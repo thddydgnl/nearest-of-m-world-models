@@ -1,0 +1,35 @@
+\section{Results IV: Rollouts and Planning}
+\label{sec:results4}
+
+
+\textbf{Rollouts stay on the token manifold.}
+\label{sec:manifold}
+A one-step model is applied recursively, so beyond one step what matters is whether its outputs stay within the distribution of inputs it was trained on. On A2-div, the manifold distance of \imlewm{} with $m{=}16$ grows from $0.86$ at $h{=}1$ to $1.68$ at $h{=}32$, within $0.1$ of regression ($1.80$), whereas FM-50 reaches $6.16$, FM-2 $6.36$ (so the drift is not an integration error) and iMF $8.04$ (Figure~\ref{fig:manifold}, Appendix~\ref{app:more}); the ordering holds on Bouncing Shapes ($2.08$ vs.\ $2.95$--$3.57$ at $h{=}16$) and on Push-T ($3.28$ vs.\ $4.37$--$5.81$). This explains why the autoregressive models in Table~\ref{tab:a1} are nearly indifferent to the readout while the joint-prediction models lose a factor of $2.7$--$4.4$ under the heatmap readout, and why flow matching has the better best-of-16 error on Push-T alone: its rollouts spread more as they drift ($36$ vs.\ $22$\,px at $h{=}16$), so one of them lands closer (Appendix~\ref{app:more}). A readout trained with feature noise $0.5$ rules out readout fragility as the cause: under it, regression and \imlewm{} improve ($22.5 \to 9.7$ and $9.0 \to 5.3$\,px, joint protocol) while flow matching worsens ($12.6 \to 15.0$).
+
+\begin{table}[t]
+\caption{Per-step matching on self-rollouts ($H{=}4$) against one-step matching on stochastic Push-T at an equal training budget (8k steps; 21M, three seeds): precision / recall error (px) and the paired per-seed change.}
+\label{tab:seq}
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccc}
+\toprule
+Stochastic Push-T & $h{=}8$ prec.\ / recall & $h{=}16$ prec.\ / recall & Train (h) \\
+\midrule
+One-step matching & 25.7 / 25.4 & 41.6 / 43.7 & 1.3 \\
+Per-step, feed matched & \best{18.8} / \best{18.4} & \best{24.6} / \best{29.3} & 5.3 \\
+Paired change & $-27\%$ / $-28\%$ & $-41\%$ / $-33\%$ & $\times 3.9$ \\
+One-step matching, 12k steps & 21.8 / 22.1 & 34.1 / 37.8 & 2.2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Per-step matching and what the fed-back state does.}
+\label{sec:seq}
+Per-step matching with $H{=}4$ reduces the $h{=}16$ recall error on stochastic Push-T from $43.7 \pm 0.9$ to $29.3 \pm 2.8$\,px (hierarchical bootstrap: $-14.3$ $[-19.1, -9.9]$\,px) and the precision error by $41\%$, and it beats the one-step-matched model trained $1.5\times$ longer (Table~\ref{tab:seq}). On the deterministic Push-T control, where the only train--test gap is exposure bias, the best-of-16 error at $h{=}16$ falls by $19\%$, so most of the gain comes from training on self-generated context; on A2-div only the manifold distance improves, and on A1 the best-of-16 rollout error improves by $24\%$ with F1 unchanged (Appendix~\ref{app:seq}). The cost is $3$--$4\times$ the training time. Changing only the fed-back state separates the two mechanisms (Table~\ref{tab:seqabl} and Figure~\ref{fig:seqabl}, Appendix~\ref{app:seq}). Feeding back the true frame, with the same number of matched updates, changes nothing. Feeding back a random candidate keeps the rollout on the manifold at least as well as the matched candidate does ($1.81$ vs.\ $1.92$) but does not improve the best-of-16 error ($22.9$ vs.\ $23.2$) and halves the spread relative to the true futures: a candidate that has followed a different future makes the true next frame an unreachable target, so the one-step distribution widens into jitter that does not accumulate into distinct futures. Only the matched candidate keeps the context on the future that was realized ($1.11\times$ the true spread; best-of-16 error $17.7$\,px). The manifold benefit thus comes from any self-generated context, and the coverage benefit from feeding back the candidate nearest the truth, which in \nom{} training is the argmin of the loss; the ablation was run on Bouncing Shapes only.
+
+
+\textbf{Planning: equal success, $50\times$ faster, accurate risk estimates.}
+\label{sec:planning}
+On stochastic Push-T, \imlewm{}, regression and FM-2 are indistinguishable at $32$--$35\%$, FM-50 is at $30\%$ on ten episodes, and the planning time per step is $4.0$\,s for \imlewm{}, half that of FM-2 and $1/50$ that of FM-50 (Table~\ref{tab:plan}, Appendix~\ref{app:plan}); the shared contact error likely prevents every model from exploiting the hidden center of gravity. The branch-risk task isolates the question: the straight path to the goal crosses an ice patch along an absorbing pit, each push on the ice is deflected by $-60^\circ$, $0^\circ$ or $+60^\circ$ with equal probability, and the upward deflection leads into the pit. \imlewm{} estimates the risk correctly (a one-push pit probability of $0.36 \pm 0.03$ against the true $0.33$, and a five-push probability of $0.44$ against $0.43$), FM-2 under-estimates it by a factor of $2.4$ because two Euler steps do not resolve the modes (with 50 steps it gives $0.31$), and regression cannot represent it at all. Yet the \imlewm{} planner succeeds no more often than the regression planner ($55\%$ vs.\ $56\%$) and falls into the pit \emph{more} often ($31\%$ vs.\ $24\%$), while the FM-2 planner, with the worst risk estimates, succeeds most often ($67\%$; the oracle planner reaches $76\%$). Planning performance thus does not follow the model's probabilistic accuracy: a mean-distance cost over a few imagined futures lets the cross-entropy method exploit model errors, and an absorbing failure is not penalized much more than a detour, consistent with \citet{cheung2026fidelity}, \citet{terver2025drives} and \citet{lee2026beckmann}. A planner that uses the estimated mode probabilities directly (through a conditional value-at-risk objective or a failure-probability constraint) is the natural next step; a mean-plus-variance cost is not, since it lowered the success rate from $78\%$ to $50\%$ even with the true simulator as the model (Appendix~\ref{app:negative}).

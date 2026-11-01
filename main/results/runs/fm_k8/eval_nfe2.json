@@ -1,0 +1,44 @@
+{
+ "run": "fm_k8",
+ "nfe": 2,
+ "args": {
+  "data": "bounce_k8",
+  "method": "fm",
+  "name": "fm_k8",
+  "steps": 12000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 4,
+  "stages": "spatial",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0,
+  "grad_ckpt": false
+ },
+ "params": 6563456,
+ "train_time": 2421.4738249778748,
+ "latency_ms": 6.033272743225098,
+ "stoch": {
+  "prec_pos": 0.20328125,
+  "minmatch_tok": 0.5862783007323742,
+  "mean_pred_err": 0.522220271974802,
+  "best_of_n": 0.5881177788972854,
+  "cov_tok": 0.0,
+  "n_modes": 8.0,
+  "minmatch_pos": 3.646303355693817,
+  "cov_pos": 0.2825,
+  "div_ratio": 0.9556287495791912,
+  "prec_tok": 0.0,
+  "precision_knn": 0.006562499795109034,
+  "recall_knn": 0.10562499612569809
+ },
+ "det": {
+  "tok_err": 0.5031774640083313,
+  "pos_err": 1.789548397064209
+ }
+}

@@ -1,0 +1,307 @@
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_a2_es8_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4211.838345050812,
+ "latency_ms": 2.7399587631225586,
+ "stoch": {
+  "prec_pos": 0.595,
+  "prec_tok": 0.0,
+  "n_modes": 4.0,
+  "mean_pred_err": 0.45535259395837785,
+  "minmatch_pos": 7.646790634393692,
+  "best_of_n": 0.476496896520257,
+  "div_ratio": 0.8037076613306999,
+  "minmatch_tok": 0.47003604009747507,
+  "cov_pos": 0.345625,
+  "cov_tok": 0.0,
+  "precision_knn": 0.8474999666213989,
+  "recall_knn": 0.7637499570846558
+ },
+ "det": {
+  "tok_err": 0.363370805978775,
+  "pos_err": 1.1121346950531006
+ }
+}
+e15_a2_es8_s0 {'manifold': [1.19, 1.77, 2.15, 2.68, 3.65], 'best_err': [2.46, 12.15, 11.98, 9.78, 9.75], 'spread': [1.71, 11.36, 20.63, 25.57, 27.63]} h= [1, 4, 8, 16, 32]
+Traceback (most recent call last):
+  File "<string>", line 7, in <module>
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/check.py", line 199, in memo_model
+    S = predict(model, ctx_tokens(tok, ii, st), torch.zeros(len(ii), 2, device="cuda"), n, nfe_, st.sigma_r)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/wm.py", line 109, in predict
+    o = model(ci, ai, z=zi)[-1].float()
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 150, in forward
+    h, ae = self.trunk(ctx, a, xt)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 129, in trunk
+    h = blk(h, w0, film)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 34, in forward
+    h = ln2d(self.dw(x))
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 17, in ln2d
+    return F.layer_norm(x.permute(0, 2, 3, 1), x.shape[1:2]).permute(0, 3, 1, 2)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2910, in layer_norm
+    return torch.layer_norm(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 256.00 MiB. GPU 0 has a total capacity of 23.58 GiB of which 200.19 MiB is free. Process 790746 has 16.68 GiB memory in use. Process 792265 has 6.69 GiB memory in use. Of the allocated memory 6.39 GiB is allocated by PyTorch, and 47.84 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_a2_es16_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 7785.320607423782,
+ "latency_ms": 4.0679216384887695,
+ "stoch": {
+  "n_modes": 4.0,
+  "prec_tok": 0.0,
+  "prec_pos": 0.59234375,
+  "mean_pred_err": 0.45331801678985356,
+  "cov_tok": 0.0,
+  "cov_pos": 0.266875,
+  "minmatch_tok": 0.47315433792769906,
+  "minmatch_pos": 8.92028614461422,
+  "div_ratio": 0.7378655337542296,
+  "best_of_n": 0.4743287081643939,
+  "precision_knn": 0.9006249904632568,
+  "recall_knn": 0.6150000095367432
+ },
+ "det": {
+  "tok_err": 0.35859373211860657,
+  "pos_err": 1.0953805446624756
+ }
+}
+e15_a2_es16_s0 {'manifold': [1.17, 1.73, 2.11, 2.57, 3.42], 'best_err': [3.12, 13.41, 12.41, 10.2, 10.86], 'spread': [1.1, 9.27, 19.45, 24.5, 26.71]} h= [1, 4, 8, 16, 32]
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_a2_es8_s1",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4210.0795476436615,
+ "latency_ms": 4.053797721862793,
+ "stoch": {
+  "prec_tok": 0.0,
+  "best_of_n": 0.4677611421793699,
+  "prec_pos": 0.6375,
+  "cov_tok": 0.0,
+  "mean_pred_err": 0.45326032683253287,
+  "cov_pos": 0.338125,
+  "minmatch_pos": 7.9928760647773744,
+  "n_modes": 4.0,
+  "minmatch_tok": 0.4663733956962824,
+  "div_ratio": 0.7764845571666956,
+  "precision_knn": 0.8762499690055847,
+  "recall_knn": 0.6993749737739563
+ },
+ "det": {
+  "tok_err": 0.3614869713783264,
+  "pos_err": 1.0284831523895264
+ }
+}
+e15_a2_es8_s1 {'manifold': [1.17, 1.79, 2.19, 2.72, 3.81], 'best_err': [3.34, 12.6, 13.47, 11.3, 11.9], 'spread': [1.08, 9.35, 18.49, 23.33, 23.88]} h= [1, 4, 8, 16, 32]
+e15_asym_es8_s0 {'train': ([0.8724358143830229, 0.8407575776459518, 0.9025564316863776], 0.795, [0.56625, 0.5475, 0.585]), 'test': ([0.8953966027845374, 0.8677408729318392, 0.9227247569413928], 0.7875, [0.565, 0.54121875, 0.59])}
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_a2_es8_s2",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4203.125066518784,
+ "latency_ms": 2.6064062118530273,
+ "stoch": {
+  "prec_pos": 0.60046875,
+  "n_modes": 4.0,
+  "minmatch_pos": 6.711450178623199,
+  "minmatch_tok": 0.4576046691834927,
+  "prec_tok": 0.0,
+  "div_ratio": 0.8299823805689812,
+  "cov_tok": 0.0,
+  "mean_pred_err": 0.4441885358467698,
+  "cov_pos": 0.38375,
+  "best_of_n": 0.4607543310523033,
+  "precision_knn": 0.8118749856948853,
+  "recall_knn": 0.8381249904632568
+ },
+ "det": {
+  "tok_err": 0.3625991642475128,
+  "pos_err": 1.031999111175537
+ }
+}
+e15_a2_es8_s2 {'manifold': [1.19, 1.74, 2.1, 2.52, 3.21], 'best_err': [2.06, 10.51, 12.82, 10.51, 9.32], 'spread': [1.68, 11.52, 20.39, 25.3, 26.51]} h= [1, 4, 8, 16, 32]
+e15_asym_es8_s1 {'train': ([0.858692634825286, 0.8236185167831698, 0.8908762238067633], 0.795, [0.5625, 0.545, 0.58]), 'test': ([0.8757518006435955, 0.8456417250695538, 0.904892042511119], 0.7875, [0.59, 0.56375, 0.61625])}
+{
+ "oracle": {
+  "precision_err": 0.04565287986770272,
+  "recall_err": 0.04565287986770272,
+  "f1_err": 0.045652879867702716,
+  "n_pred": 512,
+  "n_gt": 512
+ },
+ "copy_last": {
+  "precision_err": 21.023776382025034,
+  "recall_err": 22.427821883931756,
+  "f1_err": 21.703114768650085,
+  "n_pred": 163,
+  "n_gt": 512
+ },
+ "model": {
+  "precision_err": 9.212931560818106,
+  "recall_err": 9.079132511746138,
+  "f1_err": 9.14554269332275,
+  "n_pred": 1024,
+  "n_gt": 512
+ },
+ "run": "e15_a1_es8_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4204.507924318314
+}
+{
+ "oracle": {
+  "precision_err": 0.083465576171875,
+  "recall_err": 0.08343505859375,
+  "f1_err": 0.08345031459276148,
+  "n_pred": 512,
+  "n_gt": 512
+ },
+ "copy_last": {
+  "precision_err": 21.060870398773005,
+  "recall_err": 22.4666748046875,
+  "f1_err": 21.741071045526578,
+  "n_pred": 163,
+  "n_gt": 512
+ },
+ "model": {
+  "precision_err": 41.41609191894531,
+  "recall_err": 30.47161865234375,
+  "f1_err": 35.110740041526604,
+  "n_pred": 1024,
+  "n_gt": 512
+ },
+ "run": "e15_a1_es8_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4204.507924318314
+}
+{
+ "oracle": {
+  "precision_err": 1.0322265625,
+  "recall_err": 1.032806396484375,
+  "f1_err": 1.0325163980873246,
+  "n_pred": 512,
+  "n_gt": 512
+ },
+ "copy_last": {
+  "precision_err": 21.05818634969325,
+  "recall_err": 22.443359375,
+  "f1_err": 21.728719573456843,
+  "n_pred": 163,
+  "n_gt": 512
+ },
+ "model": {
+  "precision_err": 13.69659423828125,
+  "recall_err": 10.6387939453125,
+  "f1_err": 11.97558409623939,
+  "n_pred": 1024,
+  "n_gt": 512
+ },
+ "run": "e15_a1_es8_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4204.507924318314
+}
+e15_a1_es8_s0 {'manifold': [1.11, 1.86, 2.45, 3.05], 'best_err': [1.0, 3.85, 9.97, 25.72], 'spread': [0.26, 1.66, 4.77, 14.35]} h= [1, 4, 8, 16]
+{
+ "oracle": {
+  "precision_err": 0.04565287986770272,
+  "recall_err": 0.04565287986770272,
+  "f1_err": 0.045652879867702716,
+  "n_pred": 512,
+  "n_gt": 512
+ },
+ "copy_last": {
+  "precision_err": 21.023776382025034,
+  "recall_err": 22.427821883931756,
+  "f1_err": 21.703114768650085,
+  "n_pred": 163,
+  "n_gt": 512
+ },
+ "model": {
+  "precision_err": 8.691442131763324,
+  "recall_err": 8.796536945272237,
+  "f1_err": 8.74367375246332,
+  "n_pred": 1024,
+  "n_gt": 512
+ },
+ "run": "e15_a1_es8_s1",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4235.79984498024
+}
+{
+ "oracle": {
+  "precision_err": 0.083465576171875,
+  "recall_err": 0.08343505859375,
+  "f1_err": 0.08345031459276148,
+  "n_pred": 512,
+  "n_gt": 512
+ },
+ "copy_last": {
+  "precision_err": 21.060870398773005,
+  "recall_err": 22.4666748046875,
+  "f1_err": 21.741071045526578,
+  "n_pred": 163,
+  "n_gt": 512
+ },
+ "model": {
+  "precision_err": 38.19288635253906,
+  "recall_err": 28.165374755859375,
+  "f1_err": 32.421493244676505,
+  "n_pred": 1024,
+  "n_gt": 512
+ },
+ "run": "e15_a1_es8_s1",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4235.79984498024
+}
+{
+ "oracle": {
+  "precision_err": 1.0322265625,
+  "recall_err": 1.032806396484375,
+  "f1_err": 1.0325163980873246,
+  "n_pred": 512,
+  "n_gt": 512
+ },
+ "copy_last": {
+  "precision_err": 21.05818634969325,
+  "recall_err": 22.443359375,
+  "f1_err": 21.728719573456843,
+  "n_pred": 163,
+  "n_gt": 512
+ },
+ "model": {
+  "precision_err": 12.478530883789062,
+  "recall_err": 10.359649658203125,
+  "f1_err": 11.320797466105496,
+  "n_pred": 1024,
+  "n_gt": 512
+ },
+ "run": "e15_a1_es8_s1",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4235.79984498024
+}
+e15_a1_es8_s1 {'manifold': [1.09, 1.83, 2.41, 3.06], 'best_err': [0.96, 3.47, 9.17, 24.74], 'spread': [0.23, 1.47, 4.22, 13.2]} h= [1, 4, 8, 16]

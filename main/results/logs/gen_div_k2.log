@@ -1,0 +1,35 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_data.py", line 140, in <module>
+    compute_stats(out)
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_data.py", line 111, in compute_stats
+    r = ((x1 - mean) / std - (x - mean) / std)[torch.from_numpy(same).cuda()]
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.20 GiB. GPU 0 has a total capacity of 23.58 GiB of which 1.14 GiB is free. Process 691388 has 10.09 GiB memory in use. Process 691369 has 11.36 GiB memory in use. Process 692701 has 1000.00 MiB memory in use. Of the allocated memory 11.04 GiB is allocated by PyTorch, and 36.77 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+train 40000 frames, stochastic transitions: 0.271325
+test 10000 frames, stochastic transitions: 0.2754
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_data.py", line 111, in compute_stats
+    r = ((x1 - mean) / std - (x - mean) / std)[torch.from_numpy(same).cuda()]
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.20 GiB. GPU 0 has a total capacity of 23.58 GiB of which 135.06 MiB is free. Process 691388 has 10.09 GiB memory in use. Process 692701 has 1000.00 MiB memory in use. Process 693447 has 12.36 GiB memory in use. Of the allocated memory 11.00 GiB is allocated by PyTorch, and 1.09 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/probe.py", line 42, in <module>
+    st = Stats(a.data)
+  File "/home/yonghwi/imle-wm/code/imlewm/wm.py", line 17, in __init__
+    s = torch.load(f"{ds_dir(name)}/stats.pt")
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/serialization.py", line 1425, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/serialization.py", line 751, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/serialization.py", line 732, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/home/yonghwi/imle-wm/data/bounce_div_k2/stats.pt'
+sigma_r 0.5317091941833496 resid rms median 0.5289649367332458 PCA energy@32/64/128: 0.85149956 0.92135787 0.96713
+bounce_div_k2 probe test err px: mean 0.136 p95 0.304 max 0.957

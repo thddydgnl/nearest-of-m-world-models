@@ -1,0 +1,12 @@
+evaluation: 512 clips, 163 ICs, 10800 unique frames (avg 3.14 futures/IC)
+train: 16384 clips, 5324 ICs, 347328 unique frames (avg 3.08 futures/IC)
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_bshapes.py", line 131, in <module>
+    compute_stats(out)
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_bshapes.py", line 112, in compute_stats
+    xb = torch.from_numpy(np.asarray(toks[b])).cuda().float()
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.20 GiB. GPU 0 has a total capacity of 23.58 GiB of which 834.19 MiB is free. Process 556217 has 13.59 GiB memory in use. Process 558528 has 9.16 GiB memory in use. Of the allocated memory 7.74 GiB is allocated by PyTorch, and 1.13 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

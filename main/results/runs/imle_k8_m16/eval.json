@@ -1,0 +1,44 @@
+{
+ "run": "imle_k8_m16",
+ "nfe": 1,
+ "args": {
+  "data": "bounce_k8",
+  "method": "imle",
+  "name": "imle_k8_m16",
+  "steps": 12000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 16,
+  "stages": "spatial",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0,
+  "grad_ckpt": false
+ },
+ "params": 6826880,
+ "train_time": 11071.8559653759,
+ "latency_ms": 3.404817581176758,
+ "stoch": {
+  "best_of_n": 0.21200699288398028,
+  "mean_pred_err": 0.48878310568630695,
+  "cov_tok": 0.1284375,
+  "prec_tok": 0.09296875,
+  "n_modes": 8.0,
+  "minmatch_pos": 1.2360902973264456,
+  "cov_pos": 0.838125,
+  "prec_pos": 0.88734375,
+  "div_ratio": 0.8151494257152081,
+  "minmatch_tok": 0.2137702126055956,
+  "precision_knn": 0.2887499928474426,
+  "recall_knn": 0.7731249928474426
+ },
+ "det": {
+  "tok_err": 0.2207057774066925,
+  "pos_err": 0.8792092800140381
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "run": "imle_k4_single",
+ "nfe": 1,
+ "args": {
+  "data": "bounce_k4",
+  "method": "imle",
+  "name": "imle_k4_single",
+  "steps": 12000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 4,
+  "stages": "single",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0,
+  "grad_ckpt": false
+ },
+ "params": 6629504,
+ "train_time": 4910.57099032402,
+ "latency_ms": 3.4186363220214844,
+ "stoch": {
+  "cov_tok": 0.859375,
+  "prec_pos": 0.91921875,
+  "mean_pred_err": 0.46494413264095785,
+  "n_modes": 4.0,
+  "prec_tok": 0.66578125,
+  "minmatch_tok": 0.18914638042449952,
+  "div_ratio": 0.6284361504018307,
+  "best_of_n": 0.1873537853360176,
+  "minmatch_pos": 0.700418339036405,
+  "cov_pos": 0.965,
+  "precision_knn": 0.1574999988079071,
+  "recall_knn": 0.5799999833106995
+ },
+ "det": {
+  "tok_err": 0.15096406638622284,
+  "pos_err": 0.23971396684646606
+ }
+}

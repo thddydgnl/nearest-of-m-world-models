@@ -1,0 +1,65 @@
+\section{A Random-Codebook Account of \Nom{} Training}
+\label{sec:theory}
+
+Fix a context $c$, write $p(\cdot\,|\,c)$ for the true outcome distribution and $q(\cdot\,|\,c)$ for the generator's. Because the matching in Equation~\ref{eq:match} draws the candidates independently from $q$, the population objective behind \nom{} training is
+\begin{equation}
+L(q) = \E_{x \sim p}\, \E_{Y_1,\dots,Y_m \sim q}\, \min_{j \in [m]} \| Y_j - x \|^2 ,
+\label{eq:codebook}
+\end{equation}
+the expected distortion of quantizing $x$ with a random codebook of $m$ i.i.d.\ draws from $q$. Winner-takes-all learning with $K$ fixed hypotheses is the deterministic version of this problem, and its minimizers are centroidal Voronoi quantizers \citep{rupprecht2017mhp,letzelter2024wta}; for a Gaussian source the random-codebook version is the rate--distortion setting of \citet{shannon1959coding} with rate $\ln m / d$. The derivations below are elementary consequences of Equation~\ref{eq:codebook}; their value is that they make predictions that can be checked, and in Sections~\ref{sec:results2} and~\ref{sec:results3} they were checked against predictions written down before the corresponding runs. Proofs are in Appendix~\ref{app:proofs}.
+
+\subsection{Outcome memorization in non-repeating contexts}
+\label{sec:theory_memo}
+Let the outcome of context $c$ take one of $K$ modes $\mu_1,\dots,\mu_K$ with probabilities $p_1,\dots,p_K$. In training data whose contexts never repeat, each training context $c_i$ is seen with exactly one realized mode $\mu_{k_i}$. Two solutions compete for the empirical loss. The \emph{memorizing solution} $q(\cdot\,|\,c_i) = \delta_{\mu_{k_i}}$ puts all candidates on the realized mode and attains zero loss, at the cost of storing $k_i$ for every training context, which requires a feature of $c_i$ that identifies it. The \emph{generalizing solution} $q(\cdot\,|\,c) = p(\cdot\,|\,c)$ is the right answer on new contexts and attains
+\begin{equation}
+I(m) = \E_{k \sim p}\, \E_{S_1,\dots,S_m \sim p}\, \min_{j} \| \mu_{S_j} - \mu_k \|^2 ,
+\label{eq:I}
+\end{equation}
+the expected distortion of a random codebook of $m$ mode draws.
+
+\begin{proposition}[memorization incentive]
+\label{prop:memo}
+With non-repeating contexts, the empirical \nom{} loss prefers the memorizing solution to the generalizing one by exactly $I(m)$. If the modes are separated by at least $\delta$ and at most $\Delta$, then $(1 - 1/K)^m \delta^2 \le I(m) \le (1-1/K)^m \Delta^2$ for equiprobable modes, so the incentive vanishes exponentially once $m$ exceeds $K$. If instead the modes densely fill a curve of length $\ell$ with $K \gg m$, then $I(m) = \Theta(\ell^2/m^2)$, independent of $K$. For squared-error regression the same comparison gives $\mathrm{tr}\,\mathrm{Cov}_p$, which no budget reduces.
+\end{proposition}
+
+Two readings matter for what follows. First, the incentive is a \emph{distortion}, not a probability: it weighs a missed mode by how far away the nearest drawn mode is. Second, whether $K$ enters at all depends on the geometry. In our bounce benchmark the $K$ modes are equiangular directions on a semicircle, so for $m \lesssim K$ the distortion is nearly the same for every $K$ and only the position on the $I$ axis matters; the competing summary ``$m \approx 2K$'' that we had drawn from $K \in \{4, 8\}$ alone is a coincidence of those two points, and Section~\ref{sec:collapse} rejects it. We compute $I(m,K)$ for the benchmark geometry exactly (Appendix~\ref{app:imk}).
+
+\subsection{High-dimensional continuous outcomes: shrinkage}
+\label{sec:theory_shrink}
+When the outcome is continuous and high-dimensional no codebook of $m$ draws can cover it, and the optimal $q$ shrinks.
+
+\begin{proposition}[isotropic shrinkage]
+\label{prop:shrink}
+Let $p = \mathcal{N}(\mu, \sigma^2 I_d)$ and let the generator be free only in its spread, $q = \mathcal{N}(\mu, s^2 I_d)$. For large $d$,
+\begin{equation}
+L(q) \approx d\sigma^2 + d s^2 - 2 s \sigma \sqrt{d}\, e_m,\qquad e_m = \E\max_{j \le m} \xi_j,\ \xi_j \sim \mathcal{N}(0,1),
+\end{equation}
+so the optimal spread is $s^\star / \sigma = e_m / \sqrt{d}$ with $e_4 = 1.03$, $e_{16} = 1.77$, $e_{64} = 2.34$ and $e_m \approx \sqrt{2 \ln m}$ for large $m$.
+\end{proposition}
+
+This is the first-order form of the reproduction variance $\sigma^2(1 - m^{-2/d})$ of the Gaussian rate--distortion test channel at rate $\ln m / d$ nats per dimension \citep{cover2006elements}; the correspondence is exact because IMLE draws its codebook i.i.d.\ from the reproduction distribution. The practical content is a dichotomy in $\ln m$ against the effective dimension $\deff$ of the conditional outcome. If the outcome has a few discrete modes, $\ln m > \ln K$ lets the codebook cover them and there is no shrinkage; this is the regime of Proposition~\ref{prop:memo}, and it is also the regime in which an i.i.d.\ min-of-$N$ loss over-disperses a low-dimensional density \citep{thiede2019variety}. If $\deff \gg e_m^2$ the samples contract towards the conditional mean and the spread grows only like $\sqrt{\ln m}$. Section~\ref{sec:bair} shows that real robot video is in the second regime, and that the contraction is not isotropic.
+
+\subsection{Flattening of mode probabilities}
+\label{sec:theory_flatten}
+Even when every mode is covered, the \nom{} optimum does not reproduce the mode probabilities. For equidistant modes the population optimum satisfies the stationarity condition $p_k (1 - q_k)^{m-1} = \mathrm{const}$ for all $k$ \citep[Theorem~7]{bennett2026freedom}; for $K = 2$ this gives $\big((1-q)/q\big)^{m-1} = (1-p)/p$. At $m = 1$ the solution collapses onto the most frequent mode (mode seeking, as for regression); at $K{=}2$, $m{=}2$ it is exactly calibrated; for large $m$ the differences $q_k - q_l \approx \ln(p_k/p_l)/(m-1)$ vanish, so rare modes are over-represented. For \emph{equiprobable} modes the optimum is exactly $q = p$ for every $m \ge 2$ \citep[Theorem~4]{bennett2026freedom}. The budget $m$ therefore trades coverage against calibration, and benchmarks with equiprobable branches cannot show it; Section~\ref{sec:flatten} uses a benchmark with $p = (0.8, 0.2)$.
+
+\subsection{The energy score's incentive does not depend on $m$}
+\label{sec:theory_es}
+\citet{makabe2026esp} prefer the energy score $\IS_\beta(q, x) = \E_{Y \sim q}\|Y - x\|^\beta - \frac{1}{2}\E_{Y, Y' \sim q}\|Y - Y'\|^\beta$, $\beta \in (0, 2)$, over the hard minimum because the former is strictly proper. Propriety is a population property. In the finite-sample regime of Section~\ref{sec:theory_memo} it has a different consequence.
+
+\begin{proposition}[memorization incentive of the energy score]
+\label{prop:es}
+(a) For fixed $x$, $\IS_\beta(q, x)$ is half the energy distance between $q$ and $\delta_x$, so it is non-negative and zero only at $q = \delta_x$ \citep{dawid2007geometry,gneiting2007strictly}. With non-repeating contexts the unique minimizer of the empirical energy-score risk is therefore the memorizing solution, for every number of samples $m \ge 2$. (b) The generalizing solution attains $\frac{1}{2}\E_{Y, Y' \sim p}\|Y - Y'\|^\beta$, the generalized entropy of the score, so the memorization incentive is half the expected outcome spread and does not depend on $m$; the $m$-sample estimator is unbiased, and $m$ only changes its variance. (c) For $\beta = 2$ the score reduces to squared-error regression of the mean. (d) Averaging a per-token energy score over the token grid inherits (a) and (b) token by token.
+\end{proposition}
+
+Dividing each incentive by the incentive of the corresponding fit-only objective gives a unit-free comparison: regression and the energy score sit at $1/2$ for every $m$, while \nom{} sits at $I(m)/I(1)$, which for $K{=}4$ equiprobable modes on the bounce geometry is $0.52, 0.21, 0.054, 0.005$ for $m = 2, 4, 8, 16$. The mathematics in (a)--(c) is classical and the unconditional case is already in \citet{li2018imle}; what is new is the comparison and its test in Section~\ref{sec:es}. A second difference concerns the direction of spread. With an unknown bias $a$ and an isotropic spread $s$ in $d$ dimensions, the energy score with $\beta < 2$ is minimized at $s = a$ with gain factor $2^{\beta/2 - 1}$ independent of $d$, a special case of Proposition~4.1 of \citet{debortoli2025distributional}, whereas Proposition~\ref{prop:shrink} gives $s \approx a\, e_m/\sqrt{d} \to 0$ for \nom{}. The energy score calibrates the \emph{size} of the spread but, in high dimensions, is insensitive to its \emph{direction}: the Euclidean energy distance asymptotically detects only differences in means and covariance traces \citep{chakraborty2021framework}, and the score is far more sensitive to errors in the mean than in the variance or dependence structure \citep{pinson2013discrimination,scheuerer2015variogram,marcotte2023regions}. Isotropic spread in token space leaves the data manifold; \nom{} under-disperses but stays on it. This part is an interpretation; Appendix~\ref{app:proofs} states its assumptions.
+
+\subsection{Predictions tested in this paper}
+\label{sec:predictions}
+\begin{enumerate}
+\item[P1] In non-repeating contexts, excess memorization $(\text{index} - 1/K)/(1 - 1/K)$ is a monotone function of $I(m,K)$ and collapses across $K$ when plotted against $I$, not against $(1-1/K)^m$ or $m/K$ (Prop.~\ref{prop:memo}; Section~\ref{sec:collapse}; predictions for $K{=}2,16$ recorded before the runs).
+\item[P2] The energy score memorizes in non-repeating contexts at every $m$, and faster at larger $m$; it stops memorizing when contexts carry no identifying feature or are rarely revisited (Prop.~\ref{prop:es}; Section~\ref{sec:es}; predictions for the fixed-appearance and per-token runs recorded before the runs).
+\item[P3] With $p = (0.8, 0.2)$ the share of the frequent mode among \nom{} samples falls with $m$ as the stationarity condition prescribes, and is calibrated for FM-50 (Section~\ref{sec:flatten}).
+\item[P4] On real video the spread-to-error ratio of the samples grows with $m$ only like $e_m$ and saturates; raising $m$ to 64 does not reach the distribution metrics of 50-step flow matching (Prop.~\ref{prop:shrink}; Section~\ref{sec:bair}).
+\item[P5] An energy-score generator spreads off the token manifold in directions that readouts do not see, so its advantage disappears under a noise-robust readout while \nom{} is unaffected (Section~\ref{sec:es}).
+\end{enumerate}

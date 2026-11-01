@@ -1,0 +1,51 @@
+{
+ "run": "imle_div_k4_24k",
+ "nfe": 1,
+ "args": {
+  "data": "bounce_div_k4",
+  "method": "imle",
+  "name": "imle_div_k4_24k",
+  "steps": 24000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 4,
+  "stages": "spatial",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0,
+  "grad_ckpt": false,
+  "seqmatch": false,
+  "mf_p": 1.0,
+  "mf_bf16": false,
+  "mf_clip": 0.0,
+  "mf_chunks": 4,
+  "mf_warmup": 0,
+  "mf_ratio": 0.25
+ },
+ "params": 6826880,
+ "train_time": 10094.900134801865,
+ "latency_ms": 2.3942136764526367,
+ "stoch": {
+  "prec_pos": 0.7090625,
+  "div_ratio": 0.30947146864607933,
+  "cov_tok": 0.010625,
+  "prec_tok": 0.0125,
+  "minmatch_tok": 0.37377144731581213,
+  "best_of_n": 0.379339616894722,
+  "minmatch_pos": 6.989237679243088,
+  "mean_pred_err": 0.4334510987624526,
+  "n_modes": 4.0,
+  "cov_pos": 0.38,
+  "precision_knn": 1.0,
+  "recall_knn": 0.41624999046325684
+ },
+ "det": {
+  "tok_err": 0.24987629055976868,
+  "pos_err": 1.116957187652588
+ }
+}

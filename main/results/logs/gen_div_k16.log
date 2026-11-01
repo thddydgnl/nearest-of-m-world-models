@@ -1,0 +1,4 @@
+train 40000 frames, stochastic transitions: 0.2979
+test 10000 frames, stochastic transitions: 0.2947
+sigma_r 0.5307339429855347 resid rms median 0.5315027832984924 PCA energy@32/64/128: 0.85169 0.92184806 0.9673856
+bounce_div_k16 probe test err px: mean 0.137 p95 0.297 max 3.521

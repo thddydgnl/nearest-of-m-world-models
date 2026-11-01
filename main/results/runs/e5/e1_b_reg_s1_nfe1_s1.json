@@ -1,0 +1,20 @@
+{
+ "run": "e1_b_reg_s1",
+ "nfe": 1,
+ "seed": 1,
+ "n_eps": 100,
+ "success": 0.36,
+ "steps_success": 3.0,
+ "final_pos_err": 45.08194610118866,
+ "final_ang_err": 42.99386702805757,
+ "plan_s_per_step": 475.39492593729557,
+ "wall_s": 3565.961676836014,
+ "cem": {
+  "T": 5,
+  "N": 64,
+  "m_p": 4,
+  "iters": 3,
+  "n_elite": 8,
+  "budget": 10
+ }
+}

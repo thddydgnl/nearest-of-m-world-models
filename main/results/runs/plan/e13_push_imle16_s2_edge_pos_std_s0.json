@@ -1,0 +1,13 @@
+[
+ {
+  "lam": 0.0,
+  "model": "e13_push_imle16_s2",
+  "n_eps": 100,
+  "m_p": 8,
+  "wall_s": 3591.2,
+  "success": 0.59,
+  "pit": 0.3,
+  "timeout": 0.11,
+  "steps_success": 11.288135593220339
+ }
+]

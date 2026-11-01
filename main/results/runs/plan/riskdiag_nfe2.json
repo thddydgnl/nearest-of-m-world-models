@@ -1,0 +1,80 @@
+{
+ "n": 200,
+ "T": 5,
+ "true_pit_mean": 0.4273046875,
+ "ice_true_pit_share": 0.3296875,
+ "models": {
+  "e13_push_imle16_s0": {
+   "method": "imle",
+   "nfe": 1,
+   "model_pit_mean": 0.4172656238079071,
+   "abs_err_pit": 0.0676953125,
+   "corr_pit": 0.3259510810661081,
+   "ice_one_step_pit_share": 0.33460938930511475
+  },
+  "e13_push_imle16_s1": {
+   "method": "imle",
+   "nfe": 1,
+   "model_pit_mean": 0.40703123807907104,
+   "abs_err_pit": 0.0731640625,
+   "corr_pit": 0.22093618201158235,
+   "ice_one_step_pit_share": 0.34593749046325684
+  },
+  "e13_push_imle16_s2": {
+   "method": "imle",
+   "nfe": 1,
+   "model_pit_mean": 0.4989062547683716,
+   "abs_err_pit": 0.093125,
+   "corr_pit": 0.21522804639477364,
+   "ice_one_step_pit_share": 0.3971875011920929
+  },
+  "e13_push_reg_s0": {
+   "method": "reg",
+   "nfe": 1,
+   "model_pit_mean": 0.5049999952316284,
+   "abs_err_pit": 0.4978125,
+   "corr_pit": 0.043222000820623004,
+   "ice_one_step_pit_share": 0.6850000023841858
+  },
+  "e13_push_reg_s1": {
+   "method": "reg",
+   "nfe": 1,
+   "model_pit_mean": 0.2199999988079071,
+   "abs_err_pit": 0.454375,
+   "corr_pit": 0.08798652863246358,
+   "ice_one_step_pit_share": 0.4699999988079071
+  },
+  "e13_push_reg_s2": {
+   "method": "reg",
+   "nfe": 1,
+   "model_pit_mean": 0.054999999701976776,
+   "abs_err_pit": 0.433359375,
+   "corr_pit": 0.06315425697463067,
+   "ice_one_step_pit_share": 0.675000011920929
+  },
+  "e13_push_fm_s0": {
+   "method": "fm",
+   "nfe": 2,
+   "model_pit_mean": 0.4107031226158142,
+   "abs_err_pit": 0.072265625,
+   "corr_pit": 0.21691596738176624,
+   "ice_one_step_pit_share": 0.1354687511920929
+  },
+  "e13_push_fm_s1": {
+   "method": "fm",
+   "nfe": 2,
+   "model_pit_mean": 0.2965624928474426,
+   "abs_err_pit": 0.1369921875,
+   "corr_pit": 0.20479145039162414,
+   "ice_one_step_pit_share": 0.1360156238079071
+  },
+  "e13_push_fm_s2": {
+   "method": "fm",
+   "nfe": 2,
+   "model_pit_mean": 0.42625001072883606,
+   "abs_err_pit": 0.0785546875,
+   "corr_pit": 0.21086511094592922,
+   "ice_one_step_pit_share": 0.14421874284744263
+  }
+ }
+}

@@ -1,0 +1,27 @@
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e12_k16_m64_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 11831.819119930267,
+ "latency_ms": 3.7261390686035156,
+ "stoch": {
+  "n_modes": 15.7725,
+  "cov_tok": 0.0,
+  "prec_tok": 0.0,
+  "mean_pred_err": 0.40696083262562754,
+  "minmatch_tok": 0.29130071349442005,
+  "best_of_n": 0.2915532476827502,
+  "prec_pos": 0.315625,
+  "minmatch_pos": 2.419149472117424,
+  "cov_pos": 0.24198363095238096,
+  "div_ratio": 0.7703281089663505,
+  "precision_knn": 0.9278808236122131,
+  "recall_knn": 0.8470439314842224
+ },
+ "det": {
+  "tok_err": 0.3638680875301361,
+  "pos_err": 5.866745471954346
+ }
+}

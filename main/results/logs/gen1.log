@@ -1,0 +1,6 @@
+train 40000 frames, stochastic transitions: 0.285475
+test 10000 frames, stochastic transitions: 0.2871
+sigma_r 0.7047470808029175 resid rms median 0.7134099006652832 PCA energy@32/64/128: 0.9349591 0.9708617 0.9899162
+train 40000 frames, segments: 1372
+test 10000 frames, segments: 334
+sigma_r 0.3745856285095215 resid rms median 0.37229228019714355 PCA energy@32/64/128: 0.9357504 0.9704144 0.9896082

@@ -1,0 +1,29 @@
+{
+ "mf": {
+  "precision_err": 41.306005106307566,
+  "recall_err": 43.703637903148774,
+  "f1_err": 42.471009793344734,
+  "mode_cov": 0.0,
+  "mode_prec": 0.0,
+  "n_modes": 4.0,
+  "n_starts": 128,
+  "n": 16
+ },
+ "mf_h8": {
+  "precision_err": 26.50582801620476,
+  "recall_err": 26.582359309657477,
+  "f1_err": 26.54403849963423,
+  "mode_cov": 0.0,
+  "mode_prec": 0.0,
+  "n_modes": 3.9921875,
+  "n_starts": 128,
+  "n": 16
+ },
+ "oracle": {
+  "probe_T_vertex_err": 2.00870418548584
+ },
+ "run": "e6_b_n0_8k",
+ "nfe": 1,
+ "params": 20631040,
+ "train_time": 4857.421753406525
+}

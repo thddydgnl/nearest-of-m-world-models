@@ -1,0 +1,34 @@
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+train: softmotion30_44k/train/traj_9406_to_9661.tfrecords -> 256 trajectories
+train: softmotion30_44k/train/traj_21628_to_21883.tfrecords -> 512 trajectories
+train: softmotion30_44k/train/traj_12734_to_12989.tfrecords -> 768 trajectories
+train: softmotion30_44k/train/traj_18300_to_18555.tfrecords -> 1024 trajectories
+train: softmotion30_44k/train/traj_32153_to_32408.tfrecords -> 1280 trajectories
+train: softmotion30_44k/train/traj_19068_to_19323.tfrecords -> 1536 trajectories
+train: softmotion30_44k/train/traj_22491_to_22746.tfrecords -> 1792 trajectories
+train: softmotion30_44k/train/traj_10942_to_11197.tfrecords -> 2048 trajectories
+train: softmotion30_44k/train/traj_25051_to_25306.tfrecords -> 2304 trajectories
+train: softmotion30_44k/train/traj_25563_to_25818.tfrecords -> 2560 trajectories
+train: softmotion30_44k/train/traj_512_to_767.tfrecords -> 2816 trajectories
+train: softmotion30_44k/train/traj_11454_to_11709.tfrecords -> 3072 trajectories
+train: softmotion30_44k/train/traj_19836_to_20091.tfrecords -> 3328 trajectories
+train: softmotion30_44k/train/traj_36344_to_36599.tfrecords -> 3584 trajectories
+train: softmotion30_44k/train/traj_2048_to_2303.tfrecords -> 3840 trajectories
+train: softmotion30_44k/train/traj_16925_to_17180.tfrecords -> 4096 trajectories
+test: softmotion30_44k/test/traj_0_to_255.tfrecords -> 256 trajectories
+test: softmotion30_44k/train/traj_23515_to_23770.tfrecords -> 512 trajectories
+test: softmotion30_44k/train/traj_18044_to_18299.tfrecords -> 768 trajectories
+test: softmotion30_44k/train/traj_42327_to_42582.tfrecords -> 1024 trajectories
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_bair.py", line 145, in <module>
+    compute_stats(out)
+  File "/home/yonghwi/imle-wm/code/imlewm/gen_pusht.py", line 140, in compute_stats
+    xn = ((x - mean) / std).reshape(-1, 384)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.20 GiB. GPU 0 has a total capacity of 23.58 GiB of which 295.06 MiB is free. Process 63672 has 13.84 GiB memory in use. Process 114979 has 4.68 GiB memory in use. Process 132523 has 4.75 GiB memory in use. Of the allocated memory 4.45 GiB is allocated by PyTorch, and 55.90 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

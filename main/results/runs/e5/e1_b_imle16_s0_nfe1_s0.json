@@ -1,0 +1,20 @@
+{
+ "run": "e1_b_imle16_s0",
+ "nfe": 1,
+ "seed": 0,
+ "n_eps": 100,
+ "success": 0.34,
+ "steps_success": 3.4705882352941178,
+ "final_pos_err": 49.41399068832398,
+ "final_ang_err": 45.40537289023399,
+ "plan_s_per_step": 394.95802032916896,
+ "wall_s": 3083.2189223766327,
+ "cem": {
+  "T": 5,
+  "N": 64,
+  "m_p": 4,
+  "iters": 3,
+  "n_elite": 8,
+  "budget": 10
+ }
+}

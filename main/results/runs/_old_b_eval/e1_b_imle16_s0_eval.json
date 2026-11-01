@@ -1,0 +1,19 @@
+{
+ "mf": {
+  "precision_err": 19.7082685821224,
+  "recall_err": 18.634677345864475,
+  "f1_err": 19.156442844180336,
+  "mode_cov": 0.0,
+  "mode_prec": 0.0,
+  "n_modes": 3.921875,
+  "n_starts": 128,
+  "n": 16
+ },
+ "oracle": {
+  "probe_T_vertex_err": 2.00870418548584
+ },
+ "run": "e1_b_imle16_s0",
+ "nfe": 1,
+ "params": 20631040,
+ "train_time": 7304.7385222911835
+}

@@ -1,0 +1,50 @@
+\section{Experimental Setup}
+\label{sec:setup}
+
+\subsection{Benchmarks}
+\label{sec:bench}
+Table~\ref{tab:bench} summarizes the five settings; Appendix~\ref{app:bench} gives construction details.
+
+\begin{table}[t]
+\caption{Benchmarks. ``Contexts repeat'' means that the same context appears in the training data with several different outcomes, which removes the possibility of memorizing the realized outcome.}
+\label{tab:bench}
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llllll}
+\toprule
+Name & Source & Stochasticity & Contexts repeat & Actions & Model \\
+\midrule
+A1 Bouncing Shapes & FlowWM generator & normal bounce vs.\ reversal ($K{=}2$ per collision) & yes & none & 8M (joint: 27--29M) \\
+A2-div / A2-fix bounce & ours & $K \in \{2,4,8,16\}$ directions at a wall; asymmetric $K{=}2$ & no / partly & none & 8M \\
+Push (branch risk) & ours & $\pm20^\circ$ (2 modes), ice $\{-60^\circ,0,60^\circ\}$ (3), absorbing pit & no & 2-D push & 8M \\
+B stochastic Push-T & DINO-WM data, re-simulated & hidden centre of gravity, 4 modes & no & 10-D (5 frames) & 21M \\
+BAIR robot pushing & \citet{ebert2017bair} & continuous, high-dimensional & no & 4-D & 21M \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\paragraph{A1: Bouncing Shapes.}
+We use the public FlowWM generator unchanged \citep{porcher2026flowwm}: 32-frame clips at $256$\,px with a square and a circle that, on hitting a wall, either bounce normally or reverse their velocity with probability one half; initial conditions with a single future or more than ten are excluded. We train on $16{,}384$ clips (one eighth of FlowWM's $131$k) from $5{,}324$ initial conditions with $3.08$ futures on average, and evaluate on $512$ clips from $163$ initial conditions. Because an initial condition is seen with several futures, contexts repeat. Features are FlowWM's DINOv3 definition.
+
+\paragraph{A2: bounce with enumerable directions.}
+A ball moves at constant speed in a $64\times64$ frame; at the frame in which it touches a wall, its next direction is drawn uniformly from $K$ equiangular directions spanning $180^\circ$ about the wall normal, and the choice becomes visible one frame later, so about $28\%$ of transitions are stochastic and the rest are deterministic. There are no actions (the action input is zero). \emph{A2-div} draws a new appearance for every episode: background colour, ball colour, ball radius ($3$--$6$\,px), speed ($10$--$18$\,px per frame) and two distractor rectangles of random size and colour. The nearest training context of a test context is $1.9\times$ farther than the typical nearest neighbour within the training set, so contexts never repeat and every training context carries an identifying key. \emph{A2-fix} keeps the appearance constant ($0.35\times$). Each setting has $40$k training frames; coverage is measured on $400$ held-out wall contexts with 16 samples each. An asymmetric variant with $K{=}2$ and probabilities $(0.8, 0.2)$ serves Section~\ref{sec:flatten}.
+
+\paragraph{Push: a branching environment with actions.}
+The same renderer with a 2-D push action: each step displaces the ball by $10$\,px along the commanded direction, deflected by $\pm20^\circ$ in the open region (two modes) and by $-60^\circ$, $0^\circ$ or $+60^\circ$ on an ice patch (three modes), with equal probabilities; a pit next to the ice is absorbing. Training uses $40$k frames of random actions. The branch-risk planning task places start and goal just below the pit so that the straight path crosses the ice along the pit's edge.
+
+\paragraph{B: stochastic Push-T.}
+We replay the action sequences of the public DINO-WM Push-T data \citep{zhou2025dinowm} in the original simulator, which reproduces the recorded states exactly, and hide one variable per episode: the T block's centre of gravity, drawn from four positions at radius $20$\,px around the default plus $3$\,px of jitter. Under Push-T's quasi-static physics neither mass nor friction changes outcomes, but the centre of gravity changes how the block rotates under the same push, so one pushing context has up to four outcome modes. Five simulator frames form one model step with a 10-dimensional action, as in DINO-WM. Training uses $2{,}400$ episodes ($58{,}398$ frames); the multi-future test set has $128$ starting states taken just before first contact, each with $64$ futures ($4$ modes $\times$ $16$ jitters) of 16 steps; a deterministic control uses the default centre of gravity. A readout decodes the agent position, block position and angle (T-vertex error $2.0$\,px on real features, frame $512$\,px).
+
+\paragraph{BAIR robot pushing.}
+$64\times64$ frames with 4-dimensional actions; we train on $4{,}096$ sequences and evaluate on $256$ held-out sequences with 16 samples each, against $1{,}024$ real frames for distribution metrics.
+
+\subsection{Metrics}
+\label{sec:metrics}
+\emph{Coverage} and \emph{precision} (A2, push): 16 samples per held-out stochastic context are decoded by a position readout (test error $0.13$\,px on real features) and assigned to the nearest enumerated branch within a tolerance; coverage is the fraction of branches hit, precision the fraction of samples within tolerance of some branch. An ideal sampler with 16 draws reaches coverage $1 - (1-1/K)^{16}$, which we report as the ceiling. \emph{Memorization index}: the same quantity on 200 training contexts, restricted to the branch that was realized in the data; chance is $1/K$, and \emph{excess memorization} is $(\text{index} - 1/K)/(1 - 1/K)$. \emph{Mode share}: for the asymmetric variant, the share of samples assigned to the frequent branch. \emph{kNN precision/recall}: the manifold estimates of \citet{kynkaanniemi2019improved} with $k{=}3$ on PCA-reduced tokens. \emph{Deterministic-transition error}: readout error on transitions that are not stochastic. \emph{FlowWM precision/recall error} (A1, B): for each starting state, generate twice as many rollouts as there are true futures; precision error is the mean over rollouts of the distance to the nearest true future, recall error the mean over true futures of the distance to the nearest rollout, and F1 their harmonic mean; distances are L1 over the two shape centres on A1 ($256$\,px frame) and L2 over the eight T vertices on B ($512$\,px). \emph{Manifold distance}: the distance of a predicted token map to the nearest real token map of the test set in a PCA-64 projection, divided by the median real-to-real nearest-neighbour distance, so $1$ means on the data. \emph{Best-of-$n$} and \emph{spread}: readout (or token) error of the sample nearest the truth, and mean pairwise distance of the samples. On BAIR we use token RMS errors, the manifold distance, the spread-to-error ratio, and the Fr\'echet distance and kNN precision/recall of mean-pooled PCA-32 tokens. \emph{Latency}: milliseconds per predicted step at batch size 1. \emph{Planning}: success rate, pit rate and wall-clock time per MPC step.
+
+\subsection{Protocol and statistics}
+\label{sec:protocol}
+All models are trained with AdamW (learning rate $2\times10^{-4}$, $\beta_2 = 0.9$), batch 128, an EMA of the weights, and $12$k steps unless stated; the budget grid, the asymmetric variant and the per-step-matching comparisons use $8$k steps, iMF $36$k and Shortcut $24$k (Section~\ref{sec:baselines}). Parameter counts are matched within $\pm4\%$ inside each benchmark. Main comparisons use three seeds, the budget grid and the energy-score follow-ups two, ablations one; all means are reported with the standard deviation over seeds. Per-context uncertainty uses a bootstrap over the 400 evaluation contexts, and the Push-T comparisons a hierarchical bootstrap that resamples seeds and then starting states (Appendix~\ref{app:stats}). The experiments were run on two RTX A5000 GPUs, about $300$ GPU-hours in total including the pilot. The predictions for the $K{=}2,16$ grid, for the energy-score follow-ups and for the fed-back-state ablation were written down before the corresponding runs; we reproduce them in the appendix and count the misses.

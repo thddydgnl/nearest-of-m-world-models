@@ -1,0 +1,5 @@
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+e1_b_imle4_s1 {'manifold': [1.85, 2.51, 2.91, 3.24], 'best_err': [11.52, 36.97, 66.93, 88.68], 'spread': [0.48, 2.61, 6.49, 8.86]} h= [1, 4, 8, 16]

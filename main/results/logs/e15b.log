@@ -1,0 +1,141 @@
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_fix_es8_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4230.4418206214905,
+ "latency_ms": 4.271502494812012,
+ "stoch": {
+  "cov_tok": 0.09625,
+  "cov_pos": 0.94125,
+  "minmatch_pos": 1.2933075685799122,
+  "minmatch_tok": 0.3113876402005553,
+  "n_modes": 4.0,
+  "prec_pos": 0.8121875,
+  "div_ratio": 0.8490655034780502,
+  "prec_tok": 0.03390625,
+  "mean_pred_err": 0.4770315477252007,
+  "best_of_n": 0.31378527760505676,
+  "precision_knn": 0.004999999888241291,
+  "recall_knn": 1.0
+ },
+ "det": {
+  "tok_err": 0.18447795510292053,
+  "pos_err": 0.19012542068958282
+ }
+}
+e15_fix_es8_s0 {'manifold': [317.43, 458.75, 548.08, 647.26, 832.03], 'best_err': [0.71, 4.96, 7.16, 7.98, 8.28], 'spread': [3.59, 19.61, 27.84, 29.4, 28.82]} h= [1, 4, 8, 16, 32]
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_a2_estok8_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4601.137745141983,
+ "latency_ms": 3.9126157760620117,
+ "stoch": {
+  "cov_pos": 0.2275,
+  "cov_tok": 0.0,
+  "div_ratio": 0.696834990605712,
+  "prec_pos": 0.5640625,
+  "best_of_n": 0.48071886628866195,
+  "mean_pred_err": 0.46251979924738407,
+  "minmatch_pos": 9.692471419572831,
+  "n_modes": 4.0,
+  "minmatch_tok": 0.4759041991084814,
+  "prec_tok": 0.0,
+  "precision_knn": 0.9793750047683716,
+  "recall_knn": 0.42624998092651367
+ },
+ "det": {
+  "tok_err": 0.35732582211494446,
+  "pos_err": 1.3742092847824097
+ }
+}
+e15_a2_estok8_s0 {'manifold': [1.12, 1.53, 1.76, 2.08, 2.64], 'best_err': [2.82, 10.78, 11.8, 11.0, 12.62], 'spread': [1.14, 12.67, 21.36, 20.14, 19.18]} h= [1, 4, 8, 16, 32]
+e15_fix_es8_s0 {'manifold': [317.43, 458.75, 548.08, 647.26, 832.03], 'best_err': [0.71, 4.96, 7.16, 7.98, 8.28], 'spread': [3.59, 19.61, 27.84, 29.4, 28.82]} h= [1, 4, 8, 16, 32]
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_fix_imle16_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 3683.8432817459106,
+ "latency_ms": 3.9820909500122066,
+ "stoch": {
+  "best_of_n": 0.14808022910729052,
+  "cov_tok": 0.9575,
+  "mean_pred_err": 0.4682853410393,
+  "cov_pos": 0.985625,
+  "n_modes": 4.0,
+  "minmatch_pos": 0.32143252972513436,
+  "div_ratio": 0.7195820470154285,
+  "prec_pos": 0.94875,
+  "minmatch_tok": 0.14703208761289716,
+  "prec_tok": 0.8290625,
+  "precision_knn": 0.2306249886751175,
+  "recall_knn": 0.8787499666213989
+ },
+ "det": {
+  "tok_err": 0.18841534852981567,
+  "pos_err": 0.848565399646759
+ }
+}
+e15_fix_imle16_s0 {'manifold': [198.48, 276.47, 332.94, 420.21, 587.56], 'best_err': [0.31, 2.11, 6.79, 9.17, 8.39], 'spread': [3.98, 21.13, 29.07, 30.1, 29.66]} h= [1, 4, 8, 16, 32]
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_a2_estok8_s1",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 4627.03075671196,
+ "latency_ms": 2.634115219116211,
+ "stoch": {
+  "n_modes": 4.0,
+  "div_ratio": 0.7043262811750174,
+  "prec_tok": 0.0,
+  "prec_pos": 0.5428125,
+  "minmatch_tok": 0.4718340431153774,
+  "best_of_n": 0.47643579557538035,
+  "mean_pred_err": 0.4593414821103215,
+  "cov_tok": 0.0,
+  "cov_pos": 0.22,
+  "minmatch_pos": 9.381512351036072,
+  "precision_knn": 0.9824999570846558,
+  "recall_knn": 0.453125
+ },
+ "det": {
+  "tok_err": 0.35853448510169983,
+  "pos_err": 1.277706265449524
+ }
+}
+e15_a2_estok8_s1 {'manifold': [1.12, 1.55, 1.79, 2.08, 2.62], 'best_err': [3.27, 10.79, 12.12, 10.7, 12.28], 'spread': [1.06, 12.42, 21.01, 21.27, 20.66]} h= [1, 4, 8, 16, 32]
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:99: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(btok_all[i0:i0 + 40]).cuda())
+{
+ "run": "e15_fix_imle4_s0",
+ "nfe": 1,
+ "params": 8237440,
+ "train_time": 1887.054302930832,
+ "latency_ms": 2.7034997940063477,
+ "stoch": {
+  "best_of_n": 0.18291655626147985,
+  "n_modes": 4.0,
+  "mean_pred_err": 0.46586300507187844,
+  "cov_tok": 0.85875,
+  "prec_tok": 0.67578125,
+  "prec_pos": 0.90703125,
+  "div_ratio": 0.6363390853255987,
+  "minmatch_pos": 0.7561773164570331,
+  "cov_pos": 0.96125,
+  "minmatch_tok": 0.18383760016411543,
+  "precision_knn": 0.16749998927116394,
+  "recall_knn": 0.6549999713897705
+ },
+ "det": {
+  "tok_err": 0.13445636630058289,
+  "pos_err": 0.14750248193740845
+ }
+}
+e15_fix_imle4_s0 {'manifold': [190.75, 272.83, 328.33, 398.84, 537.55], 'best_err': [0.47, 3.19, 6.63, 7.87, 7.8], 'spread': [3.5, 20.25, 28.6, 29.82, 29.61]} h= [1, 4, 8, 16, 32]

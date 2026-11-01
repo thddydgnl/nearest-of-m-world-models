@@ -1,0 +1,80 @@
+\documentclass[10pt]{article} % For LaTeX2e
+\usepackage{tmlr}
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{tmlr}
+% To de-anonymize and remove mentions to TMLR (for example for posting to preprint servers), instead use the following:
+%\usepackage[preprint]{tmlr}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newcommand{\nom}{nearest-of-$m$}
+\newcommand{\Nom}{Nearest-of-$m$}
+\newcommand{\imlewm}{IMLE-WM}
+\newcommand{\ms}[2]{$#1 \pm #2$}
+\newcommand{\best}[1]{\textbf{#1}}
+\newcommand{\dmin}{d_{\min}}
+\newcommand{\deff}{d_{\mathrm{eff}}}
+\newcommand{\Imk}{I(m,K)}
+\newcommand{\head}[1]{\multicolumn{1}{c}{#1}}
+\newcommand{\IS}{\mathrm{ES}}
+\graphicspath{{figures/}}
+
+\title{How Many Candidates Does a One-Step World Model Need?\\A Random-Codebook Account of \Nom{} Training on Frozen DINO Tokens}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the tmlr package is used without the [accepted] or [preprint] options.
+% Non-anonymous submissions will be rejected without review.
+
+\author{\name Anonymous authors \email \\
+      \addr Paper under double-blind review}
+
+\def\month{MM}  % Insert correct month for camera-ready version
+\def\year{YYYY} % Insert correct year for camera-ready version
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}} % Insert correct link to OpenReview for camera-ready version
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Deterministic world models that predict future vision-foundation-model features average over multimodal futures; stochastic alternatives recover the modes but usually pay tens of network evaluations per step. A minimal one-step alternative trains a noise-conditioned generator with a \nom{} objective (conditional implicit maximum likelihood estimation, IMLE): draw $m$ candidate futures and pull only the one closest to the observed outcome. Recent work conjectures that a small candidate budget suffices for feature-space world models and, conversely, that a strictly proper energy score should be preferred over such hard-minimum objectives. We test both claims with action-conditioned one-step world models on frozen DINOv2/v3 patch tokens, on benchmarks whose futures can be enumerated. Under mode-like uncertainty, \nom{} with $m{=}16$ covers the enumerated futures better than 50-step flow matching, one-step flow generators (iMF, Shortcut) and an energy-score generator at matched parameters, with about $30\times$ lower latency, and its autoregressive rollouts stay on the token manifold where flow rollouts drift regardless of the number of integration steps. Our main results concern the budget. The \nom{} objective is the expected distortion of a random codebook of $m$ draws. This view predicts, and we confirm with predictions recorded before the runs, three things: (i) in contexts that never repeat, the generator memorizes the realized training outcome, and the strength of this memorization is governed by the codebook's miss \emph{distortion} $I(m)$ rather than by the miss probability (seven of nine predictions across $K{=}2$--$16$ modes fall in their intervals), whereas an energy-score generator memorizes regardless of $m$ because its incentive is $m$-independent; (ii) mode probabilities flatten with $m$, matching a known optimum within $0.01$; (iii) in high-dimensional continuous outcome spaces the samples under-disperse, which bounds the approach on real robot video. Per-step matching on self-rollouts reduces long-horizon error by a third on a stochastic Push-T variant, and an ablation separates its two effects: any self-generated context keeps rollouts on the manifold, but only feeding back the candidate nearest the truth improves long-horizon coverage. Planning success does not improve despite accurate branch-risk estimates, a negative result we report in full.
+\end{abstract}
+
+\input{sec_intro}
+\input{sec_related}
+\input{sec_method}
+\input{sec_theory}
+\input{sec_setup}
+\input{sec_results1}
+\input{sec_results2}
+\input{sec_results3}
+\input{sec_results4}
+\input{sec_discussion}
+
+\subsubsection*{Broader Impact Statement}
+This work studies the training objective of small world models on synthetic and simulated data and on a public robot-pushing dataset. We do not see a significant risk of harm beyond those of world modeling in general. One point deserves a note: \nom{} models with a large budget over-represent rare modes (Section~\ref{sec:flatten}), so their samples must not be read as calibrated probabilities in safety-relevant use.
+
+\subsubsection*{Reproducibility}
+All environments, training and evaluation code, the queue files that define every run, and the per-run outputs used for the figures and tables will be released. Appendix~\ref{app:impl} lists hyperparameters, parameter counts and training budgets; Appendix~\ref{app:bench} specifies the benchmarks; Appendix~\ref{app:stats} describes the bootstrap procedures. The predictions recorded before the $K{=}2,16$ runs and before the energy-score follow-up runs are reproduced verbatim in Appendices~\ref{app:pred} and~\ref{app:es}.
+
+\bibliography{main}
+\bibliographystyle{tmlr}
+
+\appendix
+\input{app}
+
+\end{document}

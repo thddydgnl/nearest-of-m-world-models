@@ -1,0 +1,13 @@
+[
+ {
+  "lam": 0.0,
+  "model": "e13_push_reg_s0",
+  "n_eps": 100,
+  "m_p": 1,
+  "wall_s": 761.6,
+  "success": 0.0,
+  "pit": 0.03,
+  "timeout": 0.97,
+  "steps_success": null
+ }
+]

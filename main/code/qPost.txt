@@ -1,0 +1,30 @@
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --steps 8000 --seed 0 --name e2_k4_m4_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 8 --steps 8000 --seed 0 --name e2_k4_m8_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --steps 8000 --seed 0 --name e2_k4_m16_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 32 --steps 8000 --seed 0 --name e2_k4_m32_s0
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --steps 8000 --seed 0 --name e2_k8_m4_s0
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 8 --steps 8000 --seed 0 --name e2_k8_m8_s0
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --steps 8000 --seed 0 --name e2_k8_m16_s0
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 32 --steps 8000 --seed 0 --name e2_k8_m32_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --steps 8000 --seed 1 --name e2_k4_m4_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 8 --steps 8000 --seed 1 --name e2_k4_m8_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --steps 8000 --seed 1 --name e2_k4_m16_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 32 --steps 8000 --seed 1 --name e2_k4_m32_s1
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --steps 8000 --seed 1 --name e2_k8_m4_s1
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 8 --steps 8000 --seed 1 --name e2_k8_m8_s1
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --steps 8000 --seed 1 --name e2_k8_m16_s1
+--data bounce_div_k8 --method imle --stages single --wide_head 1024 --z_from 5 --m 32 --steps 8000 --seed 1 --name e2_k8_m32_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --ctx_noise 1.0 --seed 0 --name e4_m4_cn10_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --rs_eps 0.5 --seed 0 --name e4_m4_rs05_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 8 --ctx_noise 0.3 --seed 0 --name e4_m8_cn03_s0
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --ctx_noise 1.0 --seed 1 --name e4_m4_cn10_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 4 --rs_eps 0.5 --seed 1 --name e4_m4_rs05_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 8 --ctx_noise 0.3 --seed 1 --name e4_m8_cn03_s1
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --loss l2 --seed 0 --name ab_l2
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --zdim 64 --seed 0 --name ab_z64
+--data bounce_div_k4 --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --steps 18000 --seed 0 --name ab_steps18k
+--data pusht_b --method imle --stages single --wide_head 1024 --z_from 5 --m 16 --seed 0 --name ab_b_7m
+--data pusht_b --method imle --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --m 16 --seqmatch --H 4 --seed 0 --name e6_b_seq4_s0
+--data pusht_b --method imle --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --m 16 --seqmatch --H 4 --seed 1 --name e6_b_seq4_s1
+--data pusht_det --method imle --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --m 16 --seed 0 --name e6_det_n0
+--data pusht_det --method imle --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --m 16 --seqmatch --H 4 --seed 0 --name e6_det_seq4

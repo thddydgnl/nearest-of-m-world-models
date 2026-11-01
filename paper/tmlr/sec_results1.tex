@@ -1,0 +1,83 @@
+\section{Results I: Does a Small Candidate Budget Suffice?}
+\label{sec:results1}
+
+\begin{table}[t]
+\caption{A2-div ($K{=}4$, randomized appearance), 8M models, 12k steps, three seeds (energy score $m{=}16$: two). Ideal-sampler coverage $0.99$; memorization chance $0.25$; latency per step at batch 1 on a shared RTX A5000.}
+\label{tab:a2}
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lcccccccc}
+\toprule
+Method & NFE & Coverage $\uparrow$ & Precision $\uparrow$ & kNN recall $\uparrow$ & Det.\ err.\ (px) $\downarrow$ & Memo.\ index & ms/step & Train (h) \\
+\midrule
+Regression & 1 & \ms{0.15}{0.01} & \ms{0.61}{0.02} & 0.00 & \ms{1.09}{0.03} & \ms{0.99}{0.01} & 4.4 & 0.3 \\
+FM-50 (FlowWM recipe) & 50 & \ms{0.79}{0.01} & \ms{0.51}{0.00} & \ms{0.91}{0.00} & \ms{2.24}{0.02} & \ms{0.29}{0.01} & 107 & 0.4 \\
+FM-2 (same model) & 2 & \ms{0.60}{0.00} & \ms{0.46}{0.01} & \ms{0.56}{0.01} & \ms{1.72}{0.01} & \ms{0.29}{0.01} & 6.5 & 0.4 \\
+iMF ($3\times$ steps) & 1 & \ms{0.56}{0.01} & \ms{0.23}{0.02} & \ms{0.92}{0.03} & \ms{14.5}{0.7} & \ms{0.25}{0.01} & 3.4 & 3.2 \\
+Shortcut ($2\times$ steps) & 1 & \ms{0.66}{0.00} & \ms{0.42}{0.01} & \ms{0.77}{0.01} & \ms{3.60}{0.07} & \ms{0.27}{0.01} & 4.3 & 0.7 \\
+Energy score, $m{=}8$ & 1 & \ms{0.36}{0.02} & \ms{0.61}{0.02} & \ms{0.77}{0.06} & \ms{1.06}{0.04} & \ms{0.87}{0.06} & 3.1 & 1.2 \\
+Energy score, $m{=}16$ & 1 & \ms{0.28}{0.01} & \ms{0.61}{0.01} & \ms{0.60}{0.02} & \ms{1.06}{0.03} & \ms{0.97}{0.01} & 3.3 & 2.2 \\
+\imlewm{}, $m{=}4$ & 1 & \ms{0.46}{0.01} & \ms{0.68}{0.01} & \ms{0.65}{0.01} & \ms{1.14}{0.07} & \ms{0.75}{0.01} & 3.7 & 0.6 \\
+\imlewm{}, $m{=}16$ & 1 & \best{\ms{0.93}{0.01}} & \best{\ms{0.82}{0.01}} & \best{\ms{0.94}{0.01}} & \ms{1.55}{0.05} & \ms{0.29}{0.00} & 3.3 & 1.1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Non-repeating contexts (A2-div).}
+\label{sec:a2}
+Table~\ref{tab:a2} is the main comparison (Figure~\ref{fig:scatter}, Appendix~\ref{app:more}). \imlewm{} with $m{=}16$ covers $0.93$ of the enumerated modes, against an ideal-sampler ceiling of $0.99$, with precision $0.82$: its samples sit on the modes. FM-50 reaches a coverage of $0.79$ with precision $0.51$, scattering its samples between the modes; FM-2, iMF and Shortcut are below it on both measures. The energy-score generator has the \emph{lowest} coverage of all stochastic methods ($0.36$ at $m{=}8$, $0.28$ at $m{=}16$) and, like regression, has memorized the training contexts (memorization index $0.87$--$0.97$), while \imlewm{} with $m{=}4$ lies in between (coverage $0.46$, index $0.75$); Section~\ref{sec:results2} analyzes this column. The cost of $m{=}16$ is a larger error on deterministic transitions ($1.55$ vs.\ $1.14$\,px for $m{=}4$) and $1.7\times$ the training time of $m{=}4$; the inference cost is independent of $m$, at $3.3$\,ms per step against $107$\,ms for FM-50.
+
+\begin{table}[t]
+\caption{Bouncing Shapes F1 error in px (frame $256$\,px), three seeds. Autoregressive: 3-frame context, 16 one-step predictions, 8M models. Joint: 16 frames predicted at once from 16 context frames, 27--29M models. A last-frame-copy baseline scores $21.7$ in every column; iMF, Shortcut and the energy score reach $16.8$, $12.1$ and $8.9$ (autoregressive, probe; Appendix~\ref{app:readout}). \citet{porcher2026flowwm} report $4.31$ for FlowWM and $17.1$ for their deterministic baseline under their heatmap readout with eight times our training data.}
+\label{tab:a1}
+\begin{center}
+\scriptsize
+\begin{tabular}{lccccc}
+\toprule
+ & & \multicolumn{2}{c}{Autoregressive} & \multicolumn{2}{c}{Joint 16$\to$16} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Method & NFE & probe & heatmap & probe & heatmap \\
+\midrule
+Regression & 1 & \ms{8.09}{0.15} & \ms{8.41}{0.15} & \ms{5.14}{0.01} & \ms{22.48}{0.36} \\
+FM-50 & 50 & \ms{12.28}{0.13} & \ms{14.11}{0.20} & \ms{3.86}{0.02} & \ms{12.59}{0.14} \\
+FM-2 & 2 & \ms{9.95}{0.19} & \ms{12.49}{0.38} & \ms{3.83}{0.02} & \ms{14.80}{0.17} \\
+\imlewm{}, $m{=}4$ & 1 & \best{\ms{6.61}{0.18}} & \best{\ms{6.83}{0.16}} & \best{\ms{3.30}{0.02}} & \ms{11.73}{0.31} \\
+\imlewm{}, $m{=}16$ & 1 & \ms{7.21}{0.10} & \ms{7.64}{0.18} & \ms{3.32}{0.07} & \best{\ms{9.04}{0.06}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Bouncing Shapes (A1).}
+\label{sec:a1}
+Table~\ref{tab:a1} covers two prediction protocols (autoregressive one-step rollouts, and FlowWM's joint prediction of 16 future frames from 16 context frames) and two readouts (our probe and FlowWM's heatmap readout, which we ported). In all four combinations \imlewm{} has the lowest F1 error, by at least ten seed standard deviations: $6.6$ vs.\ $12.3$\,px for FM-50 in the autoregressive protocol, and $9.0$ vs.\ $12.6$\,px under FlowWM's readout in FlowWM's own protocol. Contexts repeat here, so there is nothing to memorize and $m{=}4$ suffices. The readout matters: the deterministic joint model moves from $5.1$ to $22.5$\,px when the readout changes, which accounts for most of the gap to the $17.1$\,px that \citet{porcher2026flowwm} report for their deterministic baseline, whereas the autoregressive models barely move because they emit a clean feature map at every step (Section~\ref{sec:manifold}). Appendix~\ref{app:more} reports the baseline fairness checks (longer training preserves the ranking, iMF saturates after 24k steps, Shortcut is trained to \imlewm{}'s wall-clock budget, parameter counts match within $\pm4\%$). The caveat is scale: our joint FM-50 reaches $12.6$\,px under FlowWM's readout, where the FlowWM paper reports $4.31$\,px with eight times the data, so our claims are confined to matched small-scale compute.
+
+\begin{table}[t]
+\caption{Stochastic Push-T multi-future test (128 pre-contact starts $\times$ 64 futures $\times$ 16 steps): precision / recall error over the eight T vertices in px (frame $512$\,px), 21M, three seeds (iMF two). GT spread: mean pairwise distance among the true futures.}
+\label{tab:b}
+\begin{center}
+\scriptsize
+\begin{tabular}{lcccccc}
+\toprule
+ & & \multicolumn{2}{c}{$h{=}8$} & \multicolumn{2}{c}{$h{=}16$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}
+Method & NFE & precision & recall & precision & recall \\
+\midrule
+GT spread (reference) & & \multicolumn{2}{c}{30.8} & \multicolumn{2}{c}{48.3} \\
+Regression & 1 & \ms{24.8}{1.1} & \ms{39.6}{3.4} & \ms{40.2}{3.0} & \ms{66.4}{8.2} \\
+FM-50 & 50 & \ms{27.1}{1.6} & \ms{24.3}{1.8} & \ms{40.7}{1.1} & \ms{42.0}{3.6} \\
+FM-2 & 2 & \ms{24.2}{1.7} & \ms{23.3}{1.7} & \ms{39.7}{1.4} & \ms{41.5}{3.8} \\
+iMF & 1 & \ms{37.2}{2.6} & \ms{33.5}{3.2} & \ms{55.1}{3.7} & \ms{52.4}{3.4} \\
+Shortcut & 1 & \ms{28.0}{1.0} & \ms{24.2}{0.4} & \ms{47.3}{1.9} & \ms{45.9}{1.1} \\
+\imlewm{}, $m{=}4$ & 1 & \best{\ms{18.7}{0.4}} & \ms{29.2}{3.4} & \best{\ms{33.8}{3.2}} & \ms{49.1}{3.5} \\
+\imlewm{}, $m{=}16$ & 1 & \ms{21.8}{1.8} & \best{\ms{22.1}{2.3}} & \ms{34.1}{0.7} & \best{\ms{37.8}{2.3}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Stochastic Push-T (B).}
+\label{sec:b}
+On the Push-T variant with a hidden center of gravity, \imlewm{} with $m{=}16$ has the lowest recall error at both horizons and a precision error $6.6$\,px below that of FM-50 at $h{=}16$ (Table~\ref{tab:b}). Under a hierarchical bootstrap over seeds and starting states, the precision advantage over FM-50, FM-2 and Shortcut is significant (at $h{=}16$: $-6.6$ $[-8.5, -4.7]$, $-5.6$ $[-7.7, -3.2]$ and $-13.2$ $[-16.3, -10.2]$\,px), whereas the recall advantage, although consistent across the 128 starting states, has an interval that includes zero against the flow baselines ($-4.2$ $[-8.8, +1.1]$ vs.\ FM-50; Appendix~\ref{app:more}). All models mispredict the block's displacement at first contact by about $12$ of $16$\,px, an error that three times more training does not shrink and that masks differences between objectives. \imlewm{} with $m{=}4$ shows the collapse analyzed in Section~\ref{sec:results2}: the best precision but the worst recall among the stochastic models, and a rollout spread of $9$\,px against $22$\,px for $m{=}16$.

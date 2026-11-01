@@ -1,0 +1,1 @@
+{"model": {"precision_err": 4.536206750432029, "recall_err": 5.946592836873606, "f1_err": 5.146521088004527}, "run": "j_reg_s2", "nfe": 1, "params": 26982016, "train_time": 1684.5905168056488, "eval_s": 2.860360622406006, "readout": "probe"}

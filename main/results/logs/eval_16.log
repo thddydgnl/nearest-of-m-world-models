@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/joint.py", line 276, in <module>
+    evaluate(a.eval, a.nfe)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/joint.py", line 228, in evaluate
+    ck = torch.load(f"{RUNS}/{run}/ckpt.pt", map_location="cuda")
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/serialization.py", line 1425, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/serialization.py", line 751, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/serialization.py", line 732, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/home/yonghwi/imle-wm/runs/16/ckpt.pt'

@@ -1,0 +1,3 @@
+evaluation: 512 clips, 163 ICs, 10800 unique frames (avg 3.14 futures/IC)
+train: 16384 clips, 5324 ICs, 347328 unique frames (avg 3.08 futures/IC)
+sigma_r 0.37872835993766785 resid rms median 0.3244570791721344

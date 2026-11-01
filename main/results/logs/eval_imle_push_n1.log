@@ -1,0 +1,35 @@
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:145: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(bt_all[i0:i0 + 40]).cuda())
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/evaluate.py", line 214, in <module>
+    res.update(eval_bounce(model, data, a.nfe) if data.startswith("bounce") else eval_push(model, data, a.nfe))
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/evaluate.py", line 175, in eval_push
+    R = rollout(model, ctx, acts, n_hz, nfe, st.sigma_r)  # (B,n,H,N,D)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/wm.py", line 111, in rollout
+    return torch.stack(out, 1).view(B, n, H, 256, 384)
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.34 GiB. GPU 0 has a total capacity of 23.58 GiB of which 426.19 MiB is free. Process 3731853 has 14.93 GiB memory in use. Process 3839892 has 8.21 GiB memory in use. Of the allocated memory 5.92 GiB is allocated by PyTorch, and 2.04 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+8168945,
+   5.138093948364258,
+   5.689640998840332,
+   5.958700656890869,
+   6.480850696563721,
+   6.872660160064697,
+   7.225067138671875,
+   7.599086284637451,
+   7.994544506072998,
+   8.38893985748291,
+   8.53178882598877,
+   8.853171348571777,
+   8.795370101928711,
+   9.182572364807129
+  ]
+ }
+}

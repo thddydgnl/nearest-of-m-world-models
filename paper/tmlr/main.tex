@@ -1,0 +1,77 @@
+\documentclass[10pt]{article} % For LaTeX2e
+\usepackage{tmlr}
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{tmlr}
+% To de-anonymize and remove mentions to TMLR (for example for posting to preprint servers), instead use the following:
+%\usepackage[preprint]{tmlr}
+
+% Optional math commands from https://github.com/goodfeli/dlbook_notation.
+\input{math_commands.tex}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{tabularx}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newcommand{\nom}{nearest-of-$m$}
+\newcommand{\Nom}{Nearest-of-$m$}
+\newcommand{\imlewm}{IMLE-WM}
+\newcommand{\ms}[2]{$#1 \pm #2$}
+\newcommand{\best}[1]{\textbf{#1}}
+\newcommand{\dmin}{d_{\min}}
+\newcommand{\deff}{d_{\mathrm{eff}}}
+\newcommand{\Imk}{I(m,K)}
+\newcommand{\head}[1]{\multicolumn{1}{c}{#1}}
+\newcommand{\IS}{\mathrm{ES}}
+\graphicspath{{figures/}}
+
+\title{How Many Candidates Does a One-Step World Model Need?\\A Random-Codebook Account of \Nom{} Training on Frozen DINO Tokens}
+
+% Authors must not appear in the submitted version. They should be hidden
+% as long as the tmlr package is used without the [accepted] or [preprint] options.
+% Non-anonymous submissions will be rejected without review.
+
+\author{\name Anonymous authors \email \\
+      \addr Paper under double-blind review}
+
+\def\month{MM}  % Insert correct month for camera-ready version
+\def\year{YYYY} % Insert correct year for camera-ready version
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}} % Insert correct link to OpenReview for camera-ready version
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+One-step stochastic world models avoid the mode averaging of deterministic feature predictors without the tens of network evaluations per step that diffusion and flow matching require. The simplest such objective is \nom{} matching (conditional implicit maximum likelihood estimation, IMLE): draw $m$ candidate futures and pull only the one closest to the observed outcome. Recent work conjectures that a small $m$ suffices for feature-space world models and, conversely, that a strictly proper energy score should replace the hard minimum. We test both claims with one-step world models on frozen DINOv2/v3 patch tokens, using benchmarks whose futures can be enumerated. Under mode-like uncertainty, \nom{} with $m{=}16$ covers the enumerated futures better than 50-step flow matching, one-step flow generators and an energy-score generator at matched parameter counts, with about $30\times$ lower latency than 50-step flow matching, and its rollouts stay on the token manifold where flow rollouts drift. The candidate budget is governed by one quantity: the \nom{} objective is the expected distortion of a random codebook of $m$ draws from the generator. This view yields three predictions, which we recorded before the corresponding runs: (i) memorization of the realized outcome in contexts that never repeat, whose strength is governed by the codebook's miss \emph{distortion} $I(m)$ rather than by its miss probability, and which an energy-score generator does not escape by raising $m$; (ii) a flattening of mode probabilities with $m$ that matches a known optimum within $0.01$; and (iii) under-dispersion on continuous high-dimensional outcomes, which bounds the method on real robot video. Per-step matching on self-rollouts cuts long-horizon error by a third on a stochastic Push-T variant, and an ablation separates its manifold benefit from its coverage benefit. Planning success does not improve despite accurate risk estimates, a negative result that we report together with its diagnosis.
+\end{abstract}
+
+\input{sec_intro}
+\input{sec_related}
+\input{sec_method}
+\input{sec_theory}
+\input{sec_setup}
+\input{sec_results1}
+\input{sec_results2}
+\input{sec_results3}
+\input{sec_results4}
+\input{sec_discussion}
+
+\subsubsection*{Broader Impact Statement}
+This work studies the training objectives of small world models on synthetic, simulated and public robot data; we see no risks beyond those of world modeling in general, with one caution: samples from a \nom{} model with a large budget over-represent rare modes (Section~\ref{sec:flatten}) and must not be read as calibrated probabilities in safety-relevant use.
+
+\bibliography{main}
+\bibliographystyle{tmlr}
+
+\appendix
+\input{app}
+
+\end{document}

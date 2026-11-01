@@ -1,0 +1,12 @@
+[
+ {
+  "lam": 0.0,
+  "model": "oracle",
+  "n_eps": 100,
+  "wall_s": 99.6,
+  "success": 0.76,
+  "pit": 0.07,
+  "timeout": 0.17,
+  "steps_success": 11.421052631578947
+ }
+]

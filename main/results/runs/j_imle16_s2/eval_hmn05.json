@@ -1,0 +1,13 @@
+{
+ "model": {
+  "precision_err": 5.68939208984375,
+  "recall_err": 4.815399169921875,
+  "f1_err": 5.216037762068759
+ },
+ "run": "j_imle16_s2",
+ "nfe": 1,
+ "params": 27245184,
+ "train_time": 5817.164555311203,
+ "eval_s": 7.123770713806152,
+ "readout": "heatmap"
+}

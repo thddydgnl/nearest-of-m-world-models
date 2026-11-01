@@ -1,0 +1,89 @@
+/home/yonghwi/imle-wm/code/imlewm/evaluate.py:145: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:203.)
+  bt = st.norm(torch.from_numpy(bt_all[i0:i0 + 40]).cuda())
+{
+ "run": "e13_push_fm_s1",
+ "nfe": 50,
+ "params": 8171136,
+ "train_time": 1072.4056510925293,
+ "latency_ms": 184.96752262115479,
+ "step": {
+  "minmatch_tok": 0.3048873279988766,
+  "minmatch_pos": 0.5661329137027497,
+  "cov_tok": 0.04,
+  "cov_pos": 0.985,
+  "div_ratio": 1.2237129000325997,
+  "prec_pos": 0.78359375,
+  "prec_tok": 0.04,
+  "n_modes": 2.095
+ },
+ "step_cf": {
+  "minmatch_tok": 0.3045246940106153,
+  "minmatch_pos": 0.5701823251182213,
+  "cov_tok": 0.0275,
+  "cov_pos": 0.9845833333333333,
+  "div_ratio": 1.220026481274161,
+  "prec_pos": 0.7659375,
+  "prec_tok": 0.0275,
+  "n_modes": 2.1075
+ },
+ "sensitivity": {
+  "sens_tok": 0.8502353354992149,
+  "sens_pos": 0.9482301088087117
+ },
+ "horizon": {
+  "best_tok": [
+   0.29861190915107727,
+   0.39963510632514954,
+   0.4788454473018646,
+   0.5485377311706543,
+   0.6189498901367188,
+   0.6840599179267883,
+   0.7497144937515259,
+   0.8183433413505554,
+   0.8882027864456177,
+   0.9586122632026672,
+   1.0335596799850464,
+   1.1119155883789062,
+   1.1913471221923828,
+   1.2750331163406372,
+   1.362202763557434,
+   1.454171061515808
+  ],
+  "best_pos": [
+   0.4853009283542633,
+   1.050504446029663,
+   1.4201997518539429,
+   1.5456548929214478,
+   1.8379225730895996,
+   1.8666226863861084,
+   2.038983106613159,
+   2.2180557250976562,
+   2.273576259613037,
+   2.3547606468200684,
+   2.596482276916504,
+   2.808025360107422,
+   2.900535821914673,
+   2.96730899810791,
+   3.039057493209839,
+   3.160874605178833
+  ],
+  "mean_pos": [
+   2.5560460090637207,
+   4.0499725341796875,
+   4.954706192016602,
+   5.505489349365234,
+   6.194401264190674,
+   6.685976028442383,
+   7.225873947143555,
+   7.733770370483398,
+   8.06586742401123,
+   8.560979843139648,
+   8.947877883911133,
+   9.401823043823242,
+   9.785571098327637,
+   10.165258407592773,
+   10.483297348022461,
+   10.978153228759766
+  ]
+ }
+}

@@ -1,0 +1,38 @@
+params 6.60M  windows 35909
+{'step': 0, 'loss': 1.4116699695587158, 't': 1.1}
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/train.py", line 215, in <module>
+    main()
+  File "/home/yonghwi/imle-wm/code/imlewm/train.py", line 119, in main
+    u, dudt = torch.func.jvp(f, (xt, r, t), (v, torch.zeros_like(r), torch.ones_like(t)))
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/_functorch/eager_transforms.py", line 1042, in jvp
+    return _jvp_with_argnums(
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/_functorch/eager_transforms.py", line 1101, in _jvp_with_argnums
+    result_duals = func(*duals)
+  File "/home/yonghwi/imle-wm/code/imlewm/train.py", line 118, in f
+    return model(ctx0, acts[:, 0], t=tt, r=rr, xt=zz)[-1]
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 106, in forward
+    h = blk(h, w, film)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 40, in forward
+    h = self.pw2(F.gelu(self.pw1(h)))
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 554, in forward
+    return self._conv_forward(input, self.weight, self.bias)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/conv.py", line 549, in _conv_forward
+    return F.conv2d(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.58 GiB of which 126.19 MiB is free. Process 4136710 has 13.11 GiB memory in use. Process 4136869 has 10.33 GiB memory in use. Of the allocated memory 10.04 GiB is allocated by PyTorch, and 31.17 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

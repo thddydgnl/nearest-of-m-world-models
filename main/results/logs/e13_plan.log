@@ -1,0 +1,62 @@
+07:19:06 plan oracle
+{"lam": 0.0, "model": "oracle", "n_eps": 100, "wall_s": 99.6, "success": 0.76, "pit": 0.07, "timeout": 0.17, "steps_success": 11.421052631578947}
+08:26:48 plan e13_push_imle16_s0
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/yonghwi/imle-wm/code/imlewm/plan.py", line 130, in <module>
+    r = run(a.model, lam, a.eps, a.seed, spread=a.spread, cost=a.cost, task=a.task)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/plan.py", line 89, in run
+    s = predict(model, c, aa[i:i + chunk, h], 1, nfe=2, sigma_r=st.sigma_r)[:, 0]
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/wm.py", line 109, in predict
+    o = model(ci, ai, z=zi)[-1].float()
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 149, in forward
+    h, ae = self.trunk(ctx, a, xt)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 128, in trunk
+    h = blk(h, w0, film)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 34, in forward
+    h = ln2d(self.dw(x))
+  File "/home/yonghwi/imle-wm/code/imlewm/model.py", line 17, in ln2d
+    return F.layer_norm(x.permute(0, 2, 3, 1), x.shape[1:2]).permute(0, 3, 1, 2)
+  File "/home/yonghwi/imle-wm/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2910, in layer_norm
+    return torch.layer_norm(
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 128.00 MiB. GPU 0 has a total capacity of 23.58 GiB of which 93.94 MiB is free. Process 726580 has 10.09 GiB memory in use. Process 736094 has 9.65 GiB memory in use. Process 736961 has 2.75 GiB memory in use. Process 737048 has 990.00 MiB memory in use. Of the allocated memory 2.36 GiB is allocated by PyTorch, and 144.96 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+08:26:57 plan e13_push_fm_s0
+{"lam": 0.0, "model": "e13_push_fm_s0", "n_eps": 100, "wall_s": 10863.4, "success": 0.66, "pit": 0.18, "timeout": 0.16, "steps_success": 10.954545454545455}
+11:28:04 plan e13_push_reg_s0
+/home/yonghwi/imle-wm/code/imlewm/plan.py:98: UserWarning: std(): degrees of freedom is <= 0. Correction should be strictly less than the reduction factor (input numel divided by output numel). (Triggered internally at /pytorch/aten/src/ATen/native/ReduceOps.cpp:1831.)
+  spr = d.std(2) if spread == "std" else d.var(2)
+11:28:44 plan e13_push_imle16_s0 try 1 gpu 0
+12:11:45 plan(rev) e13_push_fm_s2 try 1 gpu 1
+{"lam": 0.0, "model": "e13_push_imle16_s0", "n_eps": 100, "m_p": 8, "wall_s": 3747.4, "success": 0.54, "pit": 0.29, "timeout": 0.17, "steps_success": 11.185185185185185}
+12:31:13 plan e13_push_reg_s0 try 1 gpu 0
+/home/yonghwi/imle-wm/code/imlewm/plan.py:98: UserWarning: std(): degrees of freedom is <= 0. Correction should be strictly less than the reduction factor (input numel divided by output numel). (Triggered internally at /pytorch/aten/src/ATen/native/ReduceOps.cpp:1831.)
+  spr = d.std(2) if spread == "std" else d.var(2)
+{"lam": 0.0, "model": "e13_push_reg_s0", "n_eps": 100, "m_p": 1, "wall_s": 761.6, "success": 0.0, "pit": 0.03, "timeout": 0.97, "steps_success": null}
+12:43:56 plan e13_push_imle16_s1 try 1 gpu 0
+{"lam": 0.0, "model": "e13_push_imle16_s1", "n_eps": 100, "m_p": 8, "wall_s": 3560.4, "success": 0.53, "pit": 0.34, "timeout": 0.13, "steps_success": 10.924528301886792}
+13:43:19 plan e13_push_fm_s1 try 1 gpu 0
+{"lam": 0.0, "model": "e13_push_fm_s2", "n_eps": 100, "m_p": 8, "wall_s": 8358.9, "success": 0.66, "pit": 0.18, "timeout": 0.16, "steps_success": 11.06060606060606}
+14:31:05 plan(rev) e13_push_imle16_s2 try 1 gpu 1
+{"lam": 0.0, "model": "e13_push_imle16_s2", "n_eps": 100, "m_p": 8, "wall_s": 3591.2, "success": 0.59, "pit": 0.3, "timeout": 0.11, "steps_success": 11.288135593220339}
+15:30:59 plan(rev) e13_push_reg_s2 try 1 gpu 1
+{"lam": 0.0, "model": "e13_push_reg_s2", "n_eps": 100, "m_p": 1, "wall_s": 518.5, "success": 0.53, "pit": 0.27, "timeout": 0.2, "steps_success": 11.415094339622641}
+15:39:40 plan(rev) e13_push_reg_s1 try 1 gpu 1
+{"lam": 0.0, "model": "e13_push_reg_s1", "n_eps": 100, "m_p": 1, "wall_s": 534.3, "success": 0.61, "pit": 0.21, "timeout": 0.18, "steps_success": 11.573770491803279}
+15:48:38 plan(rev) e13_push_reg_s0 try 1 gpu 1
+{"lam": 0.0, "model": "e13_push_fm_s1", "n_eps": 100, "m_p": 8, "wall_s": 7979.7, "success": 0.69, "pit": 0.2, "timeout": 0.11, "steps_success": 11.18840579710145}
+{"lam": 0.0, "model": "e13_push_reg_s0", "n_eps": 100, "m_p": 1, "wall_s": 515.8, "success": 0.55, "pit": 0.25, "timeout": 0.2, "steps_success": 11.345454545454546}

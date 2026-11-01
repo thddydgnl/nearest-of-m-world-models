@@ -1,0 +1,22 @@
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+train: 0/2400 episodes
+train: 200/2400 episodes
+train: 400/2400 episodes
+train: 600/2400 episodes
+train: 800/2400 episodes
+train: 1000/2400 episodes
+train: 1200/2400 episodes
+train: 1400/2400 episodes
+train: 1600/2400 episodes
+train: 1800/2400 episodes
+train: 2000/2400 episodes
+train: 2200/2400 episodes
+train: 58398 frames from 2400 episodes
+test: 0/300 episodes
+test: 200/300 episodes
+test: 8013 frames from 300 episodes
+mf_test: 128 starts x 64 futures x 16 steps
+sigma_r 0.3990696668624878

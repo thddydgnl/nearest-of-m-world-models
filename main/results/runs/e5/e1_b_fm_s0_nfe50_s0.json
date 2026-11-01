@@ -1,0 +1,20 @@
+{
+ "run": "e1_b_fm_s0",
+ "nfe": 50,
+ "seed": 0,
+ "n_eps": 10,
+ "success": 0.3,
+ "steps_success": 2.0,
+ "final_pos_err": 45.17615032196045,
+ "final_ang_err": 20.049833297729492,
+ "plan_s_per_step": 2000.312005155965,
+ "wall_s": 15203.905264616013,
+ "cem": {
+  "T": 5,
+  "N": 64,
+  "m_p": 4,
+  "iters": 3,
+  "n_elite": 8,
+  "budget": 10
+ }
+}

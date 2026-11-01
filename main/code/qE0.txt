@@ -1,0 +1,5 @@
+--data bounce_div_k4 --method fm --wide_head 1024 --t_shift 13 --stages single --name fm_e0_flowwm
+--data bounce_div_k4 --method imf --wide_head 640 --stages single --name imf_e0
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --name imle_e0_full
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --name imle_e0_late
+--data bounce_div_k4 --method imle --m 16 --stages single --name imle_e0_plain

@@ -1,0 +1,12 @@
+[
+ {
+  "lam": 0.0,
+  "model": "e13_push_fm_s0",
+  "n_eps": 100,
+  "wall_s": 10863.4,
+  "success": 0.66,
+  "pit": 0.18,
+  "timeout": 0.16,
+  "steps_success": 10.954545454545455
+ }
+]

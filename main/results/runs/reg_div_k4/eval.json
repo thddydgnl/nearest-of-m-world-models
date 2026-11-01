@@ -1,0 +1,48 @@
+{
+ "run": "reg_div_k4",
+ "nfe": 1,
+ "args": {
+  "data": "bounce_div_k4",
+  "method": "reg",
+  "name": "reg_div_k4",
+  "steps": 12000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 4,
+  "stages": "spatial",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0,
+  "grad_ckpt": false,
+  "seqmatch": false,
+  "mf_p": 1.0,
+  "mf_bf16": false,
+  "mf_clip": 0.0
+ },
+ "params": 6366592,
+ "train_time": 2459.5324263572693,
+ "latency_ms": 3.5480451583862305,
+ "stoch": {
+  "mean_pred_err": 0.45094835728406907,
+  "div_ratio": 0.0,
+  "cov_pos": 0.155625,
+  "prec_pos": 0.6225,
+  "minmatch_pos": 11.544546158313752,
+  "minmatch_tok": 0.4480690711736679,
+  "best_of_n": 0.45094835728406907,
+  "prec_tok": 0.0025,
+  "cov_tok": 0.000625,
+  "n_modes": 4.0,
+  "precision_knn": 1.0,
+  "recall_knn": 0.0
+ },
+ "det": {
+  "tok_err": 0.26407432556152344,
+  "pos_err": 1.1120904684066772
+ }
+}

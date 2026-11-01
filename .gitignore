@@ -1,0 +1,24 @@
+# OS, editor and Python caches
+.DS_Store
+__pycache__/
+*.pyc
+.claude/
+
+# Queue-runner lock files
+*.lock
+
+# LaTeX build files
+/paper/**/*.aux
+/paper/**/*.out
+/paper/**/*.log
+/paper/**/*.blg
+/paper/**/*.bbl
+/paper/**/*.synctex.gz
+/paper/**/*.fls
+/paper/**/*.fdb_latexmk
+/paper/**/*.xdv
+
+# Model checkpoints, datasets and token caches stay on the GPU server (see README "Data not in git")
+*.pt
+*.npz
+*.npy

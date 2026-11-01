@@ -1,0 +1,6 @@
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seqmatch --H 4 --steps 8000 --seed 0 --name e11_a2_seq4_s0
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seqmatch --H 4 --steps 8000 --seed 0 --name e11_a1_seq4_s0
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seqmatch --H 4 --steps 8000 --seed 1 --name e11_a2_seq4_s1
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seqmatch --H 4 --steps 8000 --seed 1 --name e11_a1_seq4_s1
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --steps 8000 --seed 0 --name e11_a1_n0_s0
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --steps 8000 --seed 1 --name e11_a1_n0_s1

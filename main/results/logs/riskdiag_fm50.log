@@ -1,0 +1,4 @@
+e13_push_fm_s0 {'method': 'fm', 'nfe': 50, 'model_pit_mean': 0.5093749761581421, 'abs_err_pit': 0.0989453125, 'corr_pit': 0.36466585723531086, 'ice_one_step_pit_share': 0.3377343714237213}
+e13_push_fm_s1 {'method': 'fm', 'nfe': 50, 'model_pit_mean': 0.42796874046325684, 'abs_err_pit': 0.070546875, 'corr_pit': 0.20322801366400506, 'ice_one_step_pit_share': 0.2979687452316284}
+e13_push_fm_s2 {'method': 'fm', 'nfe': 50, 'model_pit_mean': 0.37882813811302185, 'abs_err_pit': 0.0875, 'corr_pit': 0.22515017566431691, 'ice_one_step_pit_share': 0.2903124988079071}
+true pit mean 0.4273046875 ice one-step true pit share 0.3296875

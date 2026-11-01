@@ -1,0 +1,50 @@
+{
+ "run": "fm_div_k4",
+ "nfe": 2,
+ "args": {
+  "data": "bounce_div_k4",
+  "method": "fm",
+  "name": "fm_div_k4",
+  "steps": 12000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 4,
+  "stages": "spatial",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0,
+  "grad_ckpt": false,
+  "seqmatch": false,
+  "mf_p": 1.0,
+  "mf_bf16": false,
+  "mf_clip": 0.0,
+  "mf_chunks": 4,
+  "mf_warmup": 0
+ },
+ "params": 6563456,
+ "train_time": 2115.387565612793,
+ "latency_ms": 4.249000549316406,
+ "stoch": {
+  "cov_pos": 0.4325,
+  "mean_pred_err": 0.4379976712912321,
+  "prec_pos": 0.3315625,
+  "minmatch_pos": 5.183803571164608,
+  "minmatch_tok": 0.5134185210615396,
+  "cov_tok": 0.0,
+  "div_ratio": 0.9031884379684925,
+  "n_modes": 4.0,
+  "prec_tok": 0.0,
+  "best_of_n": 0.5131622187793254,
+  "precision_knn": 1.0,
+  "recall_knn": 0.10875000059604645
+ },
+ "det": {
+  "tok_err": 0.48630431294441223,
+  "pos_err": 3.7962913513183594
+ }
+}

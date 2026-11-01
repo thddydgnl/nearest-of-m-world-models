@@ -1,0 +1,408 @@
+12:30:37 gpu0 start e1_a1_reg_s0
+12:30:40 gpu1 start e1_a2_reg_s0
+12:48:36 gpu0 end e1_a1_reg_s0 rc=0
+12:48:36 gpu0 start e1_b_reg_s0
+12:48:41 gpu1 end e1_a2_reg_s0 rc=0
+12:48:41 gpu1 start e1_a1_fm_s0
+13:07:05 gpu1 end e1_a1_fm_s0 rc=0
+13:07:05 gpu1 start e1_a2_fm_s0
+13:26:14 gpu0 end e1_b_reg_s0 rc=0
+13:26:14 gpu0 start e1_b_fm_s0
+13:33:18 gpu1 end e1_a2_fm_s0 rc=0
+13:33:18 gpu1 start e1_a1_imle16_s0
+14:04:16 gpu0 end e1_b_fm_s0 rc=0
+14:04:16 gpu0 start e1_a2_imle16_s0
+14:56:02 gpu1 end e1_a1_imle16_s0 rc=0
+14:56:02 gpu1 start e1_b_imle16_s0
+15:07:19 gpu0 end e1_a2_imle16_s0 rc=0
+15:07:19 gpu0 start e1_a1_imle4_s0
+15:39:19 gpu0 end e1_a1_imle4_s0 rc=0
+15:39:19 gpu0 start e1_a2_imle4_s0
+16:11:15 gpu0 end e1_a2_imle4_s0 rc=0
+16:11:15 gpu0 start e1_b_imle4_s0
+16:57:51 gpu1 end e1_b_imle16_s0 rc=0
+16:57:51 gpu1 start e1_a1_imf_s0
+17:15:42 gpu0 end e1_b_imle4_s0 rc=0
+17:15:42 gpu0 start e1_a2_imf_s0
+19:50:30 gpu0 end e1_a2_imf_s0 rc=0
+19:50:30 gpu0 start e1diag_b_reg36k
+19:56:58 gpu1 end e1_a1_imf_s0 rc=0
+19:56:58 gpu1 start e1_a1_reg_s1
+20:15:20 gpu1 end e1_a1_reg_s1 rc=0
+20:15:20 gpu1 start e1_a2_reg_s1
+20:33:28 gpu1 end e1_a2_reg_s1 rc=0
+20:33:28 gpu1 start e1_a1_fm_s1
+20:51:58 gpu1 end e1_a1_fm_s1 rc=0
+20:51:58 gpu1 start e1_a2_fm_s1
+21:17:48 gpu1 end e1_a2_fm_s1 rc=0
+21:17:48 gpu1 start e1_a1_imle16_s1
+21:43:20 gpu0 end e1diag_b_reg36k rc=0
+21:43:20 gpu0 start e1_a2_imle16_s1
+22:23:44 gpu1 end e1_a1_imle16_s1 rc=0
+22:23:44 gpu1 start e1_a1_imle4_s1
+22:46:19 gpu0 end e1_a2_imle16_s1 rc=0
+22:46:19 gpu0 start e1_a2_imle4_s1
+22:56:14 gpu1 end e1_a1_imle4_s1 rc=0
+22:56:14 gpu1 start e1_a1_imf_s1
+23:18:14 gpu0 end e1_a2_imle4_s1 rc=0
+23:18:14 gpu0 start e1_a2_imf_s1
+01:23:08 gpu1 end e1_a1_imf_s1 rc=0
+01:23:08 gpu1 start e1_a1_reg_s2
+01:41:28 gpu1 end e1_a1_reg_s2 rc=0
+01:41:28 gpu1 start e1_a2_reg_s2
+01:53:10 gpu0 end e1_a2_imf_s1 rc=0
+01:53:10 gpu0 start e1_a1_fm_s2
+01:59:46 gpu1 end e1_a2_reg_s2 rc=0
+01:59:46 gpu1 start e1_a2_fm_s2
+02:11:31 gpu0 end e1_a1_fm_s2 rc=0
+02:11:31 gpu0 start e1_a1_imle16_s2
+02:25:46 gpu1 end e1_a2_fm_s2 rc=0
+02:25:46 gpu1 start e1_a2_imle16_s2
+03:14:46 gpu0 end e1_a1_imle16_s2 rc=0
+03:14:46 gpu0 start e1_a1_imle4_s2
+03:31:09 gpu1 end e1_a2_imle16_s2 rc=0
+03:31:09 gpu1 start e1_a2_imle4_s2
+03:46:52 gpu0 end e1_a1_imle4_s2 rc=0
+03:46:52 gpu0 start e1_a1_imf_s2
+03:59:22 e5 start e1_b_imle16_s0 nfe1
+04:18:11 gpu1 end e1_a2_imle4_s2 rc=0
+04:18:11 gpu1 start e1_a2_imf_s2
+04:50:52 e5 end e1_b_imle16_s0 nfe1 rc=0
+04:50:52 e5 start e1_b_reg_s0 nfe1
+05:43:48 e5 end e1_b_reg_s0 nfe1 rc=0
+05:43:48 e5 start e1_b_fm_s0 nfe2
+06:13:20 gpu0 end e1_a1_imf_s2 rc=0
+06:13:20 gpu0 start e1_b_imf_s0
+07:26:52 e5 end e1_b_fm_s0 nfe2 rc=0
+08:35:53 gpu1 end e1_a2_imf_s2 rc=0
+08:35:53 gpu1 start e1_b_reg_s1
+09:13:48 gpu1 end e1_b_reg_s1 rc=0
+09:13:48 gpu1 start e1_b_fm_s1
+09:52:28 gpu1 end e1_b_fm_s1 rc=0
+09:52:28 gpu1 start e1_b_imle16_s1
+11:26:30 gpu0 end e1_b_imf_s0 rc=0
+11:26:30 gpu0 start e1_b_imle4_s1
+12:22:16 gpu1 end e1_b_imle16_s1 rc=0
+12:22:16 gpu1 start e1_b_imf_s1
+12:22:53 e5 start e1_b_imle16_s1 nfe1
+12:31:02 gpu0 end e1_b_imle4_s1 rc=0
+12:31:02 gpu0 start e1_b_reg_s2
+13:08:49 gpu0 end e1_b_reg_s2 rc=0
+13:08:49 gpu0 start e1_b_fm_s2
+13:17:30 e5 end e1_b_imle16_s1 nfe1 rc=0
+13:17:30 e5 start e1_b_reg_s1 nfe1
+13:46:55 gpu0 end e1_b_fm_s2 rc=0
+13:46:55 gpu0 start e1_b_imle16_s2
+14:17:03 e5 end e1_b_reg_s1 nfe1 rc=0
+14:17:03 e5 start e1_b_fm_s1 nfe2
+15:48:24 gpu0 end e1_b_imle16_s2 rc=0
+15:48:24 gpu0 start e1_b_imle4_s2
+16:18:48 e5 end e1_b_fm_s1 nfe2 rc=0
+16:18:48 e5 start e1_b_imle16_s2 nfe1
+16:53:09 gpu0 end e1_b_imle4_s2 rc=0
+16:53:09 gpu0 start e2_k4_m4_s0
+17:12:32 e5 end e1_b_imle16_s2 nfe1 rc=0
+17:12:32 e5 start e1_b_reg_s2 nfe1
+17:14:34 gpu0 end e2_k4_m4_s0 rc=0
+17:14:34 gpu0 start e6_b_seq4_s0
+17:14:41 gpu0 end e6_b_seq4_s0 rc=0
+17:14:41 gpu0 start e6_b_n0_8k
+18:08:10 e5 end e1_b_reg_s2 nfe1 rc=0
+18:08:10 e5 start e1_b_fm_s2 nfe2
+18:35:44 gpu0 end e6_b_n0_8k rc=0
+18:35:44 gpu0 start e6_b_seq4_s0
+19:52:57 e5 end e1_b_fm_s2 nfe2 rc=0
+19:52:57 e5 start e1_b_fm_s0 nfe50
+23:52:22 gpu0 end e6_b_seq4_s0 rc=0
+23:52:22 gpu0 start e6_det_n0
+00:06:27 e5 end e1_b_fm_s0 nfe50 rc=0
+00:10:06 gpu1 end e1_b_imf_s1 rc=0
+00:10:06 gpu1 start e6_det_seq4
+01:13:09 gpu0 end e6_det_n0 rc=0
+01:13:09 gpu0 start e2_k4_m8_s0
+01:41:21 gpu0 end e2_k4_m8_s0 rc=0
+01:41:21 gpu0 start e2_k4_m16_s0
+02:07:22 e3 chain done
+02:32:53 gpu0 end e2_k4_m16_s0 rc=0
+02:32:53 gpu0 start e2_k4_m32_s0
+03:42:54 gpu0 end e2_k4_m32_s0 rc=0
+03:42:54 gpu0 start e2_k8_m4_s0
+03:56:40 e3 chain done
+04:08:49 gpu0 end e2_k8_m4_s0 rc=0
+04:08:49 gpu0 start e2_k8_m8_s0
+04:37:02 gpu0 end e2_k8_m8_s0 rc=0
+04:37:02 gpu0 start e2_k8_m16_s0
+05:19:09 gpu0 end e2_k8_m16_s0 rc=0
+05:19:09 gpu0 start e2_k8_m32_s0
+05:29:17 gpu1 end e6_det_seq4 rc=0
+05:29:17 gpu1 start e2_k4_m4_s1
+05:51:26 gpu1 end e2_k4_m4_s1 rc=0
+05:51:26 gpu1 start e2_k4_m8_s1
+06:19:55 gpu1 end e2_k4_m8_s1 rc=0
+06:19:55 gpu1 start e2_k4_m16_s1
+06:29:20 gpu0 end e2_k8_m32_s0 rc=0
+06:29:20 gpu0 start e2_k4_m32_s1
+07:22:07 gpu1 end e2_k4_m16_s1 rc=0
+07:22:07 gpu1 start e2_k8_m4_s1
+07:39:40 gpu0 end e2_k4_m32_s1 rc=0
+07:39:40 gpu0 start e2_k8_m8_s1
+07:43:43 gpu1 end e2_k8_m4_s1 rc=0
+07:43:43 gpu1 start e2_k8_m16_s1
+08:07:55 gpu0 end e2_k8_m8_s1 rc=0
+08:07:55 gpu0 start e2_k8_m32_s1
+08:26:10 gpu1 end e2_k8_m16_s1 rc=0
+08:26:10 gpu1 start e4_m4_cn10_s0
+08:58:34 gpu1 end e4_m4_cn10_s0 rc=0
+08:58:34 gpu1 start e4_m4_rs05_s0
+09:18:07 gpu0 end e2_k8_m32_s1 rc=0
+09:18:07 gpu0 start e4_m8_cn03_s0
+09:30:54 gpu1 end e4_m4_rs05_s0 rc=0
+09:30:54 gpu1 start e4_m4_cn10_s1
+10:00:45 gpu0 end e4_m8_cn03_s0 rc=0
+10:00:45 gpu0 start e4_m4_rs05_s1
+10:03:23 gpu1 end e4_m4_cn10_s1 rc=0
+10:03:23 gpu1 start e4_m8_cn03_s1
+10:32:52 gpu0 end e4_m4_rs05_s1 rc=0
+10:32:52 gpu0 start ab_l2
+10:46:20 gpu1 end e4_m8_cn03_s1 rc=0
+10:46:20 gpu1 start ab_z64
+11:36:00 gpu0 end ab_l2 rc=0
+11:36:00 gpu0 start ab_steps18k
+11:49:53 gpu1 end ab_z64 rc=0
+11:49:53 gpu1 start ab_b_7m
+12:53:10 gpu1 end ab_b_7m rc=0
+12:53:10 gpu1 start e7_a2_imf72k_s0
+13:10:42 gpu0 end ab_steps18k rc=0
+13:10:42 gpu0 start e7_a2_sc_s0
+13:54:01 gpu0 end e7_a2_sc_s0 rc=0
+13:54:01 gpu0 start e7_a2_sc_s1
+14:37:24 gpu0 end e7_a2_sc_s1 rc=0
+14:37:24 gpu0 start e7_a2_sc_s2
+15:20:45 gpu0 end e7_a2_sc_s2 rc=0
+15:20:45 gpu0 start e7_a1_sc_s0
+16:03:49 gpu0 end e7_a1_sc_s0 rc=0
+16:03:49 gpu0 start e7_a1_sc_s1
+16:46:56 gpu0 end e7_a1_sc_s1 rc=0
+16:46:56 gpu0 start e7_a1_sc_s2
+17:30:04 gpu0 end e7_a1_sc_s2 rc=0
+17:30:04 gpu0 start e7_b_sc_s0
+18:06:08 gpu1 end e7_a2_imf72k_s0 rc=0
+18:06:08 gpu1 start e7_b_sc_s1
+18:11:48 curve e7_a2_imf72k_s0 done
+19:00:10 gpu0 end e7_b_sc_s0 rc=0
+19:00:10 gpu0 start e7_b_sc_s2
+19:39:03 gpu1 end e7_b_sc_s1 rc=0
+19:39:03 gpu1 start e8_bair_imle16_s0
+20:30:06 gpu0 end e7_b_sc_s2 rc=0
+20:30:06 gpu0 start e8_bair_fm_s0
+21:08:12 gpu0 end e8_bair_fm_s0 rc=0
+21:08:12 gpu0 start e8_bair_reg_s0
+21:45:51 gpu0 end e8_bair_reg_s0 rc=0
+21:45:51 gpu0 start e8_bair_imle4_s0
+22:16:35 gpu1 end e8_bair_imle16_s0 rc=0
+22:16:35 gpu1 start e8_bair_sc_s0
+22:50:22 gpu0 end e8_bair_imle4_s0 rc=0
+22:50:22 gpu0 start e8_bair_imle16_s1
+23:48:29 gpu1 end e8_bair_sc_s0 rc=0
+23:48:29 gpu1 start e8_bair_fm_s1
+00:28:33 gpu1 end e8_bair_fm_s1 rc=0
+00:28:33 gpu1 start e8_bair_reg_s1
+00:51:11 gpu0 end e8_bair_imle16_s1 rc=0
+00:51:11 gpu0 start e8_bair_imle4_s1
+01:38:55 gpu1 end e8_bair_reg_s1 rc=0
+01:38:55 gpu1 start e8_bair_sc_s1
+01:55:39 gpu0 end e8_bair_imle4_s1 rc=0
+01:55:39 gpu0 start e9_a1_fm48k_s0
+03:10:42 gpu0 end e9_a1_fm48k_s0 rc=0
+03:10:42 gpu0 start e9_a1_imle4_48k_s0
+03:11:02 gpu1 end e8_bair_sc_s1 rc=0
+03:11:02 gpu1 start e6_b_seq4_s1
+05:25:41 gpu0 end e9_a1_imle4_48k_s0 rc=0
+05:25:41 gpu0 start e6_b_seq4_s2
+08:33:24 gpu1 end e6_b_seq4_s1 rc=0
+08:33:24 gpu1 start e6_b_n0_8k_s1
+09:53:16 gpu1 end e6_b_n0_8k_s1 rc=0
+09:53:16 gpu1 start e6_b_n0_8k_s2
+10:39:31 gpu0 end e6_b_seq4_s2 rc=0
+10:39:31 gpu0 start e10_bair_m64_s0
+11:13:44 gpu1 end e6_b_n0_8k_s2 rc=0
+11:13:44 gpu1 start e10_bair_coarse16_s0
+13:13:06 gpu1 end e10_bair_coarse16_s0 rc=0
+16:15:48 gpu0 end e10_bair_m64_s0 rc=0
+03:36:53 gpu0 start e11_a2_seq4_s0
+03:36:53 gpu1 start e11_a1_seq4_s0
+03:36:53 e11 started
+06:18:22 gpu0 end e11_a2_seq4_s0 rc=0
+06:18:22 gpu0 start e11_a2_seq4_s1
+08:59:28 gpu0 end e11_a2_seq4_s1 rc=0
+08:59:28 gpu0 start e11_a1_seq4_s1
+09:08:32 gpu1 end e11_a1_seq4_s0 rc=0
+09:08:32 gpu1 start e11_a1_n0_s0
+09:49:45 gpu1 end e11_a1_n0_s0 rc=0
+09:49:45 gpu1 start e11_a1_n0_s1
+10:31:04 gpu1 end e11_a1_n0_s1 rc=0
+11:40:36 gpu0 end e11_a1_seq4_s1 rc=0
+11:41:31 e11chain done
+15:20:38 gpu0 start j_imle16_s0
+15:20:38 gpu1 start j_fm_s0
+15:20:41 gpu0 end j_imle16_s0 rc=0
+15:20:43 gpu0 start 16
+15:20:45 gpu0 end 16 rc=0
+15:20:48 jchain gpu0 done
+15:21:55 gpu0 start j_imle16_s0
+15:21:55 gpu1 start j_fm_s0
+15:53:18 gpu1 end j_fm_s0 rc=0
+15:54:12 gpu1 start j_reg_s0
+16:22:42 gpu1 end j_reg_s0 rc=0
+16:22:48 gpu1 start j_imle4_s0
+16:58:26 gpu0 end j_imle16_s0 rc=0
+16:58:33 jchain gpu0 done
+17:15:16 gpu1 end j_imle4_s0 rc=0
+17:15:21 jchain gpu1 done
+00:18:00 gpu0 start j_imle16_s1
+00:18:26 gpu0 start j_imle16_s1
+00:18:26 gpu1 start j_imle16_s2
+01:55:47 gpu1 end j_imle16_s2 rc=0
+01:55:52 gpu1 start j_fm_s2
+02:14:56 gpu0 end j_imle16_s1 rc=0
+02:15:03 gpu0 start j_fm_s1
+02:27:18 gpu1 end j_fm_s2 rc=0
+02:28:12 gpu1 start j_reg_s2
+02:46:13 gpu0 end j_fm_s1 rc=0
+02:47:09 gpu0 start j_reg_s1
+02:56:53 gpu1 end j_reg_s2 rc=0
+02:57:00 gpu1 start j_imle4_s2
+03:15:47 gpu0 end j_reg_s1 rc=0
+03:15:53 gpu0 start j_imle4_s1
+03:50:52 gpu1 end j_imle4_s2 rc=0
+03:50:58 jchain gpu1 done
+04:10:04 gpu0 end j_imle4_s1 rc=0
+04:10:10 jchain gpu0 done
+04:11:39 hmchain done
+07:19:03 gpu0 start e13_push_imle16_s0
+07:19:06 gpu1 start e13_push_fm_s0
+07:20:45 data bounce_div_k2 ready
+07:22:08 data bounce_div_k16 ready
+07:38:05 gpu1 end e13_push_fm_s0 rc=0
+07:38:05 gpu1 start e13_push_reg_s0
+08:02:34 e14 runs queued
+08:14:42 gpu1 end e13_push_reg_s0 rc=0
+08:14:42 gpu1 start e13_push_imle16_s1
+08:25:26 gpu0 end e13_push_imle16_s0 rc=0
+08:25:26 gpu0 start e13_push_fm_s1
+08:43:23 gpu0 end e13_push_fm_s1 rc=0
+08:43:23 gpu0 start e13_push_reg_s1
+09:00:57 gpu0 end e13_push_reg_s1 rc=0
+09:00:57 gpu0 start e13_push_imle16_s2
+09:10:13 e14 readout n05 done
+10:01:36 gpu0 end e13_push_imle16_s2 rc=0
+10:01:36 gpu0 start e13_push_fm_s2
+10:19:31 gpu0 end e13_push_fm_s2 rc=0
+10:19:31 gpu0 start e13_push_reg_s2
+10:37:05 gpu0 end e13_push_reg_s2 rc=0
+10:37:05 gpu0 start e12_k16_m64_s0
+11:08:10 gpu1 end e13_push_imle16_s1 rc=0
+11:08:10 gpu1 start e12_k16_m64_s1
+11:28:44 planning switched to retrying chain (pc2)
+13:54:22 gpu0 end e12_k16_m64_s0 rc=0
+13:54:22 gpu0 start e12_k16_m32_s0
+14:38:36 gpu1 end e12_k16_m64_s1 rc=0
+14:38:36 gpu1 start e12_k16_m32_s1
+15:56:21 planchain done
+15:57:16 planchain_rev done
+16:06:31 gpu0 end e12_k16_m32_s0 rc=0
+16:06:31 gpu0 start e12_k16_m16_s0
+16:27:43 gpu1 end e12_k16_m32_s1 rc=0
+16:27:43 gpu1 start e12_k16_m16_s1
+16:47:13 gpu0 end e12_k16_m16_s0 rc=0
+16:47:13 gpu0 start e12_k2_m16_s0
+17:08:45 gpu1 end e12_k16_m16_s1 rc=0
+17:08:45 gpu1 start e12_k2_m16_s1
+17:27:53 gpu0 end e12_k2_m16_s0 rc=0
+17:27:53 gpu0 start e12_k16_m8_s0
+17:49:50 gpu1 end e12_k2_m16_s1 rc=0
+17:49:50 gpu1 start e12_k16_m8_s1
+17:55:31 gpu0 end e12_k16_m8_s0 rc=0
+17:55:31 gpu0 start e12_k2_m8_s0
+18:17:42 gpu1 end e12_k16_m8_s1 rc=0
+18:17:42 gpu1 start e12_k2_m8_s1
+18:23:04 gpu0 end e12_k2_m8_s0 rc=0
+18:23:04 gpu0 start e12_k16_m4_s0
+18:44:07 gpu0 end e12_k16_m4_s0 rc=0
+18:44:07 gpu0 start e12_k16_m4_s1
+18:45:38 gpu1 end e12_k2_m8_s1 rc=0
+18:45:38 gpu1 start e12_k2_m4_s0
+19:05:11 gpu0 end e12_k16_m4_s1 rc=0
+19:05:11 gpu0 start e12_k2_m4_s1
+19:06:52 gpu1 end e12_k2_m4_s0 rc=0
+19:06:52 gpu1 start e12_k2_m2_s0
+19:24:42 gpu1 end e12_k2_m2_s0 rc=0
+19:24:42 gpu1 start e12_k2_m2_s1
+19:26:15 gpu0 end e12_k2_m4_s1 rc=0
+19:26:15 gpu0 start e14_asym_m16_s0
+19:42:37 gpu1 end e12_k2_m2_s1 rc=0
+19:42:37 gpu1 start e14_asym_m4_s0
+20:03:45 gpu1 end e14_asym_m4_s0 rc=0
+20:03:45 gpu1 start e14_asym_m2_s0
+20:06:55 gpu0 end e14_asym_m16_s0 rc=0
+20:06:55 gpu0 start e14_asym_fm_s0
+20:21:00 gpu0 end e14_asym_fm_s0 rc=0
+20:21:00 gpu0 start e14_asym_m16_s1
+20:22:02 gpu1 end e14_asym_m2_s0 rc=0
+20:22:02 gpu1 start e14_asym_m4_s1
+20:54:45 gpu1 end e14_asym_m4_s1 rc=0
+20:54:45 gpu1 start e14_asym_m2_s1
+21:01:42 gpu0 end e14_asym_m16_s1 rc=0
+21:01:42 gpu0 start e14_asym_fm_s1
+21:13:01 gpu1 end e14_asym_m2_s1 rc=0
+21:15:47 gpu0 end e14_asym_fm_s1 rc=0
+21:27:30 e14chain done
+12:22:23 gpu0 start e15_a2_es8_s0
+12:22:28 gpu1 start e15_asym_es8_s0
+13:09:52 gpu1 end e15_asym_es8_s0 rc=0
+13:09:52 gpu1 start e15_a2_es16_s0
+13:32:39 gpu0 end e15_a2_es8_s0 rc=0
+13:32:39 gpu0 start e15_a2_es8_s1
+14:42:54 gpu0 end e15_a2_es8_s1 rc=0
+14:42:54 gpu0 start e15_a2_es8_s2
+15:19:42 gpu1 end e15_a2_es16_s0 rc=0
+15:19:42 gpu1 start e15_asym_es8_s1
+15:26:41 e15ms e15_asym_es8_s0 done rc=0
+15:30:59 e15 A1 ES runs queued
+15:53:01 gpu0 end e15_a2_es8_s2 rc=0
+15:53:01 gpu0 start e15_a1_es8_s0
+16:08:19 gpu1 end e15_asym_es8_s1 rc=0
+16:08:19 gpu1 start e15_a1_es8_s1
+16:09:22 e15chain done
+17:05:11 gpu0 end e15_a1_es8_s0 rc=0
+17:19:17 gpu1 end e15_a1_es8_s1 rc=0
+17:20:56 e15a1 done
+04:10:24 gpu0 start e15_fix_es8_s0
+04:10:29 gpu1 start e15_a2_estok8_s0
+04:10:34 e15b started
+05:21:10 gpu0 end e15_fix_es8_s0 rc=0
+05:21:10 gpu0 start e15_fix_imle16_s0
+05:27:14 gpu1 end e15_a2_estok8_s0 rc=0
+05:27:14 gpu1 start e15_a2_estok8_s1
+06:22:39 gpu0 end e15_fix_imle16_s0 rc=0
+06:22:39 gpu0 start e15_fix_imle4_s0
+06:44:25 gpu1 end e15_a2_estok8_s1 rc=0
+06:54:11 gpu0 end e15_fix_imle4_s0 rc=0
+06:56:35 e15b done
+07:57:48 gpu0 start e15_a2_es16_s1
+07:57:48 gpu1 start e15_fix_es8_s1
+09:09:40 gpu1 end e15_fix_es8_s1 rc=0
+09:09:40 gpu1 start e15_fix_imle16_s1
+10:06:25 gpu0 end e15_a2_es16_s1 rc=0
+10:06:25 gpu0 start e16_a1_seqrand_s0
+10:11:31 gpu1 end e15_fix_imle16_s1 rc=0
+10:11:31 gpu1 start e15_fix_imle4_s1
+10:43:51 gpu1 end e15_fix_imle4_s1 rc=0
+10:43:51 gpu1 start e16_a1_seqrand_s1
+12:48:04 gpu0 end e16_a1_seqrand_s0 rc=0
+12:48:04 gpu0 start e16_a1_seqgt_s0
+13:27:05 gpu1 end e16_a1_seqrand_s1 rc=0
+13:27:05 gpu1 start e16_a1_seqgt_s1
+15:29:52 gpu0 end e16_a1_seqgt_s0 rc=0
+16:10:27 gpu1 end e16_a1_seqgt_s1 rc=0
+16:12:11 e16 done

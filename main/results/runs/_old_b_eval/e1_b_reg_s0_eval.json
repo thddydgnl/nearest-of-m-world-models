@@ -1,0 +1,19 @@
+{
+ "mf": {
+  "precision_err": 15.78935470432043,
+  "recall_err": 21.57846776919905,
+  "f1_err": 18.235479566681857,
+  "mode_cov": 0.0,
+  "mode_prec": 0.0,
+  "n_modes": 3.921875,
+  "n_starts": 128,
+  "n": 16
+ },
+ "oracle": {
+  "probe_T_vertex_err": 2.00870418548584
+ },
+ "run": "e1_b_reg_s0",
+ "nfe": 1,
+ "params": 20367872,
+ "train_time": 2251.656852722168
+}

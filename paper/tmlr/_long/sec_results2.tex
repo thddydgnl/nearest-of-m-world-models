@@ -1,0 +1,130 @@
+\section{Results II: Outcome Memorization and the Candidate Budget}
+\label{sec:results2}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_memo_curves.pdf}
+\caption{Memorization during training on A2-div ($K{=}4$; mean over seeds, band = min--max). (a) Share of samples on the realized branch of training contexts; chance is $0.25$ and held-out contexts stay at chance for every method. (b) Coverage on held-out contexts. Regression memorizes completely; \nom{} with $m{=}4$ and both energy-score variants memorize progressively and lose coverage as they do; \nom{} with $m{=}16$ and FM-50 do not memorize at this budget.}
+\label{fig:curves}
+\end{figure}
+
+\subsection{The phenomenon}
+\label{sec:phenomenon}
+Figure~\ref{fig:curves} tracks the memorization index during training. Regression reaches $0.99$: it learns which of the four branches every training context took and predicts that branch. \imlewm{} with $m{=}4$ climbs to $0.75$ while its held-out coverage falls from $0.77$ at 4k steps to $0.46$ at 12k; on held-out contexts its index stays at chance, so this is not a failure to generalize but the memorization of the realized outcome of each training context, keyed on its appearance. Three further observations fix the interpretation. Training the $m{=}4$ model twice as long raises the index from $0.66$ to $0.92$ and lowers coverage from $0.52$ to $0.38$, and a $2.7\times$ larger model does the same ($0.86$, coverage $0.43$; both with the pilot recipe); the collapse is not under-training. On the same environment with \emph{fixed} appearance (A2-fix), where the identifying key is gone, the same $m{=}4$ recipe does not memorize ($0.26$) and covers $0.97$ of the modes (Table~\ref{tab:es}). And \imlewm{} with $m{=}16$ stays at $0.29$ even when trained $1.5\times$ longer ($0.31$; Appendix~\ref{app:ablation}). The budget, not the recipe, decides.
+
+\subsection{Excess memorization collapses onto $I(m,K)$}
+\label{sec:collapse}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_memo_collapse.pdf}
+\caption{Excess memorization $(\text{index}-1/K)/(1-1/K)$ on A2-div at 8k steps (two seeds) for $K\in\{2,4,8,16\}$ and $m\in\{2,\dots,64\}$. (a) Against the codebook distortion $I(m,K)$ of Equation~\ref{eq:I}, computed exactly for the bounce geometry. The line and band are the linear fit on the $K{=}4,8$ points ($\pm2$ RMSE) from which the $K{=}2,16$ predictions were recorded before those runs; vertical bars are the recorded intervals. (b) The same points against the miss probability $(1-1/K)^m$, the quantity used by \citet{gladstone2026xm} and \citet{bennett2026freedom}: the points no longer collapse.}
+\label{fig:collapse}
+\end{figure}
+
+Proposition~\ref{prop:memo} says the incentive to memorize is the random codebook's miss distortion $I(m)$. We trained \imlewm{} on A2-div for $K\in\{4,8\}$ and $m\in\{4,8,16,32\}$ (two seeds, 8k steps), fitted excess memorization linearly in $I(m,K)$ on those eight points (excess $= 0.015 + 1.06\,I$, RMSE $0.032$), and recorded predictions with $\pm2$ RMSE intervals for nine runs at $K\in\{2,16\}$ before training them (Appendix~\ref{app:pred}). Seven of the nine fell inside their interval (Figure~\ref{fig:collapse}a, Table~\ref{tab:grid}). The two misses are at the ends of the range and in the direction we had noted as risks: at $K{=}2$, $m{=}2$ ($I = 0.50$, outside the fitted range) memorization is stronger than the linear extrapolation ($0.96$ vs.\ $0.77$), and at $K{=}16$, $m{=}4$ it is weaker ($0.22$ vs.\ $0.31$), consistent with a capacity effect: storing one of 16 outcomes per context costs $\log_2 16$ bits.
+
+The alternative summary, that the budget should scale with the number of modes, is rejected. At equal $m{=}8$ the excess memorization is $0.075$, $0.083$ and $0.087$ for $K = 4, 8, 16$, as the near-equal $I(8,K)$ on this geometry predicts; at equal $m/K = 1$ it ranges from $0.91$ ($K{=}2$) to $0.06$ ($K{=}16$). A one-variable linear fit on all points except the extrapolated one has RMSE $0.031$ in $I(m,K)$ against $0.068$ in $(1-1/K)^m$ and $0.065$ in $e^{-m/K}$ (Figure~\ref{fig:collapse}b). The linear relation holds for $I \lesssim 0.25$; above that it saturates, and the capacity effect is a second-order factor. The practical rule is that the budget must make $I(m)$ small relative to the mode spacing on the outcome manifold: on this geometry $m = 16$--$32$ brings the excess below $0.05$ for every $K$, and the number of modes enters only through the geometry.
+
+\begin{table}[t]
+\caption{Budget grid on A2-div at 8k steps, two seeds. Memorization index (chance $1/K$), coverage, precision and deterministic-transition error (px). Coverage is capped by the ideal 16-sample sampler ($1.00$, $0.99$, $0.88$, $0.64$ for $K = 2, 4, 8, 16$). $K{=}16$ is under-trained at 8k steps: its kNN recall rises from $0.12$ to $0.85$ with $m$ while its coverage stays near $0.28$.}
+\label{tab:grid}
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccccccccccc}
+\toprule
+ & \multicolumn{4}{c}{$K{=}2$} & \multicolumn{4}{c}{$K{=}4$} & \multicolumn{4}{c}{$K{=}8$} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}\cmidrule(lr){10-13}
+$m$ & 2 & 4 & 8 & 16 & 4 & 8 & 16 & 32 & 4 & 8 & 16 & 32 \\
+\midrule
+Memo.\ index & 0.96 & 0.57 & 0.53 & 0.52 & 0.50 & 0.31 & 0.27 & 0.26 & 0.31 & 0.20 & 0.15 & 0.14 \\
+Coverage & 0.66 & 0.92 & 0.97 & 0.99 & 0.65 & 0.89 & 0.92 & 0.90 & 0.41 & 0.58 & 0.64 & 0.62 \\
+Precision & 0.78 & 0.85 & 0.85 & 0.68 & 0.69 & 0.76 & 0.77 & 0.72 & 0.54 & 0.62 & 0.64 & 0.60 \\
+Det.\ err.\ (px) & 0.99 & 1.47 & 2.64 & 4.01 & 1.23 & 1.70 & 2.91 & 3.46 & 1.20 & 1.46 & 1.64 & 2.78 \\
+\midrule
+ & \multicolumn{5}{c}{$K{=}16$} \\
+\cmidrule(lr){2-6}
+$m$ & 4 & 8 & 16 & 32 & 64 \\
+\cmidrule(lr){1-6}
+Memo.\ index & 0.22 & 0.14 & 0.12 & 0.11 & 0.08 \\
+Coverage & 0.17 & 0.25 & 0.28 & 0.27 & 0.25 \\
+Precision & 0.32 & 0.38 & 0.41 & 0.38 & 0.33 \\
+Det.\ err.\ (px) & 1.13 & 1.40 & 1.76 & 2.92 & 5.71 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_m_knob.pdf}
+\caption{What the budget $m$ controls (A2-div, 8k steps, two seeds; shade = $K$). (a)--(c) Coverage and precision peak at $m{=}16$ for $K{=}4,8$ while the memorization index approaches chance. (d)--(e) The costs: the error on deterministic transitions and the training time grow with $m$; inference cost does not. (f) With unequal mode probabilities ($K{=}2$, $p = 0.79$), the share of the frequent mode among \nom{} samples falls with $m$ along the optimum of \citet{bennett2026freedom}; FM-50 is calibrated, and the energy score over-represents the frequent mode (Section~\ref{sec:flatten}).}
+\label{fig:knob}
+\end{figure}
+
+\subsection{Countermeasures and the cost of $m$}
+\label{sec:counter}
+Raising $m$ is not the only way to remove the incentive, but it is the cleanest. Table~\ref{tab:counter} compares three alternatives at $m{=}4$ on A2-div ($12$k steps, two seeds). Rejecting candidates that are already within $\epsilon$ of the target, the RS-IMLE prior of \citet{vashist2024rsimle} adapted per transition, changes nothing. Gaussian noise on the context tokens with $\sigma = 1.0$ removes the identifying key and the memorization ($0.27$), but it also blurs the information the prediction needs: precision drops to $0.61$ and the deterministic error rises to $1.92$\,px, and coverage reaches only $0.74$. Noise $\sigma = 0.3$ on top of $m{=}8$ is indistinguishable from clean $m{=}8$. Figure~\ref{fig:knob} shows the costs of $m$ itself: the error on deterministic transitions grows from $1.2$\,px at $m{=}4$ to $2.8$--$3.5$\,px at $m{=}32$ at 8k steps (it shrinks with longer training; $1.55$\,px at 12k for $m{=}16$), and training time grows about threefold from $m{=}4$ to $m{=}32$ because the matching pass scales with $m$ even with late fusion. Coverage and precision saturate at $m{=}16$ on this environment and decline slightly at $m{=}32$. The recipe is otherwise insensitive: replacing the Geman--McClure loss by $\ell_2$, or the 256-dimensional noise by 64 dimensions, changes coverage and the index by at most $0.01$ (Appendix~\ref{app:ablation}).
+
+\begin{table}[t]
+\caption{Countermeasures against outcome memorization on A2-div ($K{=}4$, 12k steps, two seeds; the $m{=}4$ and $m{=}16$ rows are the three-seed values of Table~\ref{tab:a2}). The memorization index is given for training / held-out contexts.}
+\label{tab:counter}
+\begin{center}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+Variant & Coverage & Precision & kNN recall & Memo.\ (train / held-out) & Det.\ err.\ (px) & Train (h) \\
+\midrule
+$m{=}4$ & 0.46 & 0.68 & 0.65 & 0.75 / 0.25 & 1.14 & 0.5 \\
+$m{=}4$ + RS-IMLE rejection ($\epsilon{=}0.5$) & 0.46 & 0.69 & 0.65 & 0.74 / 0.25 & 1.17 & 0.5 \\
+$m{=}4$ + context noise $\sigma{=}1.0$ & 0.74 & 0.61 & 0.86 & 0.27 / 0.24 & 1.92 & 0.5 \\
+$m{=}8$ + context noise $\sigma{=}0.3$ & 0.88 & 0.77 & 0.92 & 0.32 / 0.22 & 1.65 & 0.7 \\
+$m{=}16$ & \best{0.93} & \best{0.82} & \best{0.94} & 0.29 / 0.25 & 1.55 & 1.1 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\subsection{A strictly proper score memorizes regardless of $m$}
+\label{sec:es}
+Proposition~\ref{prop:es} predicts that an energy-score generator, whose memorization incentive does not depend on $m$, memorizes in non-repeating contexts at every budget. We trained the \imlewm{} generator unchanged with the energy score of \citet{makabe2026esp} (Table~\ref{tab:es}). On A2-div it memorizes (index $0.87$ at $m{=}8$, $0.97$ at $m{=}16$; chance $0.25$), its held-out coverage peaks at $0.50$ around 6k steps and then falls to $0.36$ as the index rises (Figure~\ref{fig:curves}), and a larger $m$ makes it memorize \emph{faster}: at 8k steps the index is $0.84$ and $0.87$ for the two $m{=}16$ seeds against $0.51$--$0.72$ for the three $m{=}8$ seeds, as expected if $m$ only lowers the variance of the gradient towards the same minimizer. Replacing the whole-map distance by a per-token energy score, a common choice for continuous tokens, memorizes as well ($0.97$, coverage $0.22$). The ordering of the memorization index across objectives follows the relative incentive of Section~\ref{sec:theory_es}: regression $0.99$, energy score $0.87$--$0.97$, \nom{} with $m = 2, 4, 16$ at $0.96$ ($K{=}2$), $0.75$ and $0.29$. With unequal mode probabilities the score has no calibration advantage either: its frequent-mode share is $0.89$ against a truth of $0.79$, with coverage $0.58$ (Section~\ref{sec:flatten}).
+
+\begin{table}[t]
+\caption{Energy score against \nom{} on three bounce settings (12k steps). A2-div: randomized appearance, contexts never repeat. A2-fix: fixed appearance, no identifying key (same recipe for all rows). A1: Bouncing Shapes, contexts repeat; F1 error under the probe and under the FlowWM heatmap readout trained with feature noise $0.05$ and $0.5$. Two seeds unless noted. The one-step manifold distance is the distance of a predicted token map to its nearest real one, in units of the median real-to-real distance.}
+\label{tab:es}
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llcccccc}
+\toprule
+Setting & Method & Coverage & Precision & kNN recall & Memo.\ index & Det.\ err.\ (px) & Manifold $h{=}1$ \\
+\midrule
+A2-div & Energy score, $m{=}8$ (3 seeds) & 0.36 & 0.61 & 0.77 & 0.87 & 1.06 & 1.19 \\
+($K{=}4$) & Energy score, $m{=}16$ & 0.28 & 0.61 & 0.60 & 0.97 & 1.06 & -- \\
+ & Per-token energy score, $m{=}8$ & 0.22 & 0.55 & 0.44 & 0.97 & 1.33 & 1.12 \\
+ & \imlewm{}, $m{=}4$ (3 seeds) & 0.46 & 0.68 & 0.65 & 0.75 & 1.14 & 0.84 \\
+ & \imlewm{}, $m{=}16$ (3 seeds) & \best{0.93} & \best{0.82} & \best{0.94} & 0.29 & 1.55 & 0.86 \\
+\midrule
+A2-fix & Energy score, $m{=}8$ & 0.95 & 0.81 & \best{1.00} & 0.27 & 0.20 & $1.59\times$ \\
+($K{=}4$) & \imlewm{}, $m{=}4$ & 0.97 & 0.91 & 0.68 & 0.26 & 0.15 & $0.94\times$ \\
+ & \imlewm{}, $m{=}16$ & \best{0.99} & \best{0.95} & 0.85 & 0.25 & 0.91 & $1\times$ \\
+\midrule
+ & & \multicolumn{3}{c}{F1 error (px): probe / heatmap / noisy heatmap} & & & Manifold $h{=}16$ \\
+\cmidrule(lr){3-5}
+A1 & Energy score, $m{=}8$ & \multicolumn{3}{c}{8.94 / 33.8 / 11.7} & -- & -- & 3.05 \\
+ & Regression (3 seeds) & \multicolumn{3}{c}{8.09 / 8.41 / 8.53} & -- & -- & 2.04 \\
+ & FM-50 (3 seeds) & \multicolumn{3}{c}{12.28 / 14.11 / 18.38} & -- & -- & 2.95 \\
+ & \imlewm{}, $m{=}16$ (3 seeds) & \multicolumn{3}{c}{\best{7.21} / \best{7.64} / \best{7.92}} & -- & -- & 2.08 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\paragraph{Separating the mechanism.}
+Memorization needs an incentive, a key that identifies the context, and enough revisits. A toy version of the two-branch problem of \citet{makabe2026esp} ($y = \pm\sqrt{u} + 0.08\varepsilon$, equiprobable branches) with a 16-dimensional nuisance ``appearance'' vector appended to the context reproduces their result when every training context is fresh (energy score matches $0.94$ of samples to a branch centre, \nom{} $0.92$; they report $0.962$ and $0.919$). With a fixed set of 1{,}024 training contexts the energy score memorizes completely ($0.999$) and covers both branches on no new context, while \nom{} with $m = 8$ or $16$ stays at $0.51$--$0.52$ and covers $0.99$--$1.00$ (Figure~\ref{fig:toy}, Appendix~\ref{app:es}). Removing the appearance vector or using $16{,}384$ or more contexts (fewer than $234$ revisits each for this network) removes the memorization of the energy score as well. The two conditions transfer to the real environment: on A2-fix we predicted before the runs that the energy score would not memorize ($\le 0.40$), that it would still trail \imlewm{} with $m{=}16$ in coverage and precision, and that the per-token variant would memorize on A2-div; all five recorded predictions held (Appendix~\ref{app:es}). On A2-fix the coverage gap to \imlewm{} shrinks from $0.57$ to $0.04$ but the precision gap of $0.14$ remains, the energy score's best-of-16 token error is $2.1\times$ larger and its one-step manifold distance $1.6\times$ larger.
+
+\paragraph{The second cause: spread off the manifold.}
+In Bouncing Shapes, where contexts repeat and nothing can be memorized, the energy score still trails \imlewm{} and regression (F1 $8.9$ vs.\ $7.2$ and $8.1$\,px). Its error is noise-like: under FlowWM's clean heatmap readout it collapses to $33.8$\,px and under a readout trained with feature noise $0.5$ it recovers to $11.7$, whereas \imlewm{} and regression move by less than $0.5$\,px and flow matching gets worse. Its token-space spread on A2-div is \emph{larger} than that of \imlewm{} with $m{=}16$ (spread-to-error ratio $0.80$ vs.\ $0.64$) while its readout spread is less than half ($1.7$ vs.\ $3.9$\,px) and its rollouts leave the manifold like flow matching does (Table~\ref{tab:es}). The diversity is spent in directions that readouts do not see. This is the behaviour the direction-insensitivity argument of Section~\ref{sec:theory_es} suggests; we present it as an interpretation consistent with the predictions, not as a mechanism we have isolated. The conclusion is conditional, not general: when contexts are fresh or carry no identifying feature the energy score is competitive, as in the toy and on A2-fix; in non-repeating contexts with identifying appearance, the property that \citet{makabe2026esp} list as a defect of the hard minimum, that it is not strictly proper for finite $m$, is what lets \nom{} escape memorization by raising $m$.

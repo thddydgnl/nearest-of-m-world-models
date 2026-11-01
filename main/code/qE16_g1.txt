@@ -1,0 +1,5 @@
+--data bounce_k4 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e15_fix_es8_s1
+--data bounce_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e15_fix_imle16_s1
+--data bounce_k4 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e15_fix_imle4_s1
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seqmatch --seq_feed random --H 4 --steps 8000 --seed 1 --name e16_a1_seqrand_s1
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seqmatch --seq_feed gt --H 4 --steps 8000 --seed 1 --name e16_a1_seqgt_s1

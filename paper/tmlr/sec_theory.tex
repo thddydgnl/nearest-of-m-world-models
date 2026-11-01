@@ -1,0 +1,45 @@
+\section{A Random-Codebook Account of \Nom{} Training}
+\label{sec:theory}
+Fix a context and write $p$ for the true outcome distribution and $q$ for the generator's distribution. Since the candidates are drawn independently from $q$, the population objective behind Equation~\ref{eq:match} is
+\begin{equation}
+L(q) = \E_{x \sim p}\, \E_{Y_1,\dots,Y_m \sim q}\, \min_{j \in [m]} \| Y_j - x \|^2 ,
+\label{eq:codebook}
+\end{equation}
+the expected distortion of quantizing $x$ with a random codebook of $m$ i.i.d.\ draws from $q$. Winner-takes-all learning is the deterministic version of this problem, whose minimizers form centroidal Voronoi tessellations of the conditional distribution \citep{rupprecht2017mhp,letzelter2024wta}; for a Gaussian source, the random version is Shannon's random-coding construction at a rate of $\ln m / d$ nats per dimension \citep{shannon1959coding}. The consequences below are elementary (proofs in Appendix~\ref{app:proofs}); their value lies in predictions that we wrote down before the corresponding runs.
+
+\textbf{Outcome memorization in non-repeating contexts.}
+\label{sec:theory_memo}
+Let the outcome of a context take one of $K$ modes $\mu_1, \dots, \mu_K$. In data whose contexts never repeat, each training context $c_i$ is seen with a single realized mode $\mu_{k_i}$, and two solutions compete for the empirical loss: the \emph{memorizing} solution $q(\cdot\,|\,c_i) = \delta_{\mu_{k_i}}$, which attains zero loss at the cost of storing $k_i$ for every training context (and therefore requires a feature of $c_i$ that identifies it), and the \emph{generalizing} solution $q = p$, which attains
+\begin{equation}
+I(m) = \E_{k \sim p}\, \E_{S_1,\dots,S_m \sim p}\, \min_{j} \| \mu_{S_j} - \mu_k \|^2 ,
+\label{eq:I}
+\end{equation}
+the distortion of a random codebook of $m$ mode draws.
+\begin{proposition}[memorization incentive]
+\label{prop:memo}
+With non-repeating contexts, the empirical \nom{} loss of the memorizing solution is lower than that of the generalizing solution by exactly $I(m)$. For equiprobable modes with pairwise distances in $[\delta, \Delta]$, $(1 - 1/K)^m \delta^2 \le I(m) \le (1-1/K)^m \Delta^2$, so the incentive vanishes exponentially once $m$ exceeds $K$; if the modes densely fill a curve of length $\ell$ with $K \gg m$, then $I(m) = \Theta(\ell^2/m^2)$, independently of $K$. For squared-error regression the corresponding incentive is $\mathrm{tr}\,\mathrm{Cov}_p$, which no budget reduces.
+\end{proposition}
+The incentive is a \emph{distortion}, not a probability: a missed mode is weighted by the distance to the nearest drawn mode, and whether $K$ enters at all depends on the geometry. On our bounce benchmark the $K$ modes are equiangular directions on a semicircle, so for $m \lesssim K$ the distortion is nearly the same for every $K$ (Appendix~\ref{app:pred} computes it exactly); the rule of thumb ``$m \approx 2K$'' that the two values $K \in \{4, 8\}$ alone would suggest is a coincidence, and Section~\ref{sec:collapse} rejects it.
+
+\textbf{High-dimensional continuous outcomes.}
+\label{sec:theory_shrink}
+\begin{proposition}[isotropic shrinkage]
+\label{prop:shrink}
+Let $p = \mathcal{N}(\mu, \sigma^2 I_d)$ and $q = \mathcal{N}(\mu, s^2 I_d)$. For large $d$, $L(q) \approx d\sigma^2 + d s^2 - 2 s \sigma \sqrt{d}\, e_m$ with $e_m = \E\max_{j \le m} \xi_j$, $\xi_j \sim \mathcal{N}(0,1)$, so the optimal spread is $s^\star/\sigma = e_m/\sqrt{d}$ ($e_4 = 1.03$, $e_{16} = 1.77$, $e_{64} = 2.34$; $e_m \approx \sqrt{2 \ln m}$ for large $m$).
+\end{proposition}
+This is the first-order form of the reproduction variance $\sigma^2(1 - m^{-2/d})$ of the Gaussian rate--distortion test channel \citep{cover2006elements}, and the correspondence is exact in construction because IMLE draws its codebook i.i.d.\ from the reproduction distribution. It gives a dichotomy between $\ln m$ and the effective dimension $\deff$ of the conditional outcome: a few discrete modes are covered once $\ln m > \ln K$ (the regime of Proposition~\ref{prop:memo}, in which an i.i.d.\ min-of-$N$ loss over-disperses low-dimensional densities; \citealp{thiede2019variety}), whereas when $\deff \gg e_m^2$ the samples contract towards the mean and their spread grows only like $\sqrt{\ln m}$.
+
+\textbf{Flattening of mode probabilities.}
+\label{sec:theory_flatten}
+Even when every mode is covered, the population optimum for equidistant modes satisfies $p_k (1 - q_k)^{m-1} = \mathrm{const}$ \citep[Theorem~7]{bennett2026freedom}: at $m{=}1$ it collapses onto the most frequent mode, at $K{=}2$ and $m{=}2$ it is calibrated, and for large $m$ the differences $q_k - q_l \approx \ln(p_k/p_l)/(m-1)$ vanish, so rare modes are over-represented; for equiprobable modes the optimum is exactly $q = p$ for every $m \ge 2$ \citep[Theorem~4]{bennett2026freedom}. The budget therefore trades coverage against calibration, which benchmarks with equiprobable modes cannot reveal (Section~\ref{sec:flatten}).
+
+\textbf{The energy score's incentive does not depend on $m$.}
+\label{sec:theory_es}
+\citet{makabe2026esp} prefer the energy score $\IS_\beta(q, x) = \E_{Y \sim q}\|Y - x\|^\beta - \tfrac{1}{2}\E_{Y, Y' \sim q}\|Y - Y'\|^\beta$, $\beta \in (0,2)$, because it is strictly proper. Strict propriety is a population property; in the finite-sample regime above, the energy score has a further consequence.
+\begin{proposition}[memorization incentive of the energy score]
+\label{prop:es}
+(a) $\IS_\beta(q, x)$ is half the energy distance between $q$ and $\delta_x$ \citep{dawid2007geometry,gneiting2007strictly}, so with non-repeating contexts the unique minimizer of the empirical risk is the memorizing solution, for every $m \ge 2$. (b) The generalizing solution attains $\tfrac{1}{2}\E_{Y,Y' \sim p}\|Y - Y'\|^\beta$, so the incentive is half the expected outcome spread and does not depend on $m$ ($m$ changes only the variance of the estimator). (c) For $\beta = 2$ the score reduces to squared-error regression. (d) A per-token score averaged over the token grid inherits (a) and (b).
+\end{proposition}
+Normalizing each incentive by the incentive of its fit term alone ($\E\|Y - x\|^\beta$ for the energy score, $I(1)$ for \nom{}) gives a unit-free comparison: regression and the energy score sit at $1/2$ for every $m$, whereas \nom{} sits at $I(m)/I(1)$, which is $0.52$, $0.21$, $0.054$ and $0.005$ at $m = 2, 4, 8, 16$ for $K{=}4$ on the bounce geometry. Parts (a)--(c) are classical \citep{gneiting2007strictly,dawid2007geometry}, and \citet{li2018imle} note the unconditional case of (a); the comparison and its empirical test (Section~\ref{sec:es}) are new. A second difference concerns the \emph{direction} of the spread: with an unknown bias of length $a$ and an isotropic spread $s$ in $d$ dimensions, the energy score is minimized at $s = a$ independently of $d$ (a special case of Proposition~4.1 of \citealp{debortoli2025distributional}), whereas Proposition~\ref{prop:shrink} gives $s \approx a\,e_m/\sqrt{d}$. The energy score thus calibrates the size of the spread but is insensitive to its direction in high dimensions \citep{chakraborty2021framework,pinson2013discrimination,scheuerer2015variogram,marcotte2023regions}, so an isotropic spread leaves the token manifold, whereas \nom{} under-disperses but stays on it (an interpretation; Appendix~\ref{app:proofs}).
+
+The predictions these propositions make, and where each is tested, are listed in Appendix~\ref{app:pred}.

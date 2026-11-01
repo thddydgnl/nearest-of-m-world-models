@@ -1,0 +1,40 @@
+\section{\Nom{} World Models on Frozen DINO Tokens}
+\label{sec:method}
+
+\subsection{Setting and notation}
+A frozen encoder $E$ maps each observation $o_t$ to patch tokens $s_t = E(o_t) \in \R^{N \times D}$ with $N = 256$ tokens on a $16\times16$ grid and $D = 384$ channels. For the bounce, push, Push-T and BAIR benchmarks $E$ is DINOv2 ViT-S/14 at $224$\,px \citep{oquab2024dinov2}; for Bouncing Shapes it is the DINOv3 ViT-S/16 feature of FlowWM \citep{simeoni2025dinov3,porcher2026flowwm}, the average of the normalized hidden states of layers 3, 6, 9 and 12 at $256$\,px. Tokens are precomputed once, stored in half precision and standardized per token. The world model takes a context of $k = 3$ token maps $c_t = (s_{t-2}, s_{t-1}, s_t)$, an action $a_t$ and a noise vector $z \in \R^{256}$, and predicts the next token map as a residual,
+\begin{equation}
+\hat{s}_{t+1} = s_t + g_\theta(c_t, a_t, z).
+\end{equation}
+Rollouts feed $\hat{s}_{t+1}$ back into the context; every step is one network evaluation.
+
+\subsection{Generator}
+$g_\theta$ is a ConvNeXt stack \citep{liu2022convnext} on the $16\times16$ token grid. The context maps are concatenated along channels and projected by a $1\times1$ convolution; the action passes through a two-layer MLP and modulates every block by FiLM; the noise $z$ passes through a four-layer MLP and modulates blocks by adaptive layer normalization, as in the mapping network of ROMS-IMLE \citep{vashist2026roms}. The output head is a per-token MLP of width $1024$, the ``wide head'' that FlowWM found necessary for velocity prediction in feature space; we attach the same head to every method so that parameter counts match within $\pm4\%$. We use two sizes: width 256 with 8 blocks ($8.0$--$8.2$M parameters across methods) for the synthetic benchmarks, and width 384 with 12 blocks ($20.6$M) for Push-T and BAIR. The noise enters only the last three (respectively four) blocks, so the context-processing trunk is evaluated once per transition and only the tail is evaluated per candidate; this \emph{late fusion} halves training time at equal coverage (Appendix~\ref{app:impl}).
+
+\subsection{Objective: \nom{} matching with a robust loss}
+\label{sec:objective}
+For each transition $(c_t, a_t, s_{t+1})$ in a batch we draw $m$ noise vectors, generate $m$ candidates $\hat{s}^{(j)} = s_t + g_\theta(c_t, a_t, z_j)$ without gradient, and select the one nearest to the realized outcome in token space,
+\begin{equation}
+j^\star = \argmin_{j \in [m]} \big\| s_{t+1} - \hat{s}^{(j)} \big\|^2 ,
+\label{eq:match}
+\end{equation}
+where $\|\cdot\|$ is the mean squared error over all tokens and channels. The selected candidate is regenerated with gradient and trained with a Geman--McClure loss \citep{geman1987statistical} on its per-sample root-mean-square distance $d$,
+\begin{equation}
+\mathcal{L} = \rho(d),\qquad \rho(d) = \frac{2u^2}{u^2 + 4},\quad u = \frac{d}{2c},
+\label{eq:gm}
+\end{equation}
+with the scale $c$ tracked as the running median of the matching distance. The matching is recomputed for every batch (a per-transition pool, as in WIMLE; a shared pool as in image IMLE would be meaningless for conditional prediction), runs in bfloat16 under no-gradient and, importantly, in its own autocast region: autocast caches weight casts, and casts made under no-gradient and reused by the gradient pass silently cut the gradient to the weights. The robust loss reproduces the ROMS-IMLE observation in our pilot (precision $0.92$ vs.\ $0.86$ for $\ell_2$ with the pilot recipe) but matters little in the final recipe (Appendix~\ref{app:ablation}); the candidate budget $m$ is the variable this paper is about. We call the model \imlewm{} and write $m$ for the budget throughout.
+
+\paragraph{Memorization monitor.}
+Every 2{,}000 steps we draw 16 samples for 200 training contexts and 200 held-out contexts whose next transition is stochastic, decode them with a position readout, and record the share that falls on the branch that was actually realized in the data. For a held-out context this share is $1/K$ by construction; for a training context it exceeds $1/K$ only if the model has learned which of the $K$ branches that particular context led to. This \emph{memorization index} is the measurement behind Section~\ref{sec:results2} and doubles as a cheap early warning during training.
+
+\subsection{Per-step matching on self-rollouts}
+\label{sec:seqmatch}
+A world model is trained on real contexts and used on its own predictions. The natural IMLE remedy, matching whole $H$-step candidate trajectories, fails: the number of trajectory modes grows like $K^H$, far beyond any budget $m$, so the selected candidate is the one that is on average close to all branches, and averaging returns (Appendix~\ref{app:negative}). We instead match one step at a time along the model's own rollout. Starting from a real context, at step $h = 1,\dots,H$ we draw $m$ fresh noise vectors, select the candidate nearest to the true frame $s_{t+h}$ \emph{given the self-predicted context}, train that step with Equation~\ref{eq:gm}, and feed the selected prediction (detached) back as the next context. With $H = 4$ this costs $mH$ forward passes without gradient and $H$ with gradient per transition. The fed-back state has two natural alternatives, a random candidate (a free-running rollout) and the true frame (teacher forcing with the same number of matched updates); Section~\ref{sec:seq} uses them to separate what the procedure does. The selection of the candidate nearest the truth is the same device as closest-among-top-$K$ rollouts \citep{zhang2025catk}; in \nom{} training it is the argmin of the loss itself and needs no extra model.
+
+\subsection{Inference and planning}
+One predicted step is one forward pass; $m_p$ futures for a state are obtained by batching $m_p$ noise vectors. For planning we use cross-entropy-method model-predictive control \citep[CEM-MPC;][]{rubinstein1999cem,zhou2025dinowm}: each candidate action sequence is imagined with $m_p$ noise draws and scored by the mean, over draws, of a distance between the imagined terminal state and the goal. We do not penalize the spread of the imagined futures; a mean-plus-variance cost lowered the success rate even with the true simulator as the world model (Appendix~\ref{app:negative}).
+
+\subsection{Baselines at matched parameters}
+\label{sec:baselines}
+All baselines share the backbone, the wide head, the context, the residual parameterization and the training budget unless stated. \emph{Regression} minimizes the squared error of a single prediction. \emph{FM-50} is flow matching in the FlowWM recipe \citep{lipman2023flow,porcher2026flowwm}: the velocity head predicts the flow between Gaussian noise and the normalized residual, with the time shift $t' = \alpha t/(1 + (\alpha-1)t)$, $\alpha = 13$, applied to both training and the 50-step Euler sampler; \emph{FM-2} is the same model sampled with 2 Euler steps. \emph{iMF} is improved MeanFlow \citep{geng2025meanflow,geng2025imf} with its dual average- and instantaneous-velocity heads, ported from the official implementation and trained for three times as many steps because it was still improving at the common budget. \emph{Shortcut} is a shortcut model \citep{frans2025shortcut} with a quarter of each batch devoted to the self-consistency target, trained for twice as many steps so that its training time matches \imlewm{} with $m{=}16$, and sampled in one step (two steps changed its metrics by less than $0.01$). \emph{Energy score} trains the \imlewm{} generator unchanged with the energy score of \citet{makabe2026esp}: $m$ samples per transition, the unbiased estimator $\frac{1}{m}\sum_j \|Y_j - x\|^\beta - \frac{1}{2}\binom{m}{2}^{-1}\sum_{i<j}\|Y_i - Y_j\|^\beta$ with $\beta = 1$ and the whole-map root-mean-square distance, with $m \in \{8, 16\}$ and a per-token variant that averages a per-token score over the grid. Parameter counts, schedules and the porting notes for iMF are in Appendix~\ref{app:impl}.

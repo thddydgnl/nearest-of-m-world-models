@@ -1,0 +1,29 @@
+e1_a2_fm_s0 {'manifold': [1.01, 1.46, 1.89, 2.92, 6.02], 'best_err': [1.18, 5.87, 8.7, 8.47, 10.35], 'spread': [4.82, 21.5, 27.76, 27.89, 24.18]} h= [1, 4, 8, 16, 32]
+e1_a1_fm_s0 {'manifold': [0.78, 1.43, 2.11, 2.94], 'best_err': [0.77, 4.0, 10.75, 28.26], 'spread': [0.8, 3.96, 10.17, 24.13]} h= [1, 4, 8, 16]
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+e1_b_fm_s0 {'manifold': [2.1, 2.99, 3.5, 4.59], 'best_err': [8.42, 24.75, 45.62, 65.22], 'spread': [4.4, 16.76, 27.57, 37.76]} h= [1, 4, 8, 16]
+e1_a2_fm_s1 {'manifold': [1.02, 1.47, 1.89, 2.94, 5.91], 'best_err': [1.33, 6.23, 7.97, 8.59, 8.26], 'spread': [4.64, 20.93, 28.0, 28.23, 28.4]} h= [1, 4, 8, 16, 32]
+e1_a1_fm_s1 {'manifold': [0.77, 1.44, 2.12, 2.96], 'best_err': [0.86, 4.09, 11.5, 27.78], 'spread': [0.77, 4.07, 10.81, 26.93]} h= [1, 4, 8, 16]
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+e1_b_fm_s1 {'manifold': [2.08, 2.96, 3.5, 4.61], 'best_err': [8.99, 25.82, 47.23, 69.87], 'spread': [4.34, 16.84, 27.35, 35.74]} h= [1, 4, 8, 16]
+e1_a2_fm_s2 {'manifold': [1.02, 1.46, 1.9, 2.99, 6.53], 'best_err': [1.29, 6.22, 8.25, 9.38, 10.81], 'spread': [4.79, 20.86, 27.56, 26.99, 24.37]} h= [1, 4, 8, 16, 32]
+e1_a1_fm_s2 {'manifold': [0.78, 1.45, 2.13, 2.95], 'best_err': [0.81, 4.09, 10.6, 28.0], 'spread': [0.81, 3.97, 10.07, 24.25]} h= [1, 4, 8, 16]
+Gym has been unmaintained since 2022 and does not support NumPy 2.0 amongst other critical functionality.
+Please upgrade to Gymnasium, the maintained drop-in replacement of Gym, or contact the authors of your software and request that they upgrade.
+Users of this version of Gym should be able to simply replace 'import gym' with 'import gymnasium as gym' in the vast majority of cases.
+See the migration guide at https://gymnasium.farama.org/introduction/migration_guide/ for additional information.
+e1_b_fm_s2 {'manifold': [2.09, 2.95, 3.48, 4.61], 'best_err': [8.4, 26.87, 49.36, 67.07], 'spread': [4.33, 16.21, 27.89, 35.81]} h= [1, 4, 8, 16]
+e2_k4_m16_s0 {'manifold': [0.91, 1.19, 1.33, 1.5, 1.92], 'best_err': [1.05, 5.14, 7.73, 8.6, 9.33], 'spread': [5.97, 22.93, 26.93, 26.47, 25.89]} h= [1, 4, 8, 16, 32]
+e2_k4_m16_s1 {'manifold': [0.88, 1.18, 1.29, 1.43, 1.74], 'best_err': [0.99, 4.34, 7.65, 8.57, 8.59], 'spread': [4.16, 20.86, 27.17, 27.96, 27.26]} h= [1, 4, 8, 16, 32]
+e11_a2_seq4_s0 {'manifold': [0.89, 1.11, 1.19, 1.25, 1.39], 'best_err': [1.1, 4.41, 7.47, 9.02, 8.64], 'spread': [6.45, 23.24, 27.26, 27.66, 27.55]} h= [1, 4, 8, 16, 32]
+e11_a2_seq4_s1 {'manifold': [0.88, 1.1, 1.18, 1.26, 1.4], 'best_err': [1.25, 5.55, 9.18, 8.52, 9.72], 'spread': [6.11, 22.73, 27.27, 26.63, 24.2]} h= [1, 4, 8, 16, 32]
+e11_a1_n0_s0 {'manifold': [1.13, 1.42, 1.82, 2.17], 'best_err': [0.78, 2.78, 8.26, 22.53], 'spread': [0.67, 3.22, 7.03, 16.26]} h= [1, 4, 8, 16]
+e11_a1_n0_s1 {'manifold': [1.15, 1.45, 1.84, 2.16], 'best_err': [0.78, 2.95, 8.67, 23.96], 'spread': [0.65, 3.06, 6.87, 15.65]} h= [1, 4, 8, 16]
+e11_a1_seq4_s0 {'manifold': [1.08, 1.42, 1.7, 1.92], 'best_err': [0.9, 3.2, 6.86, 17.16], 'spread': [1.13, 5.06, 11.29, 24.94]} h= [1, 4, 8, 16]
+e11_a1_seq4_s1 {'manifold': [1.11, 1.41, 1.72, 1.92], 'best_err': [0.89, 3.13, 6.71, 18.28], 'spread': [1.05, 5.1, 11.5, 24.45]} h= [1, 4, 8, 16]

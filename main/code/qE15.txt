@@ -1,0 +1,8 @@
+--data bounce_div_k4 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e15_a2_es8_s0
+--data bounce_div_k2_p80 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --steps 8000 --seed 0 --name e15_asym_es8_s0
+--data bounce_div_k4 --method es --m 16 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e15_a2_es16_s0
+--data bounce_div_k4 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e15_a2_es8_s1
+--data bounce_div_k4 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --seed 2 --name e15_a2_es8_s2
+--data bounce_div_k2_p80 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --steps 8000 --seed 1 --name e15_asym_es8_s1
+--data bshapes_v3 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e15_a1_es8_s0
+--data bshapes_v3 --method es --m 8 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e15_a1_es8_s1

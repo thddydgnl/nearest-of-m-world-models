@@ -1,0 +1,43 @@
+{
+ "run": "fm_k4",
+ "nfe": 20,
+ "args": {
+  "data": "bounce_k4",
+  "method": "fm",
+  "name": "fm_k4",
+  "steps": 12000,
+  "bs": 128,
+  "lr": 0.0002,
+  "C": 256,
+  "nblocks": 8,
+  "m": 4,
+  "stages": "spatial",
+  "loss": "gm",
+  "H": 1,
+  "curriculum": false,
+  "act_path": "film",
+  "contrast": 0.0,
+  "seed": 0
+ },
+ "params": 6563456,
+ "train_time": 2122.5084867477417,
+ "latency_ms": 57.93992519378662,
+ "stoch": {
+  "prec_pos": 0.60515625,
+  "n_modes": 4.0,
+  "cov_tok": 0.0,
+  "best_of_n": 0.5377111732214689,
+  "div_ratio": 1.0489418391883374,
+  "prec_tok": 0.0,
+  "mean_pred_err": 0.5091445148736239,
+  "minmatch_tok": 0.5343603113293648,
+  "cov_pos": 0.83125,
+  "minmatch_pos": 2.4148413284122943,
+  "precision_knn": 0.08374999463558197,
+  "recall_knn": 0.9856249690055847
+ },
+ "det": {
+  "tok_err": 0.49587398767471313,
+  "pos_err": 1.7424684762954712
+ }
+}

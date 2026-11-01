@@ -1,0 +1,44 @@
+--data bshapes_v3 --method reg --stages single --wide_head 1024 --seed 0 --name e1_a1_reg_s0
+--data bounce_div_k4 --method reg --stages single --wide_head 1024 --seed 0 --name e1_a2_reg_s0
+--data pusht_b --method reg --stages single --wide_head 1024 --C 384 --nblocks 12 --seed 0 --name e1_b_reg_s0
+--data bshapes_v3 --method fm --t_shift 13 --stages single --wide_head 1024 --seed 0 --name e1_a1_fm_s0
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --seed 0 --name e1_a2_fm_s0
+--data pusht_b --method fm --t_shift 13 --stages single --wide_head 1024 --C 384 --nblocks 12 --seed 0 --name e1_b_fm_s0
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e1_a1_imle16_s0
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e1_a2_imle16_s0
+--data pusht_b --method imle --m 16 --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --seed 0 --name e1_b_imle16_s0
+--data bshapes_v3 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e1_a1_imle4_s0
+--data bounce_div_k4 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 0 --name e1_a2_imle4_s0
+--data pusht_b --method imle --m 4 --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --seed 0 --name e1_b_imle4_s0
+--data bshapes_v3 --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --seed 0 --name e1_a1_imf_s0
+--data bounce_div_k4 --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --seed 0 --name e1_a2_imf_s0
+--data pusht_b --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --C 384 --nblocks 12 --seed 0 --name e1_b_imf_s0
+--data bshapes_v3 --method reg --stages single --wide_head 1024 --seed 1 --name e1_a1_reg_s1
+--data bounce_div_k4 --method reg --stages single --wide_head 1024 --seed 1 --name e1_a2_reg_s1
+--data pusht_b --method reg --stages single --wide_head 1024 --C 384 --nblocks 12 --seed 1 --name e1_b_reg_s1
+--data bshapes_v3 --method fm --t_shift 13 --stages single --wide_head 1024 --seed 1 --name e1_a1_fm_s1
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --seed 1 --name e1_a2_fm_s1
+--data pusht_b --method fm --t_shift 13 --stages single --wide_head 1024 --C 384 --nblocks 12 --seed 1 --name e1_b_fm_s1
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e1_a1_imle16_s1
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e1_a2_imle16_s1
+--data pusht_b --method imle --m 16 --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --seed 1 --name e1_b_imle16_s1
+--data bshapes_v3 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e1_a1_imle4_s1
+--data bounce_div_k4 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 1 --name e1_a2_imle4_s1
+--data pusht_b --method imle --m 4 --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --seed 1 --name e1_b_imle4_s1
+--data bshapes_v3 --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --seed 1 --name e1_a1_imf_s1
+--data bounce_div_k4 --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --seed 1 --name e1_a2_imf_s1
+--data pusht_b --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --C 384 --nblocks 12 --seed 1 --name e1_b_imf_s1
+--data bshapes_v3 --method reg --stages single --wide_head 1024 --seed 2 --name e1_a1_reg_s2
+--data bounce_div_k4 --method reg --stages single --wide_head 1024 --seed 2 --name e1_a2_reg_s2
+--data pusht_b --method reg --stages single --wide_head 1024 --C 384 --nblocks 12 --seed 2 --name e1_b_reg_s2
+--data bshapes_v3 --method fm --t_shift 13 --stages single --wide_head 1024 --seed 2 --name e1_a1_fm_s2
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --seed 2 --name e1_a2_fm_s2
+--data pusht_b --method fm --t_shift 13 --stages single --wide_head 1024 --C 384 --nblocks 12 --seed 2 --name e1_b_fm_s2
+--data bshapes_v3 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 2 --name e1_a1_imle16_s2
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --z_from 5 --seed 2 --name e1_a2_imle16_s2
+--data pusht_b --method imle --m 16 --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --seed 2 --name e1_b_imle16_s2
+--data bshapes_v3 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 2 --name e1_a1_imle4_s2
+--data bounce_div_k4 --method imle --m 4 --stages single --wide_head 1024 --z_from 5 --seed 2 --name e1_a2_imle4_s2
+--data pusht_b --method imle --m 4 --stages single --wide_head 1024 --C 384 --nblocks 12 --z_from 8 --seed 2 --name e1_b_imle4_s2
+--data bshapes_v3 --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --seed 2 --name e1_a1_imf_s2
+--data bounce_div_k4 --method imf --wide_head 640 --t_scale 1 --stages single --steps 36000 --seed 2 --name e1_a2_imf_s2

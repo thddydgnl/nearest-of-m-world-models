@@ -1,0 +1,65 @@
+\section{Results III: Where No Candidate Budget Suffices}
+\label{sec:results3}
+
+\subsection{Mode-probability flattening}
+\label{sec:flatten}
+Every benchmark so far had equiprobable branches, for which the \nom{} optimum is exactly calibrated (Section~\ref{sec:theory_flatten}). We therefore built a bounce variant with $K{=}2$ branches of probability $0.8$ and $0.2$ (the realized frequency on the evaluation contexts is $0.787$) and measured the share of the frequent branch among 64 samples per context (Table~\ref{tab:flatten}, Figure~\ref{fig:knob}f). The share falls with $m$ exactly as the stationarity condition of \citet{bennett2026freedom} prescribes: $0.82$, $0.65$, $0.57$ for $m = 2, 4, 16$ against theoretical $0.79$, $0.61$, $0.52$. Every method, including FM-50, measures about $0.04$ above its reference, a common offset of the readout-based assignment; relative to FM-50 the measured flattening is $-0.18$ and $-0.26$ against the theoretical $-0.18$ and $-0.27$. The trade-off is therefore real and quantitative. $m{=}2$ is calibrated but memorizes ($0.93$ on training contexts) and covers only $0.75$; $m{=}16$ covers $0.99$ but reports the branches as nearly equiprobable; FM-50 does both. Recovering $p$ from $q$ by inverting the stationarity condition is ill-conditioned for large $m$, since an error in $q$ is amplified in the log-odds by roughly $(m-1)(1/q_1 + 1/q_2)$, about $60\times$ at $m{=}16$, so a large budget should be read as a coverage device, not a probability estimate. For equiprobable branches the calibration is exact, which is why the branch-risk estimates of Section~\ref{sec:planning} are accurate.
+
+\begin{table}[t]
+\caption{Asymmetric bounce ($K{=}2$, $p = 0.787$ on the evaluation contexts, 8k steps, two seeds). Share of the frequent branch among 64 samples per held-out context, its theoretical optimum, coverage of both branches, and the realized-branch share on training contexts (chance $0.5$).}
+\label{tab:flatten}
+\begin{center}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+Method & Frequent-mode share & Theory & Share $-$ FM-50 (measured / theory) & Coverage & Memo.\ index \\
+\midrule
+\imlewm{}, $m{=}2$ & 0.823 & 0.787 & $-0.01$ / $0.00$ & 0.75 & 0.93 \\
+\imlewm{}, $m{=}4$ & 0.651 & 0.607 & $-0.18$ / $-0.18$ & 0.96 & 0.68 \\
+\imlewm{}, $m{=}16$ & 0.573 & 0.522 & $-0.26$ / $-0.27$ & 0.99 & 0.56 \\
+FM-50 & 0.832 & 0.787 & -- & 0.95 & 0.73 \\
+FM-2 & 0.915 & -- & $+0.08$ / -- & 0.80 & 0.78 \\
+Energy score, $m{=}8$ & 0.886 & 0.787 & $+0.05$ / $0.00$ & 0.58 & 0.91 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\subsection{Under-dispersion on real robot video (BAIR)}
+\label{sec:bair}
+BAIR robot pushing \citep{ebert2017bair} has no enumerable modes: the uncertainty is a continuous, high-dimensional variation of the arm and the objects. Table~\ref{tab:bair} shows the two faces of \nom{} there. On sample accuracy it is the best model: the best-of-16 token error is lowest at every horizon ($0.527$ at $h{=}16$ against $0.843$ for FM-50) and the rollouts stay on the manifold like regression ($1.30$ vs.\ $1.78$). On distribution metrics it loses clearly: Fr\'echet distance $2.09$ against $1.38$ and kNN recall $0.15$ against $0.84$ for FM-50, which needs its 50 steps for this (FM-2 is at the level of regression). The samples are under-dispersed: their spread-to-error ratio at $h{=}1$ is $0.22$ at $m{=}4$ and $0.45$ at $m{=}16$, the same on training and evaluation contexts, so this is not memorization. Raising the budget to $m{=}64$ moves the ratio only to $0.54$ at $2.4\times$ the training time and leaves the Fr\'echet distance at $2.00$; matching in a 512-dimensional pooled-and-projected space, which removes the selection pressure on fine directions, lowers the ratio to $0.31$--$0.38$ and improves recall marginally. No variant within the one-step \nom{} family closes the gap (prediction P4).
+
+\begin{table}[t]
+\caption{BAIR robot pushing, 21M models, two seeds (the $m{=}64$ and coarse-matching rows are one seed). Token RMS error of the best of 16 samples and of their mean, manifold distance and spread at $h{=}16$, Fr\'echet distance and kNN recall of mean-pooled PCA-32 tokens against 1{,}024 real frames.}
+\label{tab:bair}
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccccccc}
+\toprule
+Method & NFE & \multicolumn{3}{c}{best-of-16 $\downarrow$ ($h{=}1/8/16$)} & mean $h{=}16$ $\downarrow$ & manifold $h{=}16$ $\downarrow$ & spread $h{=}16$ & FD $h{=}8/16$ $\downarrow$ & recall $h{=}8/16$ $\uparrow$ \\
+\midrule
+Regression & 1 & 0.268 & 0.481 & 0.556 & 0.556 & \best{1.27} & 0 & 1.44 / 2.65 & 0.21 / 0.08 \\
+FM-50 & 50 & 0.338 & 0.681 & 0.843 & 0.885 & 1.78 & 0.94 & \best{0.53 / 1.38} & \best{0.73 / 0.84} \\
+FM-2 & 2 & 0.302 & 0.590 & 0.734 & 0.756 & 1.45 & 0.72 & 1.42 / 2.75 & 0.26 / 0.08 \\
+Shortcut & 1 & 0.401 & 0.902 & 1.173 & 1.197 & 1.71 & 1.48 & 0.95 / 1.77 & 0.42 / 0.26 \\
+\imlewm{}, $m{=}4$ & 1 & 0.260 & 0.460 & 0.532 & \best{0.559} & 1.28 & 0.18 & 1.35 / 2.35 & 0.24 / 0.12 \\
+\imlewm{}, $m{=}16$ & 1 & \best{0.258} & \best{0.456} & \best{0.527} & 0.576 & 1.30 & 0.29 & 1.22 / 2.09 & 0.28 / 0.15 \\
+\imlewm{}, $m{=}64$ & 1 & 0.257 & 0.461 & 0.534 & 0.589 & 1.33 & 0.32 & 1.23 / 2.00 & 0.28 / 0.14 \\
+\imlewm{}, $m{=}16$, coarse matching & 1 & 0.259 & 0.463 & 0.535 & 0.565 & 1.29 & 0.21 & 1.21 / 2.03 & 0.33 / 0.15 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig_bair.pdf}
+\caption{The shape of the under-dispersion on BAIR ($h{=}1$, 256 evaluation contexts). (a) Spread-to-error ratio of the samples against $m$. The isotropic model of Proposition~\ref{prop:shrink} with one free parameter fitted at $m{=}16$ ($\deff \approx 27$) reproduces the $m{=}4$ and $m{=}64$ points within $0.05$; with $d$ set to the independently measured participation ratio of the regression residuals ($\approx 1{,}030$) it predicts a spread five times too small. (b) Participation ratio of the 64 samples of each context (median and quartiles): the generator spreads along one to three directions per context. (c) Fraction of the true residual that lies in a context's own top-16 sample directions versus in another context's directions: the directions are context-specific and aligned with the truth, but capture only $9$--$21\%$ of it.}
+\label{fig:bair}
+\end{figure}
+
+\paragraph{The shape of the contraction.}
+Proposition~\ref{prop:shrink} reproduces the growth of the spread with $m$ if one fits its single parameter: with $\deff \approx 27$ chosen to match $m{=}16$, the predicted ratios at $m = 4$ and $64$ are $0.27$ and $0.58$ against measured $0.22$ and $0.54$ (Figure~\ref{fig:bair}a). We tried to remove that free parameter by measuring the effective dimension independently, as the participation ratio of the residuals of the regression model in token space, and recorded the prediction that it would fall within a factor of two of $27$. It did not: the pooled residual is extremely high-dimensional (participation ratio $\approx 1{,}030$; its largest direction carries $0.6\%$ of the variance) and would predict a spread five times smaller than observed. The isotropic model is therefore a one-parameter description, not a parameter-free prediction. An exploratory analysis designed after this failure explains the discrepancy: per context, the generator's samples occupy only $1.2$, $1.8$ and $2.5$ effective directions at $m = 4, 16, 64$ (Figure~\ref{fig:bair}b), these directions differ across contexts, and they are aligned with the true residual of their own context ten times better than with that of another context, while capturing only $9$--$21\%$ of it (Figure~\ref{fig:bair}c). The contraction is not an isotropic shrinkage but a collapse onto a few context-specific directions whose number grows slowly with $m$, the shape of reverse water-filling in rate--distortion theory, where a rate of $\ln m$ nats is spent on the largest-variance components first and components below the water level are dropped. We could not test this quantitatively because each context has a single true future. Together with Section~\ref{sec:flatten} this delimits the method: a candidate budget fixes coverage of a few discrete modes, it does not reproduce a continuous high-dimensional conditional distribution, and it distorts mode probabilities in between.
