@@ -1,0 +1,3 @@
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 36000 --save_every 12000 --seed 0 --name r1_fm36k_s0
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 36000 --save_every 12000 --seed 1 --name r1_fm36k_s1
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 36000 --save_every 12000 --seed 2 --name r1_fm36k_s2

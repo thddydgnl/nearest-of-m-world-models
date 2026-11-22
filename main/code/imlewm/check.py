@@ -182,6 +182,8 @@ def memo_model(model, data, n_ctx=300, n=16, seed=0, nfe=None):
     model.eval()
     import re
     K = int(re.search(r"_k(\d+)", data).group(1))  # also bounce_div_k<K>_p<pct> (asymmetric modes)
+    from . import common
+    common.set_arc_from_name(data)  # bounce_div_k<K>_arc<deg>: branches on a narrower arc (revision r1)
     d = ds_dir(data); st = Stats(data); probe = load_probe(data)
     diverse = "div" in data
     out = {}

@@ -1,0 +1,6 @@
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 12000 --ctx_noise 0.1 --seed 0 --name r1_fmcn01_s0
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 12000 --ctx_noise 0.1 --seed 1 --name r1_fmcn01_s1
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 12000 --ctx_noise 0.1 --seed 2 --name r1_fmcn01_s2
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 12000 --ctx_noise 0.3 --seed 0 --name r1_fmcn03_s0
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 12000 --ctx_noise 0.3 --seed 1 --name r1_fmcn03_s1
+--data bounce_div_k4 --method fm --t_shift 13 --stages single --wide_head 1024 --memo_every 2000 --steps 12000 --ctx_noise 0.3 --seed 2 --name r1_fmcn03_s2

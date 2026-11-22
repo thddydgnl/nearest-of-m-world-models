@@ -1,0 +1,2 @@
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 48000 --save_every 12000 --seed 0 --name r1_imle16_48k_s0
+--data bounce_div_k4 --method imle --m 16 --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 48000 --save_every 12000 --seed 1 --name r1_imle16_48k_s1

@@ -135,11 +135,12 @@ if __name__ == "__main__":
     elif a.name.startswith("bounce_div_k"):
         import re
         from . import common
-        mk = re.match(r"bounce_div_k(\d+)(?:_p(\d+))?$", a.name)
+        mk = re.match(r"bounce_div_k(\d+)(?:_p(\d+))?(?:_arc(\d+))?$", a.name)  # _arc<deg>: revision r1 geometry
         K = int(mk.group(1))
         if mk.group(2):  # asymmetric modes: mode 0 (first bounce angle) has probability p
             p0 = int(mk.group(2)) / 100.0
             common.MODE_P = [p0] + [(1 - p0) / (K - 1)] * (K - 1)
+        common.set_arc_from_name(a.name)
         gen_bounce(K, a.train_eps, a.test_eps, a.T, out, enc, a.seed + 50 + K, diverse=True)
     elif a.name == "push":
         gen_push(a.train_eps, a.test_eps, a.T, out, enc, a.seed + 100)

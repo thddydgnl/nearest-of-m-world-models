@@ -1,0 +1,6 @@
+--data bounce_div_k4_arc90 --method imle --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 8000 --m 4 --seed 0 --name r1_arc90_m4_s0
+--data bounce_div_k4_arc90 --method imle --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 8000 --m 4 --seed 1 --name r1_arc90_m4_s1
+--data bounce_div_k4_arc90 --method imle --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 8000 --m 2 --seed 0 --name r1_arc90_m2_s0
+--data bounce_div_k4_arc90 --method imle --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 8000 --m 2 --seed 1 --name r1_arc90_m2_s1
+--data bounce_div_k4_arc90 --method imle --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 8000 --m 8 --seed 0 --name r1_arc90_m8_s0
+--data bounce_div_k4_arc90 --method imle --stages single --wide_head 1024 --memo_every 2000 --z_from 5 --steps 8000 --m 8 --seed 1 --name r1_arc90_m8_s1

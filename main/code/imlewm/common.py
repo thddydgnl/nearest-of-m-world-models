@@ -81,8 +81,20 @@ def rot(v, th):
 S_BOUNCE = 14.0
 
 
+ARC_DEG = 180.0  # angular width of the K bounce directions around the wall normal; the arc variant (revision r1) uses 90
+
+
 def bounce_angles(K):
-    return np.deg2rad((np.arange(K) + 0.5) / K * 180.0 - 90.0)
+    return np.deg2rad((np.arange(K) + 0.5) / K * ARC_DEG - ARC_DEG / 2)
+
+
+def set_arc_from_name(name):
+    """Set ARC_DEG from a dataset name: bounce_div_k4_arc90 -> 90 degrees; any other name -> the original 180."""
+    global ARC_DEG
+    import re
+    m = re.search(r"_arc(\d+)", name)
+    ARC_DEG = float(m.group(1)) if m else 180.0
+    return ARC_DEG
 
 
 def clamp_hit(q, r=R):
