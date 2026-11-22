@@ -23,10 +23,10 @@ case "${1:-}" in
   fetch)
     shift; tools
     rclone lsf "$R" --max-depth 1 >/dev/null || { echo "rclone remote gdrive-ro is not usable"; exit 1; }
-    [ -d $W/imle-wm/.hf ] || { log "hf cache"; rclone cat $R/tier6/hf-caches/imle-wm-hf.tar | tar -xf - -C $W; }
+    [ -d $W/imle-wm/.hf ] || { log "hf cache"; rclone cat $R/tier6/hf-caches/imle-wm-hf.tar | tar --no-same-owner -xf - -C $W; }
     for it in "$@"; do
       case "$it" in
-        ckpt) [ -f $W/imle-wm/runs/e1_a2_imle16_s0/ckpt.pt ] || { log "tier1: code, runs, checkpoints"; rclone cat $R/tier1/t1_imle-wm.tgz | tar -xzf - -C $W; } ;;
+        ckpt) [ -f $W/imle-wm/runs/e1_a2_imle16_s0/ckpt.pt ] || { log "tier1: code, runs, checkpoints"; rclone cat $R/tier1/t1_imle-wm.tgz | tar --no-same-owner -xzf - -C $W; } ;;
         push|pusht_b|pusht_det|bair) [ -d $W/imle-wm/data/$it ] || { log "data $it (tier5)"; rclone copy $R/tier5/imle-wm-data/$it $W/imle-wm/data/$it --transfers 8 --multi-thread-streams 8; } ;;
         *) [ -d $W/imle-wm/data/$it ] || { log "data $it (tier4)"; rclone copy $R/tier4/imle-wm-data/$it $W/imle-wm/data/$it --transfers 8 --multi-thread-streams 8; } ;;
       esac
@@ -54,5 +54,6 @@ ENV
     source $W/imle-wm/env.sh
     python -c "import torch, transformers, numpy; print('torch', torch.__version__, 'cuda', torch.version.cuda, 'gpus', torch.cuda.device_count(), torch.cuda.get_device_name(0), '| transformers', transformers.__version__, '| numpy', numpy.__version__)"
     free -g | head -2; nproc; log "env done" ;;
-  *) echo "usage: setup_pod.sh fetch <items...> | env"; exit 1 ;;
+  tools) tools; log "tools done" ;;
+  *) echo "usage: setup_pod.sh tools | fetch <items...> | env"; exit 1 ;;
 esac

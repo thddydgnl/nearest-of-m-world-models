@@ -5,7 +5,7 @@ Fix a context and write $p$ for the true outcome distribution and $q$ for the ge
 L(q) = \E_{x \sim p}\, \E_{Y_1,\dots,Y_m \sim q}\, \min_{j \in [m]} \| Y_j - x \|^2 ,
 \label{eq:codebook}
 \end{equation}
-the expected distortion of quantizing $x$ with a random codebook of $m$ i.i.d.\ draws from $q$. Winner-takes-all learning is the deterministic version of this problem, whose minimizers form centroidal Voronoi tessellations of the conditional distribution \citep{rupprecht2017mhp,letzelter2024wta}; for a Gaussian source, the random version is Shannon's random-coding construction at a rate of $\ln m / d$ nats per dimension \citep{shannon1959coding}. The consequences below are elementary (proofs in Appendix~\ref{app:proofs}); their value lies in predictions that we wrote down before the corresponding runs.
+the expected distortion of quantizing $x$ with a random codebook of $m$ i.i.d.\ draws from $q$. This best-of-$m$ risk obeys the coverage identity of \citet[Theorem~1]{bennett2026freedom} for general losses; $I(m)$ below is its value at $q = p$. Winner-takes-all learning is the deterministic version of this problem, whose minimizers form centroidal Voronoi tessellations of the conditional distribution \citep{rupprecht2017mhp,letzelter2024wta}; for a Gaussian source, the random version is Shannon's random-coding construction at a rate of $\ln m / d$ nats per dimension \citep{shannon1959coding}. The consequences below are elementary (proofs in Appendix~\ref{app:proofs}); Appendix~\ref{app:pred} lists their predictions and which of them we recorded in advance.
 
 \textbf{Outcome memorization in non-repeating contexts.}
 \label{sec:theory_memo}
@@ -17,7 +17,7 @@ I(m) = \E_{k \sim p}\, \E_{S_1,\dots,S_m \sim p}\, \min_{j} \| \mu_{S_j} - \mu_k
 the distortion of a random codebook of $m$ mode draws.
 \begin{proposition}[memorization incentive]
 \label{prop:memo}
-With non-repeating contexts, the empirical \nom{} loss of the memorizing solution is lower than that of the generalizing solution by exactly $I(m)$. For equiprobable modes with pairwise distances in $[\delta, \Delta]$, $(1 - 1/K)^m \delta^2 \le I(m) \le (1-1/K)^m \Delta^2$, so the incentive vanishes exponentially once $m$ exceeds $K$; if the modes densely fill a curve of length $\ell$ with $K \gg m$, then $I(m) = \Theta(\ell^2/m^2)$, independently of $K$. For squared-error regression the corresponding incentive is $\mathrm{tr}\,\mathrm{Cov}_p$, which no budget reduces.
+With non-repeating contexts, the empirical \nom{} loss of the memorizing solution is lower than that of the generalizing solution by $I(m)$ in expectation over the realized modes. For equiprobable modes with pairwise distances in $[\delta, \Delta]$, $(1 - 1/K)^m \delta^2 \le I(m) \le (1-1/K)^m \Delta^2$, so the incentive vanishes exponentially once $m$ exceeds $K$; if the modes densely fill a curve of length $\ell$ with $K \gg m$, then $I(m) = \Theta(\ell^2/m^2)$, independently of $K$. For squared-error regression the corresponding incentive is $\mathrm{tr}\,\mathrm{Cov}_p$, which no budget reduces.
 \end{proposition}
 The incentive is a \emph{distortion}, not a probability: a missed mode is weighted by the distance to the nearest drawn mode, and whether $K$ enters at all depends on the geometry. On our bounce benchmark the $K$ modes are equiangular directions on a semicircle, so for $m \lesssim K$ the distortion is nearly the same for every $K$ (Appendix~\ref{app:pred} computes it exactly); the rule of thumb ``$m \approx 2K$'' that the two values $K \in \{4, 8\}$ alone would suggest is a coincidence, and Section~\ref{sec:collapse} rejects it.
 
@@ -31,7 +31,7 @@ This is the first-order form of the reproduction variance $\sigma^2(1 - m^{-2/d}
 
 \textbf{Flattening of mode probabilities.}
 \label{sec:theory_flatten}
-Even when every mode is covered, the population optimum for equidistant modes satisfies $p_k (1 - q_k)^{m-1} = \mathrm{const}$ \citep[Theorem~7]{bennett2026freedom}: at $m{=}1$ it collapses onto the most frequent mode, at $K{=}2$ and $m{=}2$ it is calibrated, and for large $m$ the differences $q_k - q_l \approx \ln(p_k/p_l)/(m-1)$ vanish, so rare modes are over-represented; for equiprobable modes the optimum is exactly $q = p$ for every $m \ge 2$ \citep[Theorem~4]{bennett2026freedom}. The budget therefore trades coverage against calibration, which benchmarks with equiprobable modes cannot reveal (Section~\ref{sec:flatten}).
+Even when every mode is covered, the population optimum for equidistant modes satisfies $p_k (1 - q_k)^{m-1} = \mathrm{const}$ \citep[Theorem~7]{bennett2026freedom}: at $m{=}1$ it collapses onto the most frequent mode, at $K{=}2$ and $m{=}2$ it is calibrated, and for large $m$ the differences $q_k - q_l \approx (1-1/K)\ln(p_k/p_l)/(m-1)$ vanish, so rare modes are over-represented; for equiprobable modes the optimum is exactly $q = p$ for every $m \ge 2$ \citep[Theorem~4]{bennett2026freedom}. The budget therefore trades coverage against calibration, which benchmarks with equiprobable modes cannot reveal (Section~\ref{sec:flatten}).
 
 \textbf{The energy score's incentive does not depend on $m$.}
 \label{sec:theory_es}

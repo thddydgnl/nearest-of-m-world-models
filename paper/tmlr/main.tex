@@ -25,7 +25,8 @@
 \newcommand{\Nom}{Nearest-of-$m$}
 \newcommand{\imlewm}{IMLE-WM}
 \newcommand{\ms}[2]{$#1 \pm #2$}
-\newcommand{\best}[1]{\textbf{#1}}
+\newcommand{\best}[1]{{\bfseries\boldmath #1}}
+\newcommand{\sd}[2]{#1{\scriptsize\,$\pm$\,#2}}
 \newcommand{\dmin}{d_{\min}}
 \newcommand{\deff}{d_{\mathrm{eff}}}
 \newcommand{\Imk}{I(m,K)}
@@ -35,12 +36,18 @@
 
 \title{How Many Candidates Does a One-Step World Model Need?\\A Random-Codebook Account of \Nom{} Training on Frozen DINO Tokens}
 
-% Authors must not appear in the submitted version. They should be hidden
-% as long as the tmlr package is used without the [accepted] or [preprint] options.
-% Non-anonymous submissions will be rejected without review.
+% Authors stay hidden as long as the tmlr package is used without the [accepted] or
+% [preprint] options: the anonymous build prints the style's placeholder and ignores
+% this block. The arXiv build (paper/build/make_arxiv.sh) switches on [preprint].
+% Non-anonymous submissions to TMLR will be rejected without review.
 
-\author{\name Anonymous authors \email \\
-      \addr Paper under double-blind review}
+\author{\name Yong Hwi Song \email thddydgnl1937@gmail.com \\
+      \addr School of Information and Communication Engineering\\
+      Chungbuk National University, Cheongju, Republic of Korea
+      \AND
+      \name Keon Myung Lee \email kmlee@cbnu.ac.kr \\
+      \addr School of Computer Science\\
+      Chungbuk National University, Cheongju, Republic of Korea}
 
 \def\month{MM}  % Insert correct month for camera-ready version
 \def\year{YYYY} % Insert correct year for camera-ready version

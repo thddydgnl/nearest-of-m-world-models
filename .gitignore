@@ -22,3 +22,16 @@ __pycache__/
 *.pt
 *.npz
 *.npy
+
+# Generated arXiv bundle (rebuilt by paper/build/make_arxiv.sh; the tarball and PDF are kept)
+/paper/arxiv/src/
+/paper/arxiv/build.log
+
+# Font faces extracted from the system font for the slide figures (paper/slides/slidefig.py)
+/paper/slides/.fontcache/
+
+# RunPod runtime files (pod addresses, ledger, logs); the tools themselves are tracked
+/runpod/pods/
+/runpod/pods.ledger
+/runpod/pods.seen.json
+/runpod/watchdog.log
