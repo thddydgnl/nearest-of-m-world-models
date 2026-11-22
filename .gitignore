@@ -35,3 +35,6 @@ __pycache__/
 /runpod/pods.ledger
 /runpod/pods.seen.json
 /runpod/watchdog.log
+
+# Anonymous supplementary material (rebuilt by paper/build/make_supplement.sh; the zip is uploaded by hand)
+/paper/supplement_build/

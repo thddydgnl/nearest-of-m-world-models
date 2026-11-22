@@ -1,0 +1,64 @@
+{
+ "data": "bounce_div_k4_arc90",
+ "split": "train",
+ "K": 4,
+ "n_ctx": 200,
+ "seed": 0,
+ "n_used": 200,
+ "n_skipped_merged": 0,
+ "n_ceil_copies": 16,
+ "n_floor_copies_per_branch": 4,
+ "arc_deg": 90.0,
+ "ceil": [
+  1.0,
+  1.0,
+  1.0
+ ],
+ "ceil_free": [
+  1.0,
+  1.0,
+  1.0
+ ],
+ "floor": [
+  0.25,
+  0.25,
+  0.25
+ ],
+ "floor_free": [
+  0.25,
+  0.25,
+  0.25
+ ],
+ "ceil_valid": [
+  1.0,
+  1.0,
+  1.0
+ ],
+ "floor_valid_frac": [
+  1.0,
+  1.0,
+  1.0
+ ],
+ "err_next_px": [
+  0.11462851846483119,
+  0.1049721029133351,
+  0.12461680263563729
+ ],
+ "err_branch_px": [
+  0.12382875083014369,
+  0.11498918993584811,
+  0.1330566259813495
+ ],
+ "render_rms": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "render_rms_other_min": [
+  0.34861692652106285,
+  0.3406669595334679,
+  0.35662553256936375
+ ],
+ "n_ceil_contexts_valid": 200,
+ "n_floor_contexts_valid": 200
+}

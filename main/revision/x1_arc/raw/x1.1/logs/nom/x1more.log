@@ -1,0 +1,13 @@
+21:44:28Z controls done; adding 1 arc worker(s)
+launched 1 workers on /workspace/nom/code/queues/queue_x1b.txt
+23:22:50Z training done; evaluating
+23:23:27Z evaluated r1_arc90_m2_s0
+23:23:42Z evaluated r1_arc90_m2_s1
+23:23:58Z evaluated r1_arc90_m4_s1
+23:24:13Z evaluated r1_arc90_m8_s0
+23:24:29Z evaluated r1_arc90_m8_s1
+23:24:56Z evaluated r1_k4_m2_s0
+23:25:11Z evaluated r1_k4_m2_s1
+23:25:27Z evaluated r1_k4_m8_s0
+23:25:42Z evaluated r1_k4_m8_s1
+23:25:42Z x1 done

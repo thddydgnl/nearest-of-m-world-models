@@ -1,0 +1,10 @@
+{
+ "test_nn": 0.1767766922712326,
+ "train_nn": 0.5,
+ "ratio": 0.3535533845424652,
+ "data": "bounce_k4",
+ "n_train": 20000,
+ "n_test": 400,
+ "pca_dim": 64,
+ "seed": 0
+}

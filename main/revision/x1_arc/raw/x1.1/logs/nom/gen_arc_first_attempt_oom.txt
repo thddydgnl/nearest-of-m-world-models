@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/root/.local/share/uv/python/cpython-3.10.12-linux-x86_64-gnu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/root/.local/share/uv/python/cpython-3.10.12-linux-x86_64-gnu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/workspace/imle-wm/code/imlewm/gen_data.py", line 147, in <module>
+    compute_stats(out)
+  File "/workspace/imle-wm/code/imlewm/gen_data.py", line 111, in compute_stats
+    r = ((x1 - mean) / std - (x - mean) / std)[torch.from_numpy(same).cuda()]
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 2.20 GiB. GPU 0 has a total capacity of 19.58 GiB of which 1.35 GiB is free. Process 1264 has 4.53 GiB memory in use. Process 1324 has 4.53 GiB memory in use. Including non-PyTorch memory, this process has 9.14 GiB memory in use. Of the allocated memory 8.84 GiB is allocated by PyTorch, and 46.64 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+train 40000 frames, stochastic transitions: 0.243375
+test 10000 frames, stochastic transitions: 0.2454

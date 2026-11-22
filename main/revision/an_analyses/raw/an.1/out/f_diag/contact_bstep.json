@@ -1,0 +1,75 @@
+{
+ "script": "/workspace/imle-wm/bstep.py",
+ "args": [
+  "e1_b_reg_s0",
+  "e1diag_b_reg36k",
+  "e1_b_fm_s0@2",
+  "e1_b_fm_s0@50",
+  "e1_b_imle4_s0",
+  "e1_b_imle16_s0"
+ ],
+ "returncode": 0,
+ "stdout": [
+  "true block displacement on contact steps: 15.9px",
+  "e1_b_reg_s0            contact: block err best/mean 11.7/11.7px, pred block disp 12.0px, agent err 6.3 | no-contact: block err 2.2, agent err 4.8",
+  "e1diag_b_reg36k        contact: block err best/mean 11.2/11.2px, pred block disp 12.5px, agent err 6.2 | no-contact: block err 2.3, agent err 4.8",
+  "e1_b_fm_s0@2           contact: block err best/mean 9.5/12.5px, pred block disp 11.6px, agent err 5.7 | no-contact: block err 2.7, agent err 4.5",
+  "e1_b_fm_s0@50          contact: block err best/mean 8.7/12.6px, pred block disp 11.0px, agent err 7.0 | no-contact: block err 2.7, agent err 5.2",
+  "e1_b_imle4_s0          contact: block err best/mean 11.8/12.3px, pred block disp 12.2px, agent err 6.0 | no-contact: block err 2.1, agent err 4.5",
+  "e1_b_imle16_s0         contact: block err best/mean 11.1/12.3px, pred block disp 12.5px, agent err 6.2 | no-contact: block err 2.2, agent err 4.8"
+ ],
+ "numbers_per_line": [
+  [
+   15.9
+  ],
+  [
+   11.7,
+   11.7,
+   12.0,
+   6.3,
+   2.2,
+   4.8
+  ],
+  [
+   11.2,
+   11.2,
+   12.5,
+   6.2,
+   2.3,
+   4.8
+  ],
+  [
+   9.5,
+   12.5,
+   11.6,
+   5.7,
+   2.7,
+   4.5
+  ],
+  [
+   8.7,
+   12.6,
+   11.0,
+   7.0,
+   2.7,
+   5.2
+  ],
+  [
+   11.8,
+   12.3,
+   12.2,
+   6.0,
+   2.1,
+   4.5
+  ],
+  [
+   11.1,
+   12.3,
+   12.5,
+   6.2,
+   2.2,
+   4.8
+  ]
+ ],
+ "wall_s": 933.0
+}

@@ -1,0 +1,329 @@
+{
+ "gpu": "NVIDIA RTX A5000",
+ "configs": {
+  "A2 Regression": {
+   "run": "e1_a2_reg_s0",
+   "nfe": 1,
+   "method": "reg",
+   "latency": {
+    "mean_ms": 5.781394004821777,
+    "sd_ms": 0.10517844009677099,
+    "min_ms": 5.619378089904785,
+    "values_ms": [
+     5.619,
+     5.844,
+     5.764,
+     5.899,
+     5.781
+    ]
+   },
+   "orig_train_time_s": 1077.6129412651062,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_Regression",
+    "steps": 400,
+    "t200": 34.9,
+    "t400": 68.9,
+    "step_ms": 170.00000000000003,
+    "train_h_at_orig_steps": 0.5666666666666668
+   }
+  },
+  "A2 FM-50": {
+   "run": "e1_a2_fm_s0",
+   "nfe": 50,
+   "method": "fm",
+   "latency": {
+    "mean_ms": 203.44366550445557,
+    "sd_ms": 5.529817131931896,
+    "min_ms": 199.76646423339844,
+    "values_ms": [
+     213.104,
+     200.767,
+     202.983,
+     200.598,
+     199.766
+    ]
+   },
+   "orig_train_time_s": 1566.8993110656738,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_FM50",
+    "steps": 400,
+    "t200": 34.6,
+    "t400": 68.7,
+    "step_ms": 170.5,
+    "train_h_at_orig_steps": 0.5683333333333334
+   }
+  },
+  "A2 FM-2": {
+   "run": "e1_a2_fm_s0",
+   "nfe": 2,
+   "method": "fm",
+   "latency": {
+    "mean_ms": 11.300455093383789,
+    "sd_ms": 0.5206301561758025,
+    "min_ms": 10.88460922241211,
+    "values_ms": [
+     10.969,
+     10.885,
+     11.896,
+     11.843,
+     10.91
+    ]
+   },
+   "orig_train_time_s": 1566.8993110656738,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_FM50",
+    "steps": 400,
+    "t200": 34.6,
+    "t400": 68.7,
+    "step_ms": 170.5,
+    "train_h_at_orig_steps": 0.5683333333333334
+   }
+  },
+  "A2 iMF": {
+   "run": "e1_a2_imf_s0",
+   "nfe": 1,
+   "method": "imf",
+   "latency": {
+    "mean_ms": 6.482192039489746,
+    "sd_ms": 0.16229479384913137,
+    "min_ms": 6.372971534729004,
+    "values_ms": [
+     6.422,
+     6.765,
+     6.386,
+     6.373,
+     6.465
+    ]
+   },
+   "orig_train_time_s": 9283.442241191864,
+   "orig_steps": 36000,
+   "train": {
+    "name": "r1_tim_A2_iMF",
+    "steps": 400,
+    "t200": 61.0,
+    "t400": 120.9,
+    "step_ms": 299.50000000000006,
+    "train_h_at_orig_steps": 2.9950000000000006
+   }
+  },
+  "A2 Shortcut": {
+   "run": "e7_a2_sc_s0",
+   "nfe": 1,
+   "method": "sc",
+   "latency": {
+    "mean_ms": 6.814617156982422,
+    "sd_ms": 0.4241811012004042,
+    "min_ms": 6.2387895584106445,
+    "values_ms": [
+     6.763,
+     7.313,
+     6.626,
+     7.133,
+     6.239
+    ]
+   },
+   "orig_train_time_s": 2595.068796157837,
+   "orig_steps": 24000,
+   "train": {
+    "name": "r1_tim_A2_Shortcut",
+    "steps": 400,
+    "t200": 38.2,
+    "t400": 74.2,
+    "step_ms": 180.0,
+    "train_h_at_orig_steps": 1.2
+   }
+  },
+  "A2 ES m=8": {
+   "run": "e15_a2_es8_s0",
+   "nfe": 1,
+   "method": "es",
+   "latency": {
+    "mean_ms": 6.447719573974609,
+    "sd_ms": 0.08443511515878074,
+    "min_ms": 6.3240814208984375,
+    "values_ms": [
+     6.324,
+     6.488,
+     6.532,
+     6.4,
+     6.494
+    ]
+   },
+   "orig_train_time_s": 4211.838345050812,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_ES_m8",
+    "steps": 400,
+    "t200": 83.7,
+    "t400": 166.1,
+    "step_ms": 412.0,
+    "train_h_at_orig_steps": 1.3733333333333333
+   }
+  },
+  "A2 ES m=16": {
+   "run": "e15_a2_es16_s0",
+   "nfe": 1,
+   "method": "es",
+   "latency": {
+    "mean_ms": 6.074267387390137,
+    "sd_ms": 0.08104733317401312,
+    "min_ms": 5.994248390197754,
+    "values_ms": [
+     6.023,
+     6.055,
+     5.994,
+     6.096,
+     6.202
+    ]
+   },
+   "orig_train_time_s": 7785.320607423782,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_ES_m16",
+    "steps": 400,
+    "t200": 142.0,
+    "t400": 281.8,
+    "step_ms": 699.0000000000001,
+    "train_h_at_orig_steps": 2.33
+   }
+  },
+  "A2 IMLE-WM m=4": {
+   "run": "e1_a2_imle4_s0",
+   "nfe": 1,
+   "method": "imle",
+   "latency": {
+    "mean_ms": 7.51224422454834,
+    "sd_ms": 0.07708942449505798,
+    "min_ms": 7.435264587402344,
+    "values_ms": [
+     7.503,
+     7.616,
+     7.563,
+     7.435,
+     7.445
+    ]
+   },
+   "orig_train_time_s": 1910.9404911994934,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_IMLEWM_m4",
+    "steps": 400,
+    "t200": 42.2,
+    "t400": 82.8,
+    "step_ms": 202.99999999999997,
+    "train_h_at_orig_steps": 0.6766666666666665
+   }
+  },
+  "A2 IMLE-WM m=16": {
+   "run": "e1_a2_imle16_s0",
+   "nfe": 1,
+   "method": "imle",
+   "latency": {
+    "mean_ms": 7.661762237548828,
+    "sd_ms": 0.10214329461502429,
+    "min_ms": 7.5804901123046875,
+    "values_ms": [
+     7.664,
+     7.58,
+     7.604,
+     7.836,
+     7.625
+    ]
+   },
+   "orig_train_time_s": 3777.5862345695496,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_IMLEWM_m16",
+    "steps": 400,
+    "t200": 65.8,
+    "t400": 129.9,
+    "step_ms": 320.50000000000006,
+    "train_h_at_orig_steps": 1.0683333333333336
+   }
+  },
+  "B Regression": {
+   "run": "e1_b_reg_s0",
+   "nfe": 1,
+   "method": "reg",
+   "latency": {
+    "mean_ms": 10.282164573669434,
+    "sd_ms": 0.8580585854211322,
+    "min_ms": 9.205937385559082,
+    "values_ms": [
+     9.206,
+     11.61,
+     10.225,
+     10.152,
+     10.218
+    ]
+   },
+   "orig_train_time_s": 2251.656852722168,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_B_Regression",
+    "steps": 400,
+    "t200": 41.0,
+    "t400": 80.9,
+    "step_ms": 199.50000000000003,
+    "train_h_at_orig_steps": 0.6650000000000001
+   }
+  },
+  "B FM-50": {
+   "run": "e1_b_fm_s0",
+   "nfe": 50,
+   "method": "fm",
+   "latency": {
+    "mean_ms": 285.5903377532959,
+    "sd_ms": 5.972056517023114,
+    "min_ms": 277.1467685699463,
+    "values_ms": [
+     292.41,
+     290.129,
+     284.171,
+     277.147,
+     284.094
+    ]
+   },
+   "orig_train_time_s": 2275.1607418060303,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_B_FM50",
+    "steps": 400,
+    "t200": 41.3,
+    "t400": 81.6,
+    "step_ms": 201.49999999999997,
+    "train_h_at_orig_steps": 0.6716666666666666
+   }
+  },
+  "B FM-2": {
+   "run": "e1_b_fm_s0",
+   "nfe": 2,
+   "method": "fm",
+   "latency": {
+    "mean_ms": 18.3263521194458,
+    "sd_ms": 1.583338306286471,
+    "min_ms": 16.154870986938477,
+    "values_ms": [
+     16.155,
+     19.865,
+     19.202,
+     19.241,
+     17.169
+    ]
+   },
+   "orig_train_time_s": 2275.1607418060303,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_B_FM50",
+    "steps": 400,
+    "t200": 41.3,
+    "t400": 81.6,
+    "step_ms": 201.49999999999997,
+    "train_h_at_orig_steps": 0.6716666666666666
+   }
+  }
+ }
+}

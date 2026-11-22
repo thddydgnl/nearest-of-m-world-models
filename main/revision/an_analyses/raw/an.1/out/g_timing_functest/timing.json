@@ -1,0 +1,32 @@
+{
+ "gpu": "NVIDIA A40",
+ "configs": {
+  "A2 Regression": {
+   "run": "e1_a2_reg_s0",
+   "nfe": 1,
+   "method": "reg",
+   "latency": {
+    "mean_ms": 7.600868225097656,
+    "sd_ms": 3.318475421230328,
+    "min_ms": 5.847134590148926,
+    "values_ms": [
+     13.528,
+     5.847,
+     6.316,
+     6.069,
+     6.244
+    ]
+   },
+   "orig_train_time_s": 1077.6129412651062,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_A2_Regression",
+    "steps": 400,
+    "t200": 83.7,
+    "t400": 164.2,
+    "step_ms": 402.4999999999999,
+    "train_h_at_orig_steps": 1.3416666666666663
+   }
+  }
+ }
+}

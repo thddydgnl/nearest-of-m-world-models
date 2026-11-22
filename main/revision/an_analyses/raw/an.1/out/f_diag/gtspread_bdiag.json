@@ -1,0 +1,17 @@
+{
+ "script": "/workspace/imle-wm/bdiag.py",
+ "args": [],
+ "returncode": 0,
+ "stdout": [
+  "GT spread (px) h=1,4,8,16: [ 2.2 10.3 30.8 48.3]"
+ ],
+ "numbers_per_line": [
+  [
+   2.2,
+   10.3,
+   30.8,
+   48.3
+  ]
+ ],
+ "wall_s": 13.5
+}

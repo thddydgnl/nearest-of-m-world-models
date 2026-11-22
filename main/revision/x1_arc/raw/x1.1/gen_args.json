@@ -1,0 +1,8 @@
+{
+ "name": "bounce_div_k4_arc90",
+ "train_eps": 1000,
+ "test_eps": 250,
+ "T": 40,
+ "seed": 0,
+ "note": "stats computed on the CPU after a GPU OOM (revision r1)"
+}

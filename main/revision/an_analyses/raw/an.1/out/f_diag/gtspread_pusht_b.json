@@ -1,0 +1,27 @@
+{
+ "data": "pusht_b",
+ "file": "mf_test_v2.npz",
+ "n_starts": 128,
+ "h": {
+  "1": {
+   "pairwise_distinct": 6.23014011319022,
+   "pairwise_all_n2": 6.132794173921623,
+   "centroid_to_mean_last_step": 2.397398104822541
+  },
+  "4": {
+   "pairwise_distinct": 11.455099318446202,
+   "pairwise_all_n2": 11.27611339159548,
+   "centroid_to_mean_last_step": 10.440867408036215
+  },
+  "8": {
+   "pairwise_distinct": 22.13287086888292,
+   "pairwise_all_n2": 21.78704476155663,
+   "centroid_to_mean_last_step": 29.585904224871314
+  },
+  "16": {
+   "pairwise_distinct": 42.79374579643657,
+   "pairwise_all_n2": 42.12509351836725,
+   "centroid_to_mean_last_step": 48.084162393914156
+  }
+ }
+}

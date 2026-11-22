@@ -1,0 +1,42 @@
+{
+ "data": "bounce_div_k4",
+ "n_ctx": 200,
+ "n": 16,
+ "nfe": null,
+ "seed": 0,
+ "torch_seed": 123,
+ "max_abs_diff": {
+  "train.cov": 0.0,
+  "train.prec": 0.0,
+  "train.realized_share": 0.0,
+  "train.share0": 0.0,
+  "train.n": 0,
+  "test.cov": 0.0,
+  "test.prec": 0.0,
+  "test.realized_share": 0.0,
+  "test.share0": 0.0,
+  "test.n": 0
+ },
+ "check_memo_model.train.realized_share": [
+  0.47029975579975575,
+  0.43682067689255194,
+  0.5050890312812187
+ ],
+ "r1_memo.train.realized_share": [
+  0.47029975579975575,
+  0.43682067689255194,
+  0.5050890312812187
+ ],
+ "check_memo_model.test.realized_share": [
+  0.22186793747707453,
+  0.19136532566418357,
+  0.2547725640476275
+ ],
+ "r1_memo.test.realized_share": [
+  0.22186793747707453,
+  0.19136532566418357,
+  0.2547725640476275
+ ],
+ "identical": true,
+ "run": "e2_k4_m4_s0"
+}

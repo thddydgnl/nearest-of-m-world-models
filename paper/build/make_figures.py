@@ -160,10 +160,11 @@ SEED_HANDLE = Line2D([], [], ls="none", marker="_", ms=5, mew=0.8, color=INK, la
 
 
 # ------------------------------------------------------------------ I(m, K) for the bounce geometry
-def I_mK(m, K):
+def I_mK(m, K, arc=180.0):
     """Expected squared distance from a uniformly drawn mode to the nearest of m i.i.d. uniform
-    mode draws, for K equiangular bounce directions on a unit semicircle (exact)."""
-    ang = np.deg2rad((np.arange(K) + 0.5) / K * 180.0 - 90.0)
+    mode draws, for K equiangular bounce directions on a unit arc of `arc` degrees (exact; 180 = the
+    semicircle of the paper's benchmark, 90 = the arc variant of revision experiment 1)."""
+    ang = np.deg2rad((np.arange(K) + 0.5) / K * arc - arc / 2)
     pts = np.stack([np.cos(ang), np.sin(ang)], 1)
     tot = 0.0
     for k in range(K):
@@ -219,7 +220,25 @@ def fit_rmse(x):
 r_I = fit_rmse([p[2] for p in allpts])
 r_miss = fit_rmse([(1 - 1 / p[0]) ** p[1] for p in allpts])
 r_exp = fit_rmse([math.exp(-p[1] / p[0]) for p in allpts])
-print(f"one-variable linear fit RMSE (K=2,m=2 excluded): I(m,K) {r_I:.3f} | (1-1/K)^m {r_miss:.3f} | exp(-m/K) {r_exp:.3f}")
+r_m2 = fit_rmse([1 / p[1] ** 2 for p in allpts])
+print(f"one-variable linear fit RMSE (K=2,m=2 excluded): I(m,K) {r_I:.3f} | 1/m^2 {r_m2:.3f} | (1-1/K)^m {r_miss:.3f} | exp(-m/K) {r_exp:.3f}")
+
+# revision r1, experiment 1: K = 4 with the four modes on a 90-degree arc (pulled raw runs; skipped if absent)
+R1_X1 = os.path.join(RES, "..", "revision", "x1_arc", "raw", "x1.1", "runs")
+arc = {}
+for m in (2, 4, 8):
+    vals = []
+    for s_ in (0, 1):
+        pth = os.path.join(R1_X1, f"r1_arc90_m{m}_s{s_}", "log.jsonl")
+        if os.path.exists(pth):
+            rows = [json.loads(l) for l in open(pth) if "memo_train" in l]
+            if rows and rows[-1]["step"] == 8000:
+                vals.append(rows[-1]["memo_train"])
+    if len(vals) == 2:
+        arc[m] = dict(I=I_mK(m, 4, 90.0), memo=float(np.mean(vals)), memo_seeds=vals,
+                      excess=(float(np.mean(vals)) - 0.25) / 0.75)
+for m, g in sorted(arc.items()):
+    print(f"  arc90 K=4 m={m}: I={g['I']:.4f} memo={g['memo']:.3f} excess={g['excess']:.3f}")
 
 # predictions recorded before the K = 2, 16 runs (from theory_m_law.md, on the memorization-index scale)
 PRED = {(2, 2): (0.77, 0.74, 0.81), (2, 4): (0.57, 0.54, 0.61), (2, 8): (0.51, 0.50, 0.54), (2, 16): (0.51, 0.50, 0.54),
@@ -245,6 +264,12 @@ for ax, xof in zip(axes, (lambda K, m: grid[(K, m)]["I"], lambda K, m: (1 - 1 / 
                 lw=0.9, ms=4, mec="white", mew=0.4, zorder=3, label=f"$K{{=}}{K}$")
         for m in ms:
             seed_ticks(ax, xof(K, m), [excess_of(v, K) for v in grid[(K, m)]["memo_seeds"]], KCOL[K])
+    if arc:
+        xa = [arc[m]["I"] if xof is not None and ax is axes[0] else (0.75) ** m for m in sorted(arc)]
+        ax.plot(xa, [arc[m]["excess"] for m in sorted(arc)], color=C["imle"], marker="s", mfc="white", mec=C["imle"],
+                mew=1.0, lw=0.9, ls="--", ms=4, zorder=3.5, label="$K{=}4$, 90$^\\circ$ arc")
+        for xv, m in zip(xa, sorted(arc)):
+            seed_ticks(ax, xv, [excess_of(v, 4) for v in arc[m]["memo_seeds"]], C["imle"])
     ax.set_xscale("log")
 ax = axes[0]
 xx = np.geomspace(1.5e-5, 0.8, 200)
@@ -258,21 +283,22 @@ for (K, m), (p, lo, hi) in PRED.items():
         ax.plot([g["I"]], [g["excess"]], ls="none", marker="o", ms=9, mfc="none", mec="k", mew=0.8, zorder=5)
 ax.set_xlim(1.5e-5, 0.8); ax.set_ylim(-0.03, 0.97)
 ax.set_xlabel("codebook distortion $I(m,K)$"); ax.set_ylabel("excess memorization")
-ax.set_title("(a) one curve for all $K$")
+ax.set_title("(a) against the codebook distortion")
 fit_handle = (Patch(color=C["imle"], alpha=0.12, lw=0), Line2D([], [], color=C["imle"], lw=1.0))
-ax.legend(handles=K_HANDLES + [fit_handle,
+ARC_HANDLE = Line2D([], [], color=C["imle"], marker="s", mfc="white", mec=C["imle"], mew=1.0, lw=0.9, ls="--", ms=4)
+ax.legend(handles=K_HANDLES + ([ARC_HANDLE] if arc else []) + [fit_handle,
                                Line2D([], [], ls="none", marker="|", ms=7, mew=0.9, color="k"),
                                Line2D([], [], ls="none", marker="o", ms=7, mfc="none", mec="k", mew=0.8)],
-          labels=[h.get_label() for h in K_HANDLES] + [f"fit on $K{{=}}4,8$ ($\\pm2$ RMSE)", "interval recorded in advance",
-                                                       "observed value outside it"],
+          labels=[h.get_label() for h in K_HANDLES] + (["$K{=}4$, 90$^\\circ$ arc"] if arc else [])
+                 + [f"fit on $K{{=}}4,8$ ($\\pm2$ RMSE)", "interval recorded in advance", "observed value outside it"],
           loc="upper left", handlelength=1.6)
 ax = axes[1]
 ax.set_xlim(8e-6, 1.3)
 ax.set_xlabel("miss probability $(1-1/K)^m$")
-ax.set_title("(b) separate curves per $K$")
+ax.set_title("(b) against the miss probability")
 ax.annotate("", xy=(3e-4, 0.30), xytext=(3e-2, 0.30), arrowprops=dict(arrowstyle="->", color=INK, lw=0.8))
 note(ax, 3e-3, 0.32, "larger $m$", ha="center", va="bottom")
-note(ax, 0.03, 0.97, f"one-variable fit RMSE:\n$I(m,K)$  {r_I:.3f}\n$(1-1/K)^m$  {r_miss:.3f}\n$e^{{-m/K}}$  {r_exp:.3f}",
+note(ax, 0.03, 0.97, f"one-variable fit RMSE:\n$I(m,K)$  {r_I:.3f}\n$1/m^2$  {r_m2:.3f}\n$(1-1/K)^m$  {r_miss:.3f}\n$e^{{-m/K}}$  {r_exp:.3f}",
      transform=ax.transAxes, va="top", ha="left", linespacing=1.3)
 savefig(fig, "fig_memo_collapse.pdf")
 
@@ -394,17 +420,17 @@ axes[0].set_title("(a) coverage"); axes[0].set_ylim(0, 1.05)
 axes[1].set_title("(b) memorization index"); axes[1].set_ylim(0, 1.0)
 axes[2].set_title("(c) det.-transition error (px)")
 ax = axes[3]
-ax.plot(M_CURVE, [q_theory(m) - p0 for m in M_CURVE], color=C["imle"], lw=1.0, zorder=2)
-ax.axhline(0.0, color=C["fm"], lw=1.0, ls=STY["fm50"]["ls"], zorder=1.6)
-ax.axhline(es_share - fm50_share, color=C["es"], lw=1.0, ls=STY["es8"]["ls"], zorder=1.6)
-share_points(ax, offset=fm50_share)
+# Raw frequent-mode shares against the optimum (revision r1: the readout returns the share of true branch maps
+# exactly, so the earlier "minus FM-50" normalization had no basis). FM-50 and the energy score are in the caption.
+ax.plot(M_CURVE, [q_theory(m) for m in M_CURVE], color=C["imle"], lw=1.0, zorder=2)
+ax.axhline(p0, color="k", lw=0.7, ls="--", zorder=1.6)
+share_points(ax)
 log2_m_axis(ax, [1, 4, 16, 64], xlim=(0.9, 80))
-ax.set_ylim(-0.38, 0.25); ax.set_yticks([-0.2, 0.0, 0.2])
-note(ax, 78, es_share - fm50_share + 0.012, "energy score", ha="right", va="bottom")
-note(ax, 78, -0.012, "FM-50", ha="right", va="top")
-note(ax, 78, q_theory(78) - p0 - 0.02, "optimum", ha="right", va="top")
-note(ax, 5.0, share[4][0] - fm50_share + 0.01, "IMLE-WM", ha="left", va="center")
-ax.set_title("(d) share minus FM-50")
+ax.set_ylim(0.45, 0.9); ax.set_yticks([0.5, 0.6, 0.7, 0.8])
+note(ax, 78, p0 + 0.012, f"true {p0:.2f}", ha="right", va="bottom")
+note(ax, 78, q_theory(78) + 0.015, "optimum", ha="right", va="bottom")
+note(ax, 5.0, share[4][0] + 0.01, "IMLE-WM", ha="left", va="center")
+ax.set_title("(d) frequent-mode share")
 fig.legend(handles=K_HANDLES + [REF_HANDLE, SEED_HANDLE],
            labels=[h.get_label() for h in K_HANDLES] + ["ideal sampler (a), chance $1/K$ (b)", "individual seeds"],
            loc="outside upper center", ncol=6)
