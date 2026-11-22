@@ -167,7 +167,7 @@ Energy score, $m{=}8$ & -- & -- & -- & 8.94 & 33.77 & 11.65 \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_memo_curves.pdf}
-\caption{Memorization during training on A2-div ($K{=}4$; mean of three seeds, two for the energy score with $m{=}16$ and the per-token variant; band = min--max). (a) Memorization index on training contexts; chance is $0.25$, and on held-out contexts the seed means of every method stay between $0.22$ and $0.30$ (not shown). (b) Coverage on held-out contexts. Both panels come from the training monitor, which samples FM-50 with 20 Euler steps. Regression memorizes completely; \imlewm{} with $m{=}4$ and the three energy-score runs memorize progressively and lose coverage as they do; \imlewm{} with $m{=}16$ and FM-50 do not memorize within 12k steps.}
+\caption{Memorization during training on A2-div ($K{=}4$; mean of three seeds, two for the energy score with $m{=}16$ and the per-token variant; band: min--max over seeds). (a) Memorization index on training contexts (dashed: chance $0.25$); on held-out contexts the seed means of every method stay between $0.22$ and $0.30$ (not shown). (b) Coverage on held-out contexts (dashed: ideal 16-sample sampler). Both panels come from the training monitor, which samples FM-50 with 20 Euler steps. Regression memorizes completely; \imlewm{} with $m{=}4$ and the three energy-score runs memorize progressively and lose coverage as they do; \imlewm{} with $m{=}16$ and FM-50 do not memorize within 12k steps.}
 \label{fig:curves}
 \end{figure}
 
@@ -204,7 +204,7 @@ Det.\ err.\ (px) & 1.13 & 1.40 & 1.76 & 2.92 & 5.71 \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_m_knob.pdf}
-\caption{Full version of Figure~\ref{fig:knob}: (a) coverage, (b) precision, (c) memorization index, (d) deterministic-transition error, (e) training time (GPU-hours for 8k steps) and (f) frequent-mode share on the asymmetric variant, all against the budget $m$ (A2-div, 8k steps, two seeds).}
+\caption{Full version of Figure~\ref{fig:knob} (A2-div, 8k steps; markers: mean of two seeds, ticks: the seeds; triangles: ideal 16-sample sampler in (a), chance $1/K$ in (c)): (a) coverage, (b) precision, (c) memorization index, (d) deterministic-transition error, (e) training time (GPU-hours for 8k steps; some $K{=}16$ runs with large $m$ shared a GPU, which inflates their times) and (f) the raw frequent-mode share on the asymmetric variant ($K{=}2$; dashed: true share; curve: optimum of \citet{bennett2026freedom}), all against the budget $m$. The raw shares in (f) include the readout offset that Figure~\ref{fig:knob}d removes by subtracting the FM-50 share.}
 \label{fig:knobfull}
 \end{figure}
 
@@ -252,7 +252,7 @@ Energy score, $m{=}8$ & 0.886 & 0.787 & $+0.05$ / $0.00$ & 0.58 & 0.91 / 0.72 \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_bair.pdf}
-\caption{Under-dispersion on BAIR ($h{=}1$, 256 evaluation contexts). (a) Spread-to-error ratio against $m$: the isotropic model of Proposition~\ref{prop:shrink} with one parameter fitted at $m{=}16$ ($\deff \approx 27$) reproduces the $m{=}4$ and $64$ points within about $0.05$; with $d$ set to the measured participation ratio (PR) of the regression residuals ($\approx 1{,}030$) it predicts a spread five times too small; the PR of a covariance $S$ is $(\mathrm{tr}\,S)^2/\mathrm{tr}\,S^2$. (b) Participation ratio of the 64 samples of a context (median, quartiles): one to three directions. (c) Fraction of the true residual in a context's own top-16 sample directions versus another context's: the directions are context-specific and aligned with the truth, but capture $9$--$21\%$ of it.}
+\caption{Under-dispersion on BAIR ($h{=}1$, 256 evaluation contexts). (a) Spread-to-error ratio against $m$ (markers: measured, mean of two seeds that differ by less than $0.003$; one seed at $m{=}64$): the isotropic model of Proposition~\ref{prop:shrink} with one parameter fitted at $m{=}16$ ($\deff \approx 27$, solid) reproduces the $m{=}4$ and $64$ points within about $0.05$; with $d$ set to the measured participation ratio (PR) of the regression residuals ($\approx 1{,}030$, dotted) it predicts a spread five times too small; the PR of a covariance $S$ is $(\mathrm{tr}\,S)^2/\mathrm{tr}\,S^2$. (b), (c): seed 0; markers and bars: median and quartiles over the 256 contexts. (b) Participation ratio of the 64 samples of a context: one to three directions. (c) Fraction of the true residual in a context's own top-16 sample directions versus another context's: the directions are context-specific and aligned with the truth, but capture $9$--$21\%$ of it.}
 \label{fig:bair}
 \end{figure}
 
@@ -290,7 +290,7 @@ iMF: a 72k-step run on A2-div (one seed, checkpoints every 6k steps) saturates a
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_manifold.pdf}
-\caption{Manifold distance of autoregressive rollouts against the horizon (16 rollouts from each of 128 real contexts; mean of three seeds, two for the energy score on A1 and for iMF on B; log scale; $1$ = on the data). \imlewm{} with $m{=}4$ stays as close to the data as regression on all three benchmarks, and $m{=}16$ does so on A2-div and Push-T; on Bouncing Shapes $m{=}16$ starts higher ($1.05$ vs.\ $0.58$ at $h{=}1$) and meets regression at $h{=}16$. Flow-matching rollouts drift equally with 50 and with 2 integration steps, and iMF drifts most. The energy score ($m{=}8$) starts above flow matching on A2-div and ends below it ($3.6$ vs.\ $6.2$ at $h{=}32$).}
+\caption{Manifold distance of autoregressive rollouts against the horizon (16 rollouts from each of 128 real contexts; mean of three seeds, two for the energy score on A1 and for iMF on B; shared logarithmic $y$-axis; dashed line: $1$ = on the data). \imlewm{} with $m{=}4$ stays as close to the data as regression on all three benchmarks, and $m{=}16$ does so on A2-div and Push-T; on Bouncing Shapes $m{=}16$ starts higher ($1.05$ vs.\ $0.58$ at $h{=}1$) and meets regression at $h{=}16$. Flow-matching rollouts drift equally with 50 and with 2 integration steps, and iMF drifts most. The energy score ($m{=}8$) starts above flow matching on A2-div and drifts less from $h \approx 13$ on ($3.6$ vs.\ $6.2$ at $h{=}32$). Shortcut rollouts were not evaluated.}
 \label{fig:manifold}
 \end{figure}
 Table~\ref{tab:e3} completes Figure~\ref{fig:manifold} with the best-of-16 readout error and the spread at the last horizon.
@@ -375,8 +375,8 @@ Figure~\ref{fig:toy} shows the toy experiment of Section~\ref{sec:es}. The task 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.9\linewidth]{fig_toy.pdf}
-\caption{Toy two-branch problem with a nuisance appearance vector (two seeds for fresh contexts and 1{,}024 contexts, one seed for 4{,}096 or more; $m{=}8$ for the energy score and $16$ for \nom{}). (a) Memorization index on training contexts against the number of fixed training contexts. (b) Two-mode coverage on new contexts; ``fresh'' draws a new context at every step.}
+\includegraphics[width=\linewidth]{fig_toy.pdf}
+\caption{Toy two-branch problem with a 16-dimensional nuisance appearance vector ($m{=}8$ for the energy score and $16$ for \nom{}; two seeds for fresh contexts and for 1{,}024 contexts, which agree within $0.01$; one seed for 4{,}096 or more). (a) Memorization index on training contexts against the number of fixed training contexts (fewer contexts mean more revisits of each; dashed: chance $0.5$). (b) Fraction of new contexts on which both modes are covered; crosses: a fresh context at every training step (both methods reach $1.00$; drawn side by side).}
 \label{fig:toy}
 \end{figure}
 
@@ -406,7 +406,7 @@ Per-step, feed true frame & 2.14 & 23.6 & 16.6 & 8.62 \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=\linewidth]{fig_seq_ablation.pdf}
-\caption{The fed-back-state ablation on Bouncing Shapes (two seeds). (a) Any self-generated context, matched or random, keeps the rollout on the manifold; the true frame does not. (b) Only the candidate nearest the truth improves the best-of-16 error. (c) The matched variant is the only one whose 16 rollouts spread like the true futures at $h{=}16$; the random variant jitters at every step but does not form distinct futures, and spreads to half the true spread.}
+\caption{The fed-back-state ablation on Bouncing Shapes (mean of two seeds). (a) Any self-generated context, matched or random, keeps the rollout closer to the manifold (dashed: $1$ = on the data); the true frame does not. (b) Only the candidate nearest the truth improves the best-of-16 error. (c) Spread of the 16 rollouts; stars: true futures. At $h{=}16$ only the matched variant reaches the true spread ($26.3$ vs.\ $23.6$\,px), but it over-spreads at $h \le 8$ ($12.2$ vs.\ $6.8$\,px at $h{=}8$); the random variant jitters at $h{=}1$ and ends at half the true spread.}
 \label{fig:seqabl}
 \end{figure}
 Per-seed Push-T recall errors at $h{=}16$ (one-step $\to$ per-step): $43.7 \to 30.3$, $42.6 \to 32.2$, $44.7 \to 25.5$. On the deterministic Push-T control (one seed) the best-of-16 T-vertex error at $h = 4 / 8 / 16$ moves from $35.8 / 60.4 / 72.3$ to $29.2 / 45.6 / 58.9$\,px and the manifold distance at $h{=}16$ from $3.90$ to $3.64$. On A2-div (two seeds, 8k steps) the manifold distance at $h = 8 / 16 / 32$ moves from $1.31 / 1.47 / 1.83$ to $1.19 / 1.26 / 1.40$ while coverage and precision at $h{=}1$ move from $0.92 / 0.77$ to $0.90 / 0.73$ and the deterministic-transition error from $2.91$ to $3.97$\,px; the best-of-16 error is unchanged. On A1 (two seeds) F1 moves from $8.74$ to $8.51$ (precision error $9.26 \to 9.77$, recall error $8.28 \to 7.55$), the manifold distance at $h{=}16$ from $2.17$ to $1.92$ and the best-of-16 error from $23.2$ to $17.7$\,px. The fed-back-state ablation was preceded by three recorded predictions: (S1) feeding back the true frame yields less than half of the manifold gain (manifold at $h{=}16$ $\ge 2.05$; observed $2.14$); (S2) feeding back a random candidate yields more than half ($\le 2.05$; observed $1.81$); (S3) the random candidate's best-of-16 error exceeds the matched one's by at least $1$\,px ($\ge 18.7$; observed $22.9$). The spread of the 16 rollouts at $h = 1 / 4 / 8 / 16$ is $0.20 / 1.90 / 6.81 / 23.6$\,px for the true futures, $0.70 / 3.35 / 7.42 / 17.0$ for one-step matching, $1.16 / 5.42 / 12.2 / 26.3$ for the matched variant, $2.41 / 4.19 / 6.38 / 12.4$ for the random variant and $0.61 / 3.07 / 7.08 / 16.6$ for the true-frame variant. Training times: one-step $0.68$\,h, per-step variants $2.7$\,h (8M, 8k steps).

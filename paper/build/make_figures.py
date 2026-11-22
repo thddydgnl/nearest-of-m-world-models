@@ -5,9 +5,21 @@ usage: python make_figures.py <runs_dir> <results_dir> <out_dir>
   results_dir : the project's main/results/ folder (e15_toy/ json, feasibility/ pilot scatter png)
   out_dir     : paper/tmlr/figures
 
-Hue follows the method family in every figure (regression gray, flow blue, iMF purple, Shortcut
-orange, energy score green, nearest-of-m vermillion); the variant within a family (m, NFE) is the
-line style. Palette: Okabe-Ito.
+Conventions shared by all figures
+- Size: every vector figure is drawn at its printed size (6.5 in wide = \\textwidth; the .tex includes it
+  with width=\\linewidth, i.e. at scale 1) with constrained layout and saved without bbox cropping.
+- Text: panel titles and axis labels 8 pt; tick labels, legends and annotations 7 pt. Only sub- and
+  superscripts are smaller. Annotation text is dark ink, never a series color.
+- Methods: hue follows the method family (regression gray, flow blue, iMF purple, Shortcut sky blue,
+  energy score green, nearest-of-m vermillion; Okabe-Ito), and each family has its own marker (square,
+  circle, down-triangle, up-triangle, diamond, plus). Within a family the larger budget (m or NFE) is a
+  solid line with filled markers, the smaller one a dotted line with open markers. Legend labels and
+  their order follow the tables.
+- Grids over the number of modes K (all nearest-of-m) use a sequential blue ramp and one marker per K.
+  In the fed-back-state ablation the matched variant keeps the nearest-of-m style and the other
+  variants are black.
+- A marker that is the mean of two seeds carries short horizontal ticks at the individual seeds.
+- Legends sit outside the data area (above or below the panels) or are replaced by direct labels.
 """
 import json
 import math
@@ -19,18 +31,30 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from matplotlib.ticker import FixedLocator, FixedFormatter, NullFormatter
 
 RUNS, RES, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
 os.makedirs(OUT, exist_ok=True)
 
+WIDTH = 6.5          # in; = \textwidth of the TMLR style
+FS_LABEL = 8         # panel titles, axis labels
+FS_TEXT = 7          # tick labels, legends, annotations
+INK = "#222222"      # annotation text
 plt.rcParams.update({
-    "font.size": 8, "axes.labelsize": 8, "axes.titlesize": 8.5, "legend.fontsize": 7,
-    "xtick.labelsize": 7, "ytick.labelsize": 7, "axes.spines.top": False, "axes.spines.right": False,
-    "axes.grid": True, "grid.color": "#e6e6e6", "grid.linewidth": 0.5, "lines.linewidth": 1.4,
+    "font.size": FS_TEXT, "axes.labelsize": FS_LABEL, "axes.titlesize": FS_LABEL, "legend.fontsize": FS_TEXT,
+    "xtick.labelsize": FS_TEXT, "ytick.labelsize": FS_TEXT, "axes.spines.top": False, "axes.spines.right": False,
+    "axes.grid": True, "grid.color": "#e6e6e6", "grid.linewidth": 0.5, "lines.linewidth": 1.2,
     "lines.markersize": 4, "pdf.fonttype": 42, "figure.dpi": 150, "legend.frameon": False,
+    "axes.titlepad": 3.0, "axes.labelpad": 2.0, "xtick.major.pad": 2.0, "ytick.major.pad": 2.0,
+    "legend.handlelength": 1.8, "legend.handletextpad": 0.5, "legend.columnspacing": 1.2,
+    "legend.borderaxespad": 0.3, "legend.borderpad": 0.2,
+    "figure.constrained_layout.h_pad": 2 / 72, "figure.constrained_layout.w_pad": 2 / 72,
+    "figure.constrained_layout.hspace": 0.02, "figure.constrained_layout.wspace": 0.02,
 })
 
-C = {"reg": "#8c8c8c", "fm": "#0072B2", "imf": "#CC79A7", "sc": "#C47A00", "es": "#009E73",
+C = {"reg": "#8c8c8c", "fm": "#0072B2", "imf": "#CC79A7", "sc": "#56B4E9", "es": "#009E73",
      "imle": "#D55E00", "truth": "#000000"}
 STY = {
     "reg": dict(color=C["reg"], ls="--", marker="s", label="Regression"),
@@ -38,12 +62,14 @@ STY = {
     "fm2": dict(color=C["fm"], ls=":", marker="o", mfc="white", label="FM-2"),
     "imf": dict(color=C["imf"], ls="-", marker="v", label="iMF"),
     "sc": dict(color=C["sc"], ls="-", marker="^", label="Shortcut"),
-    "es8": dict(color=C["es"], ls="-", marker="D", label="Energy score, $m{=}8$"),
-    "es16": dict(color=C["es"], ls=":", marker="D", mfc="white", label="Energy score, $m{=}16$"),
+    "es8": dict(color=C["es"], ls=":", marker="D", mfc="white", label="Energy score, $m{=}8$"),
+    "es16": dict(color=C["es"], ls="-", marker="D", label="Energy score, $m{=}16$"),
     "estok8": dict(color=C["es"], ls="-.", marker="d", mfc="white", label="Per-token energy score, $m{=}8$"),
-    "imle4": dict(color=C["imle"], ls=":", marker="o", mfc="white", label="IMLE-WM, $m{=}4$"),
-    "imle16": dict(color=C["imle"], ls="-", marker="o", label="IMLE-WM, $m{=}16$"),
+    "imle4": dict(color=C["imle"], ls=":", marker="P", mfc="white", label="IMLE-WM, $m{=}4$"),
+    "imle16": dict(color=C["imle"], ls="-", marker="P", label="IMLE-WM, $m{=}16$"),
 }
+KCOL = {2: "#4f9bcb", 4: "#2171b5", 8: "#08519c", 16: "#08306b"}   # sequential blue ramp, K = 2 at >= 3:1 on white
+KMK = {2: "o", 4: "s", 8: "^", 16: "D"}
 
 
 def J(*p):
@@ -81,10 +107,56 @@ def mean_curves(runs, key, fname="e3.json"):
     return np.mean([a[:n] for a in arrs], 0)
 
 
+def new_fig(nrows, ncols, height, **kw):
+    """Figure at its printed size: WIDTH x height inches, constrained layout."""
+    return plt.subplots(nrows, ncols, figsize=(WIDTH, height), layout="constrained", **kw)
+
+
 def savefig(fig, name):
-    fig.savefig(os.path.join(OUT, name), bbox_inches="tight")
+    # no bbox_inches: the file keeps the exact WIDTH so that LaTeX prints it at scale 1
+    fig.savefig(os.path.join(OUT, name))
     plt.close(fig)
     print("wrote", name)
+
+
+def seed_ticks(ax, x, vals, color):
+    """Individual seeds as short horizontal ticks at the position of their mean (drawn under the marker)."""
+    if len(vals) > 1:
+        ax.plot([x] * len(vals), vals, ls="none", marker="_", ms=5, mew=0.8, color=color, zorder=2)
+
+
+def ref_marks(ax, x, levels):
+    """Reference level of each K as a small left-pointing triangle near the right edge of the panel."""
+    for K, y in levels.items():
+        ax.plot([x], [y], ls="none", marker="<", ms=4, color=KCOL[K], mec="none", clip_on=False, zorder=4)
+
+
+def note(ax, x, y, s, **kw):
+    """Direct label in data coordinates (7 pt, dark ink)."""
+    kw.setdefault("color", INK)
+    return ax.text(x, y, s, fontsize=FS_TEXT, **kw)
+
+
+def row_major(handles, ncol):
+    """Reorder legend handles so that a multi-row legend reads left to right, row by row."""
+    n = len(handles)
+    nrow = math.ceil(n / ncol)
+    return [handles[r * ncol + c] for c in range(ncol) for r in range(nrow) if r * ncol + c < n]
+
+
+def log2_m_axis(ax, ticks, label="candidate budget $m$", xlim=None):
+    ax.set_xscale("log", base=2)
+    ax.xaxis.set_major_locator(FixedLocator(ticks))
+    ax.xaxis.set_major_formatter(FixedFormatter([str(t) for t in ticks]))
+    ax.xaxis.set_minor_locator(FixedLocator([]))
+    if xlim:
+        ax.set_xlim(*xlim)
+    if label:
+        ax.set_xlabel(label)
+
+
+K_HANDLES = [Line2D([], [], color=KCOL[K], marker=KMK[K], ms=3.5, lw=1.0, label=f"$K{{=}}{K}$") for K in (2, 4, 8, 16)]
+SEED_HANDLE = Line2D([], [], ls="none", marker="_", ms=5, mew=0.8, color=INK, label="individual seeds")
 
 
 # ------------------------------------------------------------------ I(m, K) for the bounce geometry
@@ -114,6 +186,8 @@ for K in (2, 4, 8, 16):
             continue
         ev = [J(r, "eval.json") for r in rs]
         ev = [e for e in ev if e]
+        per_seed = dict(cov=[e["stoch"]["cov_pos"] for e in ev], prec=[e["stoch"]["prec_pos"] for e in ev],
+                        det=[e["det"]["pos_err"] for e in ev], train_h=[e["train_time"] / 3600 for e in ev])
         grid[(K, m)] = dict(
             memo=float(np.mean(vals)), memo_seeds=vals,
             cov=float(np.mean([e["stoch"]["cov_pos"] for e in ev])),
@@ -122,7 +196,8 @@ for K in (2, 4, 8, 16):
             det=float(np.mean([e["det"]["pos_err"] for e in ev])),
             train_h=float(np.mean([e["train_time"] for e in ev])) / 3600,
             steps=ev[0]["args"]["steps"], I=I_mK(m, K),
-            excess=(float(np.mean(vals)) - 1 / K) / (1 - 1 / K))
+            excess=(float(np.mean(vals)) - 1 / K) / (1 - 1 / K),
+            **{k + "_seeds": v for k, v in per_seed.items()})
 print("K x m grid:")
 for (K, m), g in sorted(grid.items()):
     print(f"  K={K:2d} m={m:2d} steps={g['steps']} memo={g['memo']:.3f} excess={g['excess']:.3f} I={g['I']:.4f} "
@@ -157,48 +232,57 @@ for (K, m), (p, lo, hi) in PRED.items():
     print(f"  prediction K={K} m={m}: {p} [{lo}, {hi}] observed {grid[(K, m)]['memo']:.3f} -> {'in' if ok else 'OUT'}")
 print(f"predictions inside interval: {hits}/{len(PRED)}")
 
-KCOL = {2: "#9ecae1", 4: "#4292c6", 8: "#08519c", 16: "#08306b"}
-KMK = {2: "o", 4: "s", 8: "^", 16: "D"}
-fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.6))
+
+def excess_of(v, K):
+    return (v - 1 / K) / (1 - 1 / K)
+
+
+fig, axes = new_fig(1, 2, 2.2, sharey=True)
+for ax, xof in zip(axes, (lambda K, m: grid[(K, m)]["I"], lambda K, m: (1 - 1 / K) ** m)):
+    for K in (2, 4, 8, 16):
+        ms = sorted(m for (k, m) in grid if k == K)
+        ax.plot([xof(K, m) for m in ms], [grid[(K, m)]["excess"] for m in ms], color=KCOL[K], marker=KMK[K],
+                lw=0.9, ms=4, mec="white", mew=0.4, zorder=3, label=f"$K{{=}}{K}$")
+        for m in ms:
+            seed_ticks(ax, xof(K, m), [excess_of(v, K) for v in grid[(K, m)]["memo_seeds"]], KCOL[K])
+    ax.set_xscale("log")
 ax = axes[0]
-xx = np.linspace(0, 0.52, 100)
-ax.fill_between(xx, a + b * xx - 2 * rmse, a + b * xx + 2 * rmse, color="#D55E00", alpha=0.12, lw=0)
-ax.plot(xx, a + b * xx, color="#D55E00", lw=1, label=f"linear fit on $K{{=}}4,8$ (RMSE {rmse:.3f})")
-for (K, m), g in sorted(grid.items()):
-    ax.scatter(g["I"], g["excess"], color=KCOL[K], marker=KMK[K], s=22, zorder=3, edgecolor="white", linewidth=0.4)
-    if (K, m) in PRED:
-        p, lo, hi = PRED[(K, m)]
-        ex = lambda v: (v - 1 / K) / (1 - 1 / K)
-        ax.plot([g["I"], g["I"]], [ex(lo), ex(hi)], color=KCOL[K], lw=0.8, alpha=0.9, zorder=2)
-    if (K, m) in ((2, 2), (2, 4), (4, 4), (8, 4), (16, 4)):
-        off = {(2, 2): (-38, -11), (2, 4): (4, 2), (4, 4): (5, 2), (8, 4): (5, 4), (16, 4): (5, -8)}[(K, m)]
-        ax.annotate(f"$K{{=}}{K}, m{{=}}{m}$", (g["I"], g["excess"]), textcoords="offset points", xytext=off, fontsize=5.5, color="#444")
-for K in (2, 4, 8, 16):
-    ax.scatter([], [], color=KCOL[K], marker=KMK[K], s=22, label=f"$K{{=}}{K}$")
-ax.set_xlabel("codebook distortion $I(m,K)$ (unit-speed bounce geometry)")
-ax.set_ylabel("excess memorization")
-ax.set_title("(a) excess memorization vs. the miss distortion")
-ax.legend(loc="upper left", ncol=1, handlelength=1.4)
-ax.set_xlim(-0.01, 0.53); ax.set_ylim(-0.03, 0.97)
+xx = np.geomspace(1.5e-5, 0.8, 200)
+ax.fill_between(xx, a + b * xx - 2 * rmse, a + b * xx + 2 * rmse, color=C["imle"], alpha=0.12, lw=0, zorder=1)
+ax.plot(xx, a + b * xx, color=C["imle"], lw=1.0, zorder=1.5)
+for (K, m), (p, lo, hi) in PRED.items():
+    g = grid[(K, m)]
+    # recorded interval as a black bar just right of its point (x * 1.18 on the log axis)
+    ax.plot([g["I"] * 1.18] * 2, [excess_of(lo, K), excess_of(hi, K)], color="k", lw=0.9, solid_capstyle="butt", zorder=4)
+    if not lo <= g["memo"] <= hi:
+        ax.plot([g["I"]], [g["excess"]], ls="none", marker="o", ms=9, mfc="none", mec="k", mew=0.8, zorder=5)
+ax.set_xlim(1.5e-5, 0.8); ax.set_ylim(-0.03, 0.97)
+ax.set_xlabel("codebook distortion $I(m,K)$"); ax.set_ylabel("excess memorization")
+ax.set_title("(a) one curve for all $K$")
+fit_handle = (Patch(color=C["imle"], alpha=0.12, lw=0), Line2D([], [], color=C["imle"], lw=1.0))
+ax.legend(handles=K_HANDLES + [fit_handle,
+                               Line2D([], [], ls="none", marker="|", ms=7, mew=0.9, color="k"),
+                               Line2D([], [], ls="none", marker="o", ms=7, mfc="none", mec="k", mew=0.8)],
+          labels=[h.get_label() for h in K_HANDLES] + [f"fit on $K{{=}}4,8$ ($\\pm2$ RMSE)", "interval recorded in advance",
+                                                       "observed value outside it"],
+          loc="upper left", handlelength=1.6)
 ax = axes[1]
-for (K, m), g in sorted(grid.items()):
-    ax.scatter((1 - 1 / K) ** m, g["excess"], color=KCOL[K], marker=KMK[K], s=22, zorder=3, edgecolor="white", linewidth=0.4)
-    if (K, m) in ((2, 2), (2, 4), (4, 4), (8, 4), (16, 4), (16, 8)):
-        ax.annotate(f"$K{{=}}{K}, m{{=}}{m}$", ((1 - 1 / K) ** m, g["excess"]), textcoords="offset points", xytext=(4, -3), fontsize=5.5, color="#444")
+ax.set_xlim(8e-6, 1.3)
 ax.set_xlabel("miss probability $(1-1/K)^m$")
-ax.set_title("(b) the same points vs. the miss probability")
-ax.set_xlim(-0.02, 1.0); ax.set_ylim(-0.03, 0.97)
-ax.text(0.03, 0.9, f"one-variable fit RMSE:\n$I(m,K)$ {r_I:.3f}, $(1-1/K)^m$ {r_miss:.3f}, $e^{{-m/K}}$ {r_exp:.3f}",
-        transform=ax.transAxes, fontsize=6.5, va="top")
+ax.set_title("(b) separate curves per $K$")
+ax.annotate("", xy=(3e-4, 0.30), xytext=(3e-2, 0.30), arrowprops=dict(arrowstyle="->", color=INK, lw=0.8))
+note(ax, 3e-3, 0.32, "larger $m$", ha="center", va="bottom")
+note(ax, 0.03, 0.97, f"one-variable fit RMSE:\n$I(m,K)$  {r_I:.3f}\n$(1-1/K)^m$  {r_miss:.3f}\n$e^{{-m/K}}$  {r_exp:.3f}",
+     transform=ax.transAxes, va="top", ha="left", linespacing=1.3)
 savefig(fig, "fig_memo_collapse.pdf")
 
 # ------------------------------------------------------------------ Fig: memorization and coverage during training (E1, E15)
 curves = {
     "reg": seeds("e1_a2_reg_s{}"), "fm50": seeds("e1_a2_fm_s{}"),
-    "imle4": seeds("e1_a2_imle4_s{}"), "imle16": seeds("e1_a2_imle16_s{}"),
     "es8": seeds("e15_a2_es8_s{}"), "es16": seeds("e15_a2_es16_s{}", 2), "estok8": seeds("e15_a2_estok8_s{}", 2),
-}
-fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.5))
+    "imle4": seeds("e1_a2_imle4_s{}"), "imle16": seeds("e1_a2_imle16_s{}"),
+}   # table order
+fig, axes = new_fig(1, 2, 2.9)
 for key, rs in curves.items():
     cs = [memo_curve(r) for r in rs]
     cs = [c for c in cs if len(c[0])]
@@ -207,20 +291,23 @@ for key, rs in curves.items():
     n = min(len(c[0]) for c in cs)
     st = cs[0][0][:n]
     mt = np.array([c[1][:n] for c in cs]); cv = np.array([c[3][:n] for c in cs])
-    s = dict(STY[key]); s.pop("marker", None); s.pop("mfc", None)
+    s = dict(STY[key]); s["ms"] = 3.5
     axes[0].plot(st / 1000, mt.mean(0), **s)
     axes[0].fill_between(st / 1000, mt.min(0), mt.max(0), color=s["color"], alpha=0.12, lw=0)
     axes[1].plot(st / 1000, cv.mean(0), **s)
     axes[1].fill_between(st / 1000, cv.min(0), cv.max(0), color=s["color"], alpha=0.12, lw=0)
-axes[0].axhline(0.25, color="k", lw=0.7, ls="--"); axes[0].text(2.0, 0.235, "chance", fontsize=6, va="top")
+axes[0].axhline(0.25, color="k", lw=0.7, ls="--", zorder=1.6); note(axes[0], 12.4, 0.235, "chance", va="top", ha="right")
 axes[0].set_xlabel("training step (k)"); axes[0].set_ylabel("memorization index (training contexts)")
 axes[0].set_title("(a) outcome memorization during training")
 axes[1].set_xlabel("training step (k)"); axes[1].set_ylabel("coverage, held-out contexts")
 axes[1].set_title("(b) mode coverage during training")
-axes[1].axhline(1 - 0.75 ** 16, color="k", lw=0.7, ls="--"); axes[1].text(2.0, 1 - 0.75 ** 16 - 0.015, "ideal sampler", fontsize=6, va="top")
+axes[1].axhline(1 - 0.75 ** 16, color="k", lw=0.7, ls="--", zorder=1.6)
+note(axes[1], 1.6, 1 - 0.75 ** 16 - 0.015, "ideal sampler", va="top", ha="left")
 axes[0].set_ylim(0.15, 1.02); axes[1].set_ylim(0.0, 1.02)
+for ax in axes:
+    ax.set_xlim(1.5, 12.5); ax.set_xticks([2, 4, 6, 8, 10, 12])
 h_, l_ = axes[1].get_legend_handles_labels()
-fig.legend(h_, l_, loc="lower center", ncol=4, handlelength=1.8, fontsize=6.3, bbox_to_anchor=(0.5, -0.2))
+fig.legend(row_major(h_, 4), row_major(l_, 4), loc="outside lower center", ncol=4)
 savefig(fig, "fig_memo_curves.pdf")
 
 # ------------------------------------------------------------------ Fig: the m knob (E2, E12, E14)
@@ -235,75 +322,92 @@ p0 = J("e14_asym_m16_s0", "modeshare.json")["test"]["data_freq0"]
 print(f"asymmetric modes: true p0={p0:.3f}; IMLE share0 m=2 {share[2][0]:.3f} m=4 {share[4][0]:.3f} m=16 {share[16][0]:.3f}; "
       f"FM-50 {fm50_share:.3f} FM-2 {fm2_share:.3f} ES8 {es_share:.3f}")
 def q_theory(m, p=p0):
+    """Frequent-mode share at the optimum of Bennett (2026) for budget m (m > 1 may be non-integer)."""
     if m == 1:
         return 1.0
     r = ((1 - p) / p) ** (1 / (m - 1))
     return 1 / (1 + r)
 for m in (2, 4, 16):
     print(f"  theory q0(m={m}) = {q_theory(m):.3f}; measured - FM-50 = {share[m][0]-fm50_share:+.3f}; theory - p = {q_theory(m)-p0:+.3f}")
-
-fig, axes = plt.subplots(2, 3, figsize=(6.5, 4.2))
-axes = axes.ravel()
+M_CURVE = np.geomspace(1.0, 64, 200)   # continuous budget grid for the theory curve
 ideal = {K: 1 - (1 - 1 / K) ** 16 for K in (2, 4, 8, 16)}
-for K in (2, 4, 8, 16):
-    ms = sorted(m for (k, m) in grid if k == K)
-    g = [grid[(K, m)] for m in ms]
-    kw = dict(color=KCOL[K], marker=KMK[K], label=f"$K{{=}}{K}$")
-    axes[0].plot(ms, [x["cov"] for x in g], **kw)
-    axes[0].axhline(ideal[K], color=KCOL[K], lw=0.6, ls=":")
-    axes[1].plot(ms, [x["prec"] for x in g], **kw)
-    axes[2].plot(ms, [x["memo"] for x in g], **kw)
-    axes[2].axhline(1 / K, color=KCOL[K], lw=0.6, ls=":")
-    axes[3].plot(ms, [x["det"] for x in g], **kw)
-    axes[4].plot(ms, [x["train_h"] for x in g], **kw)
-for ax in axes[:5]:
-    ax.set_xscale("log", base=2); ax.set_xlabel("candidate budget $m$")
-    ax.set_xticks([2, 4, 8, 16, 32, 64]); ax.set_xticklabels([2, 4, 8, 16, 32, 64])
-axes[0].set_title("(a) coverage (dotted: ideal sampler)"); axes[0].set_ylim(0, 1.03)
+REF_HANDLE = Line2D([], [], ls="none", marker="<", ms=4, color=INK, mec="none")
+M_TICKS = [2, 4, 8, 16, 32, 64]
+M_XLIM = (1.6, 100)
+M_REF_X = 85     # x of the reference triangles (right of the last budget, m = 64)
+
+
+def knob_lines(ax, key):
+    for K in (2, 4, 8, 16):
+        ms = sorted(m for (k, m) in grid if k == K)
+        ax.plot(ms, [grid[(K, m)][key] for m in ms], color=KCOL[K], marker=KMK[K], ms=3.5, lw=1.0, mec="white", mew=0.3, zorder=3)
+        for m in ms:
+            seed_ticks(ax, m, grid[(K, m)][key + "_seeds"], KCOL[K])
+    log2_m_axis(ax, M_TICKS, xlim=M_XLIM)
+
+
+def share_points(ax, offset=0.0):
+    """IMLE-WM frequent-mode shares (mean of two seeds, seeds as ticks), minus `offset`."""
+    ax.plot([2, 4, 16], [share[m][0] - offset for m in (2, 4, 16)], ls="none", marker="P", ms=5, color=C["imle"],
+            mec="white", mew=0.4, zorder=4)
+    for m in (2, 4, 16):
+        seed_ticks(ax, m, [v - offset for v in share[m][1]], C["imle"])
+
+
+# full version (appendix): 2 x 3
+fig, axes = new_fig(2, 3, 3.9)
+axes = axes.ravel()
+for ax, key in zip(axes[:5], ("cov", "prec", "memo", "det", "train_h")):
+    knob_lines(ax, key)
+ref_marks(axes[0], M_REF_X, ideal); ref_marks(axes[2], M_REF_X, {K: 1 / K for K in (2, 4, 8, 16)})
+axes[0].set_title("(a) coverage"); axes[0].set_ylim(0, 1.03)
 axes[1].set_title("(b) precision"); axes[1].set_ylim(0, 1.0)
-axes[2].set_title("(c) memorization index (dotted: chance)"); axes[2].set_ylim(0, 1.0)
-axes[3].set_title("(d) deterministic error (px)")
-axes[4].set_title("(e) training time (GPU-h)")
-axes[0].legend(loc="lower right", fontsize=6.3, handlelength=1.5)
+axes[2].set_title("(c) memorization index"); axes[2].set_ylim(0, 1.0)
+axes[3].set_title("(d) det.-transition error (px)")
+axes[4].set_title("(e) training time (GPU-hours)")
 ax = axes[5]
-mm = np.arange(1, 65)
-ax.plot(mm, [q_theory(m) for m in mm], color=C["imle"], lw=1, ls="-", label="optimum (Bennett, 2026)")
-ax.scatter([2, 4, 16], [share[m][0] for m in (2, 4, 16)], color=C["imle"], marker="o", s=24, zorder=3, label="measured")
-ax.axhline(p0, color="k", lw=0.8, ls="--"); ax.text(64, p0 - 0.012, f"true {p0:.2f}", fontsize=5.6, ha="right", va="top")
-ax.axhline(fm50_share, color=C["fm"], lw=1, ls="-"); ax.text(64, fm50_share + 0.008, f"FM-50 {fm50_share:.2f}", fontsize=5.6, ha="right", va="bottom", color=C["fm"])
-ax.axhline(es_share, color=C["es"], lw=1, ls="-"); ax.text(64, es_share + 0.008, f"energy score {es_share:.2f}", fontsize=5.6, ha="right", va="bottom", color=C["es"])
-ax.set_xscale("log", base=2); ax.set_xticks([1, 2, 4, 8, 16, 32, 64]); ax.set_xticklabels([1, 2, 4, 8, 16, 32, 64])
-ax.set_xlabel("candidate budget $m$"); ax.set_ylim(0.45, 1.02)
+ax.plot(M_CURVE, [q_theory(m) for m in M_CURVE], color=C["imle"], lw=1.0, zorder=2)
+ax.axhline(p0, color="k", lw=0.7, ls="--", zorder=1.6)
+ax.axhline(fm50_share, color=C["fm"], lw=1.0, ls=STY["fm50"]["ls"], zorder=1.6)
+ax.axhline(es_share, color=C["es"], lw=1.0, ls=STY["es8"]["ls"], zorder=1.6)
+share_points(ax)
+log2_m_axis(ax, [1, 2, 4, 8, 16, 32, 64], xlim=(0.9, 80))
+ax.set_ylim(0.45, 1.02)
+note(ax, 78, es_share + 0.008, f"energy score {es_share:.2f}", ha="right", va="bottom")
+note(ax, 5.5, fm50_share + 0.006, f"FM-50 {fm50_share:.2f}", ha="left", va="bottom")
+note(ax, 78, p0 - 0.010, f"true {p0:.2f}", ha="right", va="top")
+note(ax, 78, q_theory(78) + 0.012, "optimum", ha="right", va="bottom")
+note(ax, 5.0, share[4][0], "IMLE-WM", ha="left", va="center")
 ax.set_title("(f) frequent-mode share")
-ax.legend(loc="upper right", bbox_to_anchor=(1.0, 0.56), fontsize=5.6, handlelength=1.3)
-fig.tight_layout(h_pad=1.0, w_pad=0.8)
+fig.legend(handles=K_HANDLES + [REF_HANDLE, SEED_HANDLE],
+           labels=[h.get_label() for h in K_HANDLES] + ["ideal sampler (a), chance $1/K$ (c)", "individual seeds"],
+           loc="outside upper center", ncol=6)
 savefig(fig, "fig_m_knob.pdf")
 
 
 # ------------------------------------------------------------------ compact m-knob for the main text (1 x 4)
-fig, axes = plt.subplots(1, 4, figsize=(6.5, 1.5))
-for K in (2, 4, 8, 16):
-    ms = sorted(m for (k, m) in grid if k == K)
-    g = [grid[(K, m)] for m in ms]
-    kw = dict(color=KCOL[K], marker=KMK[K], label=f"$K{{=}}{K}$", markersize=3)
-    axes[0].plot(ms, [x["cov"] for x in g], **kw); axes[0].axhline(ideal[K], color=KCOL[K], lw=0.6, ls=":")
-    axes[1].plot(ms, [x["memo"] for x in g], **kw); axes[1].axhline(1 / K, color=KCOL[K], lw=0.6, ls=":")
-    axes[2].plot(ms, [x["det"] for x in g], **kw)
-for ax in axes[:3]:
-    ax.set_xscale("log", base=2); ax.set_xlabel("budget $m$"); ax.set_xticks([2, 4, 8, 16, 32, 64]); ax.set_xticklabels([2, 4, 8, 16, 32, 64])
-axes[0].set_title("(a) coverage"); axes[0].set_ylim(0, 1.03); axes[0].legend(fontsize=5.6, handlelength=1.2, loc="lower right")
+fig, axes = new_fig(1, 4, 1.43)
+for ax, key in zip(axes[:3], ("cov", "memo", "det")):
+    knob_lines(ax, key)
+ref_marks(axes[0], M_REF_X, ideal); ref_marks(axes[1], M_REF_X, {K: 1 / K for K in (2, 4, 8, 16)})
+axes[0].set_title("(a) coverage"); axes[0].set_ylim(0, 1.05)
 axes[1].set_title("(b) memorization index"); axes[1].set_ylim(0, 1.0)
-axes[2].set_title("(c) deterministic error (px)")
+axes[2].set_title("(c) det.-transition error (px)")
 ax = axes[3]
-mm = np.arange(1, 65)
-ax.plot(mm, [q_theory(m) for m in mm], color=C["imle"], lw=1, label="optimum (Bennett, 2026)")
-ax.scatter([2, 4, 16], [share[m][0] for m in (2, 4, 16)], color=C["imle"], marker="o", s=18, zorder=3, label="measured")
-ax.axhline(p0, color="k", lw=0.8, ls="--"); ax.text(64, p0 - 0.012, f"true {p0:.2f}", fontsize=5.4, ha="right", va="top")
-ax.axhline(fm50_share, color=C["fm"], lw=1); ax.text(64, fm50_share + 0.008, f"FM-50 {fm50_share:.2f}", fontsize=5.4, ha="right", va="bottom", color=C["fm"])
-ax.axhline(es_share, color=C["es"], lw=1); ax.text(64, es_share + 0.008, f"energy score {es_share:.2f}", fontsize=5.4, ha="right", va="bottom", color=C["es"])
-ax.set_xscale("log", base=2); ax.set_xticks([1, 4, 16, 64]); ax.set_xticklabels([1, 4, 16, 64]); ax.set_xlabel("budget $m$"); ax.set_ylim(0.45, 1.02)
-ax.set_title("(d) frequent-mode share"); ax.legend(loc="upper right", bbox_to_anchor=(1.0, 0.56), fontsize=5.4, handlelength=1.2)
-fig.tight_layout(w_pad=0.6)
+ax.plot(M_CURVE, [q_theory(m) - p0 for m in M_CURVE], color=C["imle"], lw=1.0, zorder=2)
+ax.axhline(0.0, color=C["fm"], lw=1.0, ls=STY["fm50"]["ls"], zorder=1.6)
+ax.axhline(es_share - fm50_share, color=C["es"], lw=1.0, ls=STY["es8"]["ls"], zorder=1.6)
+share_points(ax, offset=fm50_share)
+log2_m_axis(ax, [1, 4, 16, 64], xlim=(0.9, 80))
+ax.set_ylim(-0.38, 0.25); ax.set_yticks([-0.2, 0.0, 0.2])
+note(ax, 78, es_share - fm50_share + 0.012, "energy score", ha="right", va="bottom")
+note(ax, 78, -0.012, "FM-50", ha="right", va="top")
+note(ax, 78, q_theory(78) - p0 - 0.02, "optimum", ha="right", va="top")
+note(ax, 5.0, share[4][0] - fm50_share + 0.01, "IMLE-WM", ha="left", va="center")
+ax.set_title("(d) share minus FM-50")
+fig.legend(handles=K_HANDLES + [REF_HANDLE, SEED_HANDLE],
+           labels=[h.get_label() for h in K_HANDLES] + ["ideal sampler (a), chance $1/K$ (b)", "individual seeds"],
+           loc="outside upper center", ncol=6)
 savefig(fig, "fig_m_knob_main.pdf")
 
 # ------------------------------------------------------------------ Fig: BAIR under-dispersion (E8, E10, E16)
@@ -321,7 +425,7 @@ d_fit = (em[16] / rho16) ** 2
 pr_pooled = np.mean([deff[f"e8_bair_reg_s{s}/test_eval"]["pr"] for s in (0, 1)])
 print(f"BAIR: measured r = {meas}; one-point fit d_eff = {d_fit:.1f}; predicted r(4) = {r_model(4, d_fit):.3f}, r(64) = {r_model(64, d_fit):.3f}; "
       f"pooled residual PR = {pr_pooled:.0f} -> predicted r = {[round(r_model(m, pr_pooled), 3) for m in (4, 16, 64)]}")
-fig, axes = plt.subplots(1, 3, figsize=(6.5, 2.3))
+fig, axes = new_fig(1, 3, 2.15)
 ax = axes[0]
 mm = np.array([2, 4, 8, 16, 32, 64, 128, 256])
 # e_m for the curve: numerical expectation of the max of m standard normals
@@ -329,29 +433,37 @@ def e_max(m, n=400000, seed=0):
     rng = np.random.default_rng(seed)
     return float(rng.standard_normal((n // 8, m)).max(1).mean()) if m <= 256 else float("nan")
 em_curve = {m: (em[m] if m in em else e_max(m)) for m in mm}
-ax.plot(mm, [r_of(em_curve[m] / math.sqrt(d_fit)) for m in mm], color=C["imle"], lw=1, label=f"isotropic model, $d_\\mathrm{{eff}}{{=}}{d_fit:.0f}$ (fit at $m{{=}}16$)")
-ax.plot(mm, [r_of(em_curve[m] / math.sqrt(pr_pooled)) for m in mm], color=C["imle"], lw=1, ls=":", label=f"isotropic model, $d{{=}}$ residual PR ({pr_pooled:.0f})")
+r_fit = [r_of(em_curve[m] / math.sqrt(d_fit)) for m in mm]
+r_pr = [r_of(em_curve[m] / math.sqrt(pr_pooled)) for m in mm]
+ax.plot(mm, r_fit, color=C["imle"], lw=1.0)
+ax.plot(mm, r_pr, color=C["imle"], lw=1.0, ls=":")
 for m, v in meas.items():
-    ax.scatter(m, v, color=C["imle"], s=24, zorder=3, edgecolor="white", linewidth=0.5)
-ax.scatter([], [], color=C["imle"], s=24, label="measured, $h{=}1$")
-ax.set_xscale("log", base=2); ax.set_xticks([4, 16, 64, 256]); ax.set_xticklabels([4, 16, 64, 256])
-ax.set_xlabel("candidate budget $m$"); ax.set_ylabel("spread-to-error ratio $r$"); ax.set_ylim(0, 0.75)
-ax.set_title("(a) spread-to-error ratio on BAIR"); ax.legend(fontsize=5.8, loc="upper left", handlelength=1.4)
+    ax.plot([m], [v], ls="none", marker="P", ms=5.5, color=C["imle"], mec="white", mew=0.5, zorder=3)
+log2_m_axis(ax, [4, 16, 64, 256], xlim=(1.7, 300))
+ax.set_ylabel("spread-to-error ratio $r$"); ax.set_ylim(0, 0.8)
+note(ax, 256, r_fit[-1] + 0.03, f"isotropic, $d_{{\\mathrm{{eff}}}}{{=}}{d_fit:.0f}$", ha="right", va="bottom")
+note(ax, 256, r_pr[-1] + 0.03, f"isotropic, $d{{=}}${pr_pooled:,.0f}", ha="right", va="bottom")
+note(ax, 80, meas[64], "measured", ha="left", va="center")
+ax.set_title("(a) spread-to-error ratio on BAIR")
 ax = axes[1]
 ms_ = [4, 16, 64]; keys = ["e8_bair_imle4_s0", "e8_bair_imle16_s0", "e10_bair_m64_s0"]
 q = np.array([dims[k]["pr_ctx_q"] for k in keys])
-ax.errorbar(ms_, q[:, 1], yerr=[q[:, 1] - q[:, 0], q[:, 2] - q[:, 1]], color=C["imle"], marker="o", capsize=2, lw=1)
-ax.set_xscale("log", base=2); ax.set_xticks(ms_); ax.set_xticklabels(ms_)
-ax.set_xlabel("candidate budget $m$"); ax.set_ylabel("participation ratio")
-ax.set_title("(b) per-context sample PR"); ax.set_ylim(0, 3.2)
+ax.errorbar(ms_, q[:, 1], yerr=[q[:, 1] - q[:, 0], q[:, 2] - q[:, 1]], color=C["imle"], marker="P", ms=5,
+            mec="white", mew=0.4, capsize=2, lw=1)
+log2_m_axis(ax, ms_, xlim=(2.8, 90))
+ax.set_ylabel("participation ratio")
+ax.set_title("(b) participation ratio per context"); ax.set_ylim(0, 3.2)
 ax = axes[2]
 fo = np.array([dims[k]["f_own_q"] for k in keys]); ft = np.array([dims[k]["f_other_q"] for k in keys])
-ax.errorbar(ms_, fo[:, 1], yerr=[fo[:, 1] - fo[:, 0], fo[:, 2] - fo[:, 1]], color=C["imle"], marker="o", capsize=2, lw=1, label="own context's top-16 directions")
-ax.errorbar(ms_, ft[:, 1], yerr=[ft[:, 1] - ft[:, 0], ft[:, 2] - ft[:, 1]], color=C["reg"], marker="s", ls="--", capsize=2, lw=1, label="another context's directions")
-ax.set_xscale("log", base=2); ax.set_xticks(ms_); ax.set_xticklabels(ms_)
-ax.set_xlabel("candidate budget $m$"); ax.set_ylabel("fraction of residual captured")
-ax.set_title("(c) overlap with the true residual"); ax.set_ylim(0, 0.35); ax.legend(fontsize=6, loc="upper left")
-fig.tight_layout(w_pad=1.0)
+ax.errorbar(ms_, fo[:, 1], yerr=[fo[:, 1] - fo[:, 0], fo[:, 2] - fo[:, 1]], color=C["imle"], marker="P", ms=5,
+            mec="white", mew=0.4, capsize=2, lw=1)
+ax.errorbar(ms_, ft[:, 1], yerr=[ft[:, 1] - ft[:, 0], ft[:, 2] - ft[:, 1]], color="k", marker="s", ms=3.5, mfc="white",
+            ls="--", capsize=2, lw=1)
+log2_m_axis(ax, ms_, xlim=(2.8, 90))
+note(ax, 4, fo[0, 2] + 0.035, "own context's\ntop-16 directions", ha="left", va="bottom", linespacing=1.15)
+note(ax, 64, ft[2, 2] + 0.02, "another context's", ha="right", va="bottom")
+ax.set_ylabel("fraction of residual captured")
+ax.set_title("(c) overlap with true residual"); ax.set_ylim(0, 0.35)
 savefig(fig, "fig_bair.pdf")
 
 # ------------------------------------------------------------------ Fig: manifold distance vs horizon (E3, E11, E15)
@@ -366,43 +478,49 @@ def e3_series(bench):
     if bench in ("a2", "a1"):
         out["es8"] = mean_curves(seeds(f"e15_{bench}_es8_s{{}}"), "manifold")
     return out
-fig, axes = plt.subplots(1, 3, figsize=(6.5, 2.3))
+fig, axes = new_fig(1, 3, 2.35, sharey=True)
 for ax, bench, title in zip(axes, ("a2", "a1", "b"), ("(a) A2-div bounce", "(b) A1 Bouncing Shapes", "(c) B stochastic Push-T")):
     ser = e3_series(bench)
+    ax.axhline(1.0, color="k", lw=0.6, ls=(0, (4, 3)), zorder=1.6)
     for key in ("reg", "fm50", "fm2", "imf", "es8", "imle4", "imle16"):
         y = ser.get(key)
         if y is None:
             continue
-        s = dict(STY[key]); s["markevery"] = max(1, len(y) // 8); s["markersize"] = 3
+        s = dict(STY[key]); s["markevery"] = max(1, len(y) // 8); s["ms"] = 3.5
         ax.plot(np.arange(1, len(y) + 1), y, **s)
         print(f"  manifold {bench} {key}: h=1 {y[0]:.2f} h=last {y[-1]:.2f}")
     ax.set_xlabel("rollout horizon $h$"); ax.set_title(title)
-    ax.set_yscale("log")
-axes[0].set_ylabel("manifold distance (1 = on data)")
+    ax.set_yscale("log"); ax.set_ylim(0.5, 9)
+    ax.yaxis.set_major_locator(FixedLocator([0.5, 1, 2, 4, 8]))
+    ax.yaxis.set_major_formatter(FixedFormatter(["0.5", "1", "2", "4", "8"]))
+    ax.yaxis.set_minor_formatter(NullFormatter())
+axes[0].set_ylabel("manifold distance")
 h_, l_ = axes[0].get_legend_handles_labels()
-fig.legend(h_, l_, loc="lower center", ncol=7, handlelength=1.8, fontsize=6.2, bbox_to_anchor=(0.5, -0.1))
-fig.tight_layout(w_pad=0.8)
+fig.legend(h_, l_, loc="outside lower center", ncol=7, handlelength=1.8, columnspacing=1.0)
 savefig(fig, "fig_manifold.pdf")
 
 # ------------------------------------------------------------------ Fig: fed-back state ablation (E11, E16)
-variants = {"N0": ("e11_a1_n0_s{}", dict(color=C["reg"], ls="--", marker="s", label="one-step matching")),
-            "matched": ("e11_a1_seq4_s{}", dict(color=C["imle"], ls="-", marker="o", label="per-step, feed matched")),
-            "random": ("e16_a1_seqrand_s{}", dict(color=C["sc"], ls="-", marker="^", label="per-step, feed random candidate")),
-            "gt": ("e16_a1_seqgt_s{}", dict(color=C["fm"], ls=":", marker="v", label="per-step, feed true frame"))}
+variants = {"N0": ("e11_a1_n0_s{}", dict(color="k", ls="--", marker="s", mfc="white", label="One-step matching")),
+            "matched": ("e11_a1_seq4_s{}", dict(color=C["imle"], ls="-", marker="P", label="Per-step, feed matched")),
+            "random": ("e16_a1_seqrand_s{}", dict(color="k", ls=":", marker="^", mfc="white", label="Per-step, feed random candidate")),
+            "gt": ("e16_a1_seqgt_s{}", dict(color="k", ls="-.", marker="v", mfc="white", label="Per-step, feed true frame"))}
 real_spread = {1: 0.20, 4: 1.90, 8: 6.81, 16: 23.6}  # pairwise distance among the true futures of an IC (e16_curves.py)
-fig, axes = plt.subplots(1, 3, figsize=(6.5, 2.3))
+fig, axes = new_fig(1, 3, 2.28)
 for name, (fmt, s) in variants.items():
     rs = seeds(fmt, 2)
     man = mean_curves(rs, "manifold"); best = mean_curves(rs, "best_err"); spr = mean_curves(rs, "spread")
     h = np.arange(1, len(man) + 1)
-    kw = dict(s); kw["markevery"] = 3; kw["markersize"] = 3
+    kw = dict(s); kw["markevery"] = 3; kw["ms"] = 3.5
     axes[0].plot(h, man, **kw); axes[1].plot(h, best, **kw); axes[2].plot(h, spr * 16 / 15, **kw)
     print(f"  seq ablation {name}: manifold h16 {man[15]:.2f} best h16 {best[15]:.1f} spread h16 {spr[15]*16/15:.1f}")
-axes[2].scatter(list(real_spread), list(real_spread.values()), color="k", marker="*", s=40, zorder=4, label="true futures")
+axes[2].plot(list(real_spread), list(real_spread.values()), ls="none", color="k", marker="*", ms=7, zorder=4, label="True futures")
+axes[0].axhline(1.0, color="k", lw=0.6, ls=(0, (4, 3)), zorder=1.6); axes[0].set_ylim(0.9, None)
 for ax, t in zip(axes, ("(a) manifold distance", "(b) best-of-16 readout error (px)", "(c) spread of the 16 rollouts (px)")):
     ax.set_xlabel("rollout horizon $h$"); ax.set_title(t)
-axes[2].legend(fontsize=5.8, loc="upper left", handlelength=1.6)
-fig.tight_layout(w_pad=0.8)
+handles =[l for l in axes[0].get_lines() if not l.get_label().startswith("_")] + \
+          [l for l in axes[2].get_lines() if l.get_label() == "True futures"]
+fig.legend(handles=row_major(handles, 3), labels=row_major([l.get_label() for l in handles], 3),
+           loc="outside lower center", ncol=3, handlelength=2.4)
 savefig(fig, "fig_seq_ablation.pdf")
 
 # ------------------------------------------------------------------ Fig (appendix): toy experiment (E15)
@@ -418,24 +536,30 @@ def toy_pick(method, m, n_train, a_dim=16):
             if r["method"] == method and r["m"] == m and r["n_train"] == n_train and r.get("a_dim", 16) == a_dim:
                 out.append(r)
     return out
-fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.3))
+fig, axes = new_fig(1, 2, 2.04)
 ns = [1024, 4096, 16384, 65536]
+FRESH_X = 2.6e5
 for method, m, s in (("es", 8, STY["es8"]), ("nn", 16, STY["imle16"])):
     memo = [np.mean([r["train"]["memo"] for r in toy_pick(method, m, n)]) for n in ns]
     cov = [np.mean([r["test"]["cov2"] for r in toy_pick(method, m, n)]) for n in ns]
     fresh = np.mean([r["test"]["cov2"] for r in toy_pick(method, m, "fresh")])
-    kw = dict(s); kw["label"] = {"es": "energy score, $m{=}8$", "nn": "nearest-of-$m$, $m{=}16$"}[method]
+    kw = dict(s); kw["label"] = {"es": "Energy score, $m{=}8$", "nn": "Nearest-of-$m$, $m{=}16$"}[method]
     axes[0].plot(ns, memo, **kw); axes[1].plot(ns, cov, **kw)
-    axes[1].scatter([2.6e5], [fresh], color=s["color"], marker="x", s=30, zorder=3)
+    # the two methods both reach 1.00 here: offset them by +-10% in x so that both crosses stay visible
+    axes[1].plot([FRESH_X * (0.9 if method == "es" else 1.1)], [fresh], ls="none", color=s["color"], marker="x", ms=5.5, mew=1.2, zorder=3)
     print(f"  toy {method} m={m}: memo {np.round(memo,3)} cov2 {np.round(cov,3)} fresh cov2 {fresh:.3f}")
 for ax in axes:
-    ax.set_xscale("log", base=2); ax.set_xticks(ns + [2.6e5]); ax.set_xticklabels(["1k", "4k", "16k", "64k", "fresh"])
+    ax.set_xscale("log", base=2); ax.xaxis.set_minor_locator(FixedLocator([]))
     ax.set_xlabel("number of fixed training contexts")
-axes[0].axhline(0.5, color="k", lw=0.7, ls="--"); axes[0].set_ylabel("memorization index (training contexts)")
-axes[0].set_title("(a) memorization vs. context revisits"); axes[0].set_ylim(0.4, 1.03)
-axes[1].set_ylabel("two-mode coverage, new contexts"); axes[1].set_title("(b) coverage on new contexts"); axes[1].set_ylim(-0.03, 1.05)
-axes[1].legend(fontsize=6.3, loc="lower right")
-fig.tight_layout(w_pad=1.0)
+axes[0].set_xticks(ns); axes[0].set_xticklabels(["1k", "4k", "16k", "64k"]); axes[0].set_xlim(700, 1e5)
+axes[1].set_xticks(ns + [FRESH_X]); axes[1].set_xticklabels(["1k", "4k", "16k", "64k", "fresh"]); axes[1].set_xlim(700, 4e5)
+axes[0].axhline(0.5, color="k", lw=0.7, ls="--", zorder=1.6); note(axes[0], 1.25e3, 0.49, "chance", ha="left", va="top")
+axes[0].set_ylabel("memorization index\n(training contexts)")
+axes[0].set_title("(a) memorization vs. number of contexts"); axes[0].set_ylim(0.4, 1.03)
+axes[1].set_ylabel("two-mode coverage\n(new contexts)"); axes[1].set_title("(b) coverage on new contexts"); axes[1].set_ylim(-0.03, 1.05)
+h_, l_ = axes[0].get_legend_handles_labels()
+fresh_h = Line2D([], [], ls="none", color=INK, marker="x", ms=5.5, mew=1.2)
+fig.legend(h_ + [fresh_h], l_ + ["fresh context at every step"], loc="outside lower center", ncol=3)
 savefig(fig, "fig_toy.pdf")
 
 # ------------------------------------------------------------------ qualitative pilot figure (copied)

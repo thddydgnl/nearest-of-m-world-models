@@ -8,7 +8,7 @@ Regression reaches a memorization index of $0.99$ on A2-div: it learns which mod
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_memo_collapse.pdf}
-\caption{Excess memorization on A2-div at 8k steps (two seeds) for $K\in\{2,4,8,16\}$, $m\in\{2,\dots,64\}$. (a) Against the codebook distortion $I(m,K)$ of Equation~\ref{eq:I} (exact for the bounce geometry); line and band: the linear fit on the $K{=}4,8$ points ($\pm2$ RMSE) from which the $K{=}2,16$ predictions were recorded before those runs; vertical bars: the recorded intervals. (b) The same points against the miss probability $(1-1/K)^m$, to which the distortion reduces for equidistant modes (\citealp[Theorems~3--5]{bennett2026freedom}; \citealp[Proposition~3]{gladstone2026xm} multiplies it by the squared separation): the points do not fall on a common curve.}
+\caption{Excess memorization on A2-div at 8k steps for $K\in\{2,4,8,16\}$, $m\in\{2,\dots,64\}$ (markers: mean of two seeds; ticks: the seeds). (a) Against the codebook distortion $I(m,K)$ of Equation~\ref{eq:I} (exact for the bounce geometry); line and band: linear fit on the $K{=}4,8$ points ($\pm2$ RMSE); black bars: intervals recorded from it before the $K{=}2,16$ runs; circles: the two misses. (b) Against the miss probability $(1-1/K)^m$, to which the distortion reduces for equidistant modes (\citealp[Theorems~3--5]{bennett2026freedom}; \citealp[Proposition~3]{gladstone2026xm} multiplies it by the squared separation): the points do not fall on a common curve.}
 \label{fig:collapse}
 \end{figure}
 
@@ -19,7 +19,7 @@ Proposition~\ref{prop:memo} says that the incentive is the codebook distortion. 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{fig_m_knob_main.pdf}
-\caption{What the budget controls (A2-div, 8k steps, two seeds; shade = $K$). (a) Coverage peaks at $m{=}16$ (dotted: ideal sampler) while (b) the memorization index approaches chance (dotted). (c) The deterministic-transition error grows with $m$ (all panels in Appendix~\ref{app:more}). (d) With unequal mode probabilities ($K{=}2$, $p{=}0.79$) the frequent-mode share of \imlewm{} samples falls with $m$ along the optimum of \citet{bennett2026freedom}; FM-50 is calibrated and the energy score over-represents the frequent mode (Section~\ref{sec:flatten}).}
+\caption{What the budget controls (A2-div, 8k steps, mean of two seeds; shade and marker = $K$). (a) Coverage peaks at $m{=}16$ while (b) the memorization index approaches chance. (c) The deterministic-transition error grows with $m$ (all panels: Figure~\ref{fig:knobfull}). (d) Unequal modes ($K{=}2$, true share $0.79$): frequent-mode share minus that of FM-50. Raw shares lie about $0.04$ above theory for \imlewm{} and $0.045$ above the true share for FM-50, an offset, attributed to the readout, that cancels if it is common to all methods. \imlewm{} then follows the optimum of \citet{bennett2026freedom} within $0.01$; the energy score over-represents the frequent mode (Section~\ref{sec:flatten}).}
 \label{fig:knob}
 \end{figure}
 
