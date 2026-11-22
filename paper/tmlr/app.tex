@@ -16,6 +16,7 @@ Let the generator place mass $q_k$ on mode $k$ and let all modes be at mutual di
 \paragraph{Direction insensitivity (interpretation).}
 Suppose the generator's mean is offset from the outcome by an unknown vector of length $a$ and it adds isotropic noise of scale $s$ in $d$ dimensions with $d$ large. Then $\E\|Y - x\|^\beta \approx (a^2 + s^2)^{\beta/2}$ and $\E\|Y - Y'\|^\beta \approx (2 s^2)^{\beta/2}$, and the energy score $(a^2 + s^2)^{\beta/2} - \frac{1}{2}(2s^2)^{\beta/2}$ is minimized at $s = a$ for every $\beta \in (0, 2)$, where it equals $2^{\beta/2 - 1} a^\beta$; this is the $\lambda = 1$ case of Proposition~4.1 of \citet{debortoli2025distributional}, and the gain does not depend on $d$. The same calculation for the \nom{} loss follows Proposition~\ref{prop:shrink} and gives $s \approx a\, e_m/\sqrt{d}$. The approximation requires the bias and the noise to be spread over many dimensions (participation ratio $\gg 1$); the regression residual on BAIR has participation ratio about $1{,}030$, and we did not measure it on the bounce tokens. The argument says nothing about where the isotropic spread points; the claim in Section~\ref{sec:es} that it points off the manifold is an empirical observation.
 
+\FloatBarrier
 \section{$I(m,K)$ for the bounce geometry and the recorded predictions}
 \label{app:pred}
 \label{app:imk}
@@ -56,6 +57,7 @@ $K$ & $m$ & $I(m,K)$ & Chance & Predicted [interval] & Observed \\
 \end{center}
 \end{table}
 
+\FloatBarrier
 \section{Benchmark construction}
 \label{app:bench}
 
@@ -90,6 +92,7 @@ Center of gravity, radius $25$\,px & 56 / 195 & too large \\
 \paragraph{BAIR.}
 We use the first part of the official archive: $4{,}096$ training sequences and $1{,}024$ held-out sequences (the official test set plus three held-out training files), $64\times64$ frames, 4-dimensional actions, 3 context frames and 16-step rollouts.
 
+\FloatBarrier
 \section{Implementation details and ablations}
 \label{app:impl}
 Code, environments, the queue files that define every run and the per-run outputs behind every figure and table will be released with the paper.
@@ -127,6 +130,7 @@ iMF, time-embedding scale 1, 12k steps & 0.55 [0.52, 0.58] & 0.22 & -- & 13.1 & 
 \label{app:ablation}
 On A2-div with $m{=}16$ (one seed): replacing Geman--McClure by $\ell_2$ gives coverage $0.93$, precision $0.83$, index $0.28$, deterministic-transition error $1.81$\,px (vs.\ $1.55$); a 64-dimensional noise vector gives $0.92$, $0.83$, $0.28$, $1.50$; training $1.5\times$ longer (18k steps) gives $0.92$, $0.86$, $0.31$, $1.45$. On stochastic Push-T an 8M \imlewm{} with $m{=}16$ reaches recall errors $24.5$ / $39.0$\,px at $h = 8$ / $16$ against $22.1$ / $37.8$ for the 21M model (three seeds), so model size matters little there. In the pilot with the earlier recipe, Geman--McClure improved precision ($0.92$ vs.\ $0.86$) and token-space coverage ($0.85$ vs.\ $0.66$) over $\ell_2$. The iMF learning curve on A2-div (one seed, checkpoints of a 72k-step run) saturates after 24k steps: coverage $0.56$, $0.57$, $0.58$, $0.58$ and precision $0.24$, $0.25$, $0.26$, $0.26$ at 24k, 42k, 60k and 72k steps.
 
+\FloatBarrier
 \section{Readouts}
 \label{app:readout}
 Position readouts are small networks trained on real tokens: a soft-argmax probe for the ball (test error $0.13$\,px on A2-div, $0.05$\,px with DINOv3 on A1), and for Push-T a probe for agent position, block position and angle (T-vertex error $2.0$\,px). Because a probe might decode generated (out-of-distribution) tokens differently from real ones, the pilot cross-checked it against a nearest-neighbor judge that decodes a token map by looking up the nearest of $12{,}000$ real frames in a PCA-128 space: on the fixed-appearance environment the two judges agreed within $0.01$ for every \imlewm{} run (e.g.\ coverage $0.960$ vs.\ $0.960$ at $K{=}4$) and the nearest-neighbor judge was $0.03$--$0.09$ lower for flow matching ($0.841$ vs.\ $0.814$ with 20 steps), so the probe is, if anything, generous to the baselines; the ranking was identical under both. The FlowWM heatmap readout, ported from the public code, maps the $384$-channel token map through a $1\times1$ convolution to 256 channels, a GELU, dropout $0.1$ and a $16\times$ transposed convolution to $256\times256$ logits per shape; it is trained with a pixel-wise cross-entropy and feature noise of standard deviation $0.05$ for 20k steps and reads out the argmax; its error on real features is $0.10$\,px (95th percentile $0.75$\,px). The noise-robust variant is trained with feature noise $0.5$ (error floor $1.03$\,px). Table~\ref{tab:readout} gives all readout combinations for A1, including the energy-score generator, whose rollout manifold distance at $h{=}16$ is $3.05$ against $2.95$--$3.03$ for flow matching and $1.98$--$2.08$ for \imlewm{}.
@@ -154,6 +158,7 @@ Energy score, $m{=}8$ & -- & -- & -- & 8.94 & 33.77 & 11.65 \\
 \end{center}
 \end{table}
 
+\FloatBarrier
 \section{Additional results}
 \label{app:more}
 
@@ -286,6 +291,7 @@ Shortcut & 1 & 0.401 & 0.902 & 1.173 & 1.197 & 1.71 & 1.48 & 0.95 / 1.77 & 0.42 
 iMF: a 72k-step run on A2-div (one seed, checkpoints every 6k steps) saturates after 24k steps at coverage $0.56$--$0.58$ and precision $0.24$--$0.26$, so its 36k training steps in the main tables are not the limiting factor. Flow matching: with four times the steps on A1 (48k, one seed) the F1 error becomes $4.08$ (\imlewm{} $m{=}4$), $7.10$ (FM-2) and $8.99$ (FM-50) under the probe, and $4.20$ for \imlewm{} under the heatmap readout; the FlowWM recipe (wide head, time shift 13, 50 steps) raised the A2-div coverage of our initial 20-step flow baseline from $0.58$ to $0.79$ and its precision from $0.38$ to $0.51$. Shortcut: trained for 24k steps so that its wall-clock time ($0.7$\,h on A2, $1.5$\,h on B) is below that of \imlewm{} with $m{=}16$; sampling with two steps instead of one changed its coverage and precision by less than $0.01$. Parameter counts: $7.97$--$8.24$M (8M setting), $20.6$M (21M setting).
 
 
+\FloatBarrier
 \subsection{Rollout metrics}
 \begin{figure}[h]
 \centering
@@ -318,6 +324,7 @@ iMF & 8.04 & 10.1 & 30.9 & 3.57 & 33.4 & 36.1 & 5.81 & 84.1 & 60.8 \\
 \end{center}
 \end{table}
 
+\FloatBarrier
 \subsection{Stochastic Push-T: bootstrap intervals}
 Table~\ref{tab:bci} gives the paired differences behind Section~\ref{sec:b} and Section~\ref{sec:seq}. No model resolves the four modes of this benchmark: with the tolerance rule of the coverage metric (capped at $20$\,px here), the mode coverage at $h{=}16$ is at most $0.03$ for every model and seed in Table~\ref{tab:b}, and $0.06$--$0.08$ with per-step matching.
 
@@ -346,6 +353,7 @@ Per-step vs.\ one-step matching (8k) & $h{=}8$ recall error & $-7.1$ & $[-8.2, -
 \end{center}
 \end{table}
 
+\FloatBarrier
 \subsection{Energy-score follow-ups}
 \label{app:es}
 \begin{table}[h]
@@ -382,8 +390,28 @@ Figure~\ref{fig:toy} shows the toy experiment of Section~\ref{sec:es}. The task 
 
 The follow-up runs on A2-fix and with the per-token score were preceded by five recorded predictions, all of which held (two seeds each): (P1) the energy score with $m{=}8$ does not memorize on A2-fix (index $\le 0.40$; observed $0.268$); (P2) its coverage on A2-fix exceeds its A2-div value but stays below \imlewm{} with $m{=}16$ in both coverage and precision (observed $0.947$ vs.\ $0.987$ and $0.814$ vs.\ $0.954$); (P3) \imlewm{} with $m{=}4$ does not memorize on A2-fix ($\le 0.35$; observed $0.256$); (P4) the per-token energy score memorizes on A2-div (index $\ge 0.7$, coverage $\le 0.5$; observed $0.970$ and $0.224$); (P5) its manifold distance at $h{=}1$ exceeds $1.1$ (observed $1.12$; \imlewm{} $0.86$). On A2-fix the energy score's kNN recall is $1.00$ against $0.85$ for \imlewm{}, so its samples spread more widely than the outcomes; its deterministic-transition error is lower than that of \imlewm{} with $m{=}16$ ($0.20$ vs.\ $0.91$\,px). On A2-div its learning curves peak in coverage at 6k steps ($0.50$) and decline as the index rises ($0.42 \to 0.87$); the two $m{=}16$ seeds reach an index of $0.84$ and $0.87$ at 8k steps against $0.51$--$0.72$ for the three $m{=}8$ seeds. Token-space diagnostics at $h{=}1$ on A2-div (three seeds, evaluation contexts): spread-to-error ratio $0.80$ (energy score) vs.\ $0.64$ (\imlewm{} 16), $0.38$ (\imlewm{} 4), $1.15$ (FM-50); best-of-16 token error $0.468$ vs.\ $0.271$; mean-prediction error $0.451$ vs.\ $0.396$; readout spread $1.6$ vs.\ $4.1$\,px; manifold distance at $h{=}1$ $1.19$ vs.\ $0.86$.
 
+\FloatBarrier
 \subsection{Per-step matching}
 \label{app:seq}
+
+\begin{table}[h]
+\caption{Per-step matching on self-rollouts ($H{=}4$) against one-step matching on stochastic Push-T at equal training steps (8k, but $3.9\times$ the wall-clock time; 21M, three seeds): precision / recall error (px) and the paired per-seed change; bold: lower error.}
+\label{tab:seq}
+\begin{center}
+\scriptsize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccc}
+\toprule
+Stochastic Push-T & $h{=}8$ prec.\ / recall err. & $h{=}16$ prec.\ / recall err. & Train (h) \\
+\midrule
+One-step matching & 25.7 / 25.4 & 41.6 / 43.7 & 1.3 \\
+Per-step, feed matched & \best{18.8} / \best{18.4} & \best{24.6} / \best{29.3} & 5.3 \\
+Paired change & $-27\%$ / $-28\%$ & $-41\%$ / $-33\%$ & $\times 3.9$ \\
+One-step matching, 12k steps & 21.8 / 22.1 & 34.1 / 37.8 & 2.2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
 
 \begin{table}[h]
 \caption{Fed-back-state ablation on Bouncing Shapes (8M, $m{=}16$, 8k steps, two seeds): manifold distance, best-of-16 readout error and spread of the 16 rollouts at $h{=}16$ (the true futures spread by $23.6$\,px), and F1 error. All three predictions recorded before the ablation held (S1--S3 below). Bold: best manifold distance and best-of-16 error; the F1 differences are within the seed variation.}
@@ -411,6 +439,7 @@ Per-step, feed true frame & 2.14 & 23.6 & 16.6 & 8.62 \\
 \end{figure}
 Per-seed Push-T recall errors at $h{=}16$ (one-step $\to$ per-step): $43.7 \to 30.3$, $42.6 \to 32.2$, $44.7 \to 25.5$. On the deterministic Push-T control (one seed) the best-of-16 T-vertex error at $h = 4 / 8 / 16$ moves from $35.8 / 60.4 / 72.3$ to $29.2 / 45.6 / 58.9$\,px and the manifold distance at $h{=}16$ from $3.90$ to $3.64$. On A2-div (two seeds, 8k steps) the manifold distance at $h = 8 / 16 / 32$ moves from $1.31 / 1.47 / 1.83$ to $1.19 / 1.26 / 1.40$ while coverage and precision at $h{=}1$ move from $0.92 / 0.77$ to $0.90 / 0.73$ and the deterministic-transition error from $2.91$ to $3.97$\,px; the best-of-16 error is unchanged. On A1 (two seeds) F1 moves from $8.74$ to $8.51$ (precision error $9.26 \to 9.77$, recall error $8.28 \to 7.55$), the manifold distance at $h{=}16$ from $2.17$ to $1.92$ and the best-of-16 error from $23.2$ to $17.7$\,px. The fed-back-state ablation was preceded by three recorded predictions: (S1) feeding back the true frame yields less than half of the manifold gain (manifold at $h{=}16$ $\ge 2.05$; observed $2.14$); (S2) feeding back a random candidate yields more than half ($\le 2.05$; observed $1.81$); (S3) the random candidate's best-of-16 error exceeds the matched one's by at least $1$\,px ($\ge 18.7$; observed $22.9$). The spread of the 16 rollouts at $h = 1 / 4 / 8 / 16$ is $0.20 / 1.90 / 6.81 / 23.6$\,px for the true futures, $0.70 / 3.35 / 7.42 / 17.0$ for one-step matching, $1.16 / 5.42 / 12.2 / 26.3$ for the matched variant, $2.41 / 4.19 / 6.38 / 12.4$ for the random variant and $0.61 / 3.07 / 7.08 / 16.6$ for the true-frame variant. Training times: one-step $0.68$\,h, per-step variants $2.7$\,h (8M, 8k steps).
 
+\FloatBarrier
 \subsection{Planning details}
 \label{app:plan}
 \begin{table}[h]
@@ -435,6 +464,7 @@ FM-50                   & 30             & 200        & & --             & --   
 \end{table}
 On stochastic Push-T the final block position and angle errors are $46.6$\,px / $42.0^\circ$ (regression), $40.6$ / $35.2$ (FM-2), $45.2$ / $20.0$ (FM-50, 10 episodes) and $49.5$ / $44.9$ (\imlewm{}). The contact error of a single transition (block displacement after a contact transition, true $15.9$\,px) is $11.7$ / $11.2$\,px for regression at 12k / 36k steps, $12.4$ / $12.6$ for FM-2 / FM-50 and $12.2$ / $12.3$ for \imlewm{} with $m = 4$ / $16$ (seed 0). On the branch-risk task the per-start absolute error of the five-push pit probability is $0.078$ (\imlewm{}), $0.086$ (FM-50), $0.096$ (FM-2) and $0.462$ (regression), and the timeout rates are $13.7\%$ (\imlewm{}), $14.3\%$ (FM-2), $19.3\%$ (regression) and $17\%$ (oracle). Wall-clock for 100 episodes: oracle $100$\,s, regression $523$\,s ($m_p{=}1$), \imlewm{} $3{,}633$\,s, FM-2 $9{,}067$\,s.
 
+\FloatBarrier
 \section{Negative results}
 \label{app:negative}
 The first four paragraphs below describe additions that the pilot study tested and the final recipe does not use; the last one collects two BAIR variants that did not help either.
@@ -454,6 +484,7 @@ We had anticipated that the noise $z$ might absorb the effect of the action. It 
 \paragraph{Low-dimensional matching and larger budgets on BAIR.}
 See Table~\ref{tab:bair}: over $h = 1$ to $16$, $m{=}64$ raises the spread-to-error ratio from $0.43$--$0.51$ to $0.51$--$0.56$ ($0.45$ and $0.54$ at $h{=}1$) at $2.4\times$ the training time, and matching in a 512-dimensional pooled space lowers it to $0.31$--$0.39$ ($0.32$ at $h{=}1$); neither approaches FM-50 on distribution metrics.
 
+\FloatBarrier
 \section{Statistical methodology}
 \label{app:stats}
 Per-context intervals are percentile bootstrap intervals (2{,}000 resamples) over the 400 evaluation contexts of a run, used in the pilot and recipe tables. Seed statistics are means and standard deviations over the listed seeds; the $\pm$ values in the tables are these standard deviations, computed with the $1/n$ normalization. For the Push-T multi-future test set, each model's per-start errors were stored; the start-state interval averages the seeds first and resamples the 128 starts, and the hierarchical interval resamples the seeds with replacement and then the starts, 10{,}000 times each. Per-step and one-step matching runs with the same seed are paired. All comparisons report the direction and the magnitude of the difference; where an interval includes zero we say so in the text.

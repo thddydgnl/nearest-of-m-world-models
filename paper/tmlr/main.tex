@@ -17,6 +17,7 @@
 \usepackage{xcolor}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{placeins}
 
 \newtheorem{proposition}{Proposition}
 \newtheorem{corollary}{Corollary}
@@ -79,6 +80,10 @@ This work studies the training objectives of small world models on synthetic, si
 \bibliographystyle{tmlr}
 
 \appendix
+\FloatBarrier
+\setcounter{figure}{0}\setcounter{table}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theHfigure}{S\arabic{figure}}\renewcommand{\theHtable}{S\arabic{table}}
 \input{app}
 
 \end{document}
