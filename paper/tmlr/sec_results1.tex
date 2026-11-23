@@ -2,7 +2,7 @@
 \label{sec:results1}
 
 \begin{table}[t]
-\caption{A2-div ($K{=}4$, randomized appearance), 8M models, 12k steps, three seeds (energy score $m{=}16$: two). Ideal-sampler coverage $0.99$; chance level of the memorization index $0.25$; latency per frame at batch 1 on a shared RTX A5000. Bold: best per column with an arrow. Memorization index: the training monitor's value (200 training contexts, 16 samples); for FM-50, FM-2 and iMF, whose monitor samples with 20 Euler steps, it is re-measured with the same protocol at each model's own NFE (Appendix~\ref{app:memo}).}
+\caption{A2-div ($K{=}4$, randomized appearance), 8M models, 12k steps, three seeds (energy score $m{=}16$: two). Ideal-sampler coverage $0.99$; chance level of the memorization index $0.25$; ms/step: latency per predicted frame at batch 1 on an otherwise idle RTX A5000 (mean of five repeats of 50 passes); Train (h): wall-clock time of the original runs, some of which shared a GPU (idle-GPU step times in Appendix~\ref{app:impl}). Bold: best per column with an arrow. Memorization index: the training monitor's value (200 training contexts, 16 samples); for FM-50, FM-2 and iMF, whose monitor samples with 20 Euler steps, it is re-measured with the same protocol at each model's own NFE (Appendix~\ref{app:memo}).}
 \label{tab:a2}
 \begin{center}
 \scriptsize
@@ -11,15 +11,15 @@
 \toprule
 Method & NFE & Coverage $\uparrow$ & Precision $\uparrow$ & kNN recall $\uparrow$ & Det.\ err.\ (px) $\downarrow$ & Memo.\ index & ms/frame & Train (h) \\
 \midrule
-Regression & 1 & \ms{0.15}{0.01} & \ms{0.61}{0.02} & 0.00 & \ms{1.09}{0.03} & \ms{0.99}{0.01} & 4.4 & 0.3 \\
-FM-50 (FlowWM recipe) & 50 & \ms{0.79}{0.01} & \ms{0.51}{0.00} & \ms{0.91}{0.00} & \ms{2.24}{0.02} & \ms{0.30}{0.00} & 107 & 0.4 \\
-FM-2 (same model) & 2 & \ms{0.60}{0.00} & \ms{0.46}{0.01} & \ms{0.56}{0.01} & \ms{1.72}{0.01} & \ms{0.33}{0.01} & 6.5 & 0.4 \\
-iMF (36k steps) & 1 & \ms{0.56}{0.01} & \ms{0.23}{0.02} & \ms{0.92}{0.03} & \ms{14.5}{0.7} & \ms{0.29}{0.02} & 3.4 & 3.2 \\
-Shortcut (24k steps) & 1 & \ms{0.66}{0.00} & \ms{0.42}{0.01} & \ms{0.77}{0.01} & \ms{3.60}{0.07} & \ms{0.27}{0.01} & 4.3 & 0.7 \\
-Energy score, $m{=}8$ & 1 & \ms{0.36}{0.02} & \ms{0.61}{0.02} & \ms{0.77}{0.06} & \best{\ms{1.06}{0.04}} & \ms{0.87}{0.06} & 3.1 & 1.2 \\
-Energy score, $m{=}16$ & 1 & \ms{0.28}{0.01} & \ms{0.61}{0.01} & \ms{0.60}{0.02} & \best{\ms{1.06}{0.03}} & \ms{0.97}{0.01} & 3.3 & 2.2 \\
-\imlewm{}, $m{=}4$ & 1 & \ms{0.46}{0.01} & \ms{0.68}{0.01} & \ms{0.65}{0.01} & \ms{1.14}{0.07} & \ms{0.75}{0.01} & 3.7 & 0.6 \\
-\imlewm{}, $m{=}16$ & 1 & \best{\ms{0.93}{0.01}} & \best{\ms{0.82}{0.01}} & \best{\ms{0.94}{0.01}} & \ms{1.55}{0.05} & \ms{0.29}{0.00} & 3.3 & 1.1 \\
+Regression & 1 & \ms{0.15}{0.01} & \ms{0.61}{0.02} & 0.00 & \ms{1.09}{0.03} & \ms{0.99}{0.01} & 5.8 & 0.3 \\
+FM-50 (FlowWM recipe) & 50 & \ms{0.79}{0.01} & \ms{0.51}{0.00} & \ms{0.91}{0.00} & \ms{2.24}{0.02} & \ms{0.30}{0.00} & 203 & 0.4 \\
+FM-2 (same model) & 2 & \ms{0.60}{0.00} & \ms{0.46}{0.01} & \ms{0.56}{0.01} & \ms{1.72}{0.01} & \ms{0.33}{0.01} & 11.3 & 0.4 \\
+iMF (36k steps) & 1 & \ms{0.56}{0.01} & \ms{0.23}{0.02} & \ms{0.92}{0.03} & \ms{14.5}{0.7} & \ms{0.29}{0.02} & 6.5 & 3.2 \\
+Shortcut (24k steps) & 1 & \ms{0.66}{0.00} & \ms{0.42}{0.01} & \ms{0.77}{0.01} & \ms{3.60}{0.07} & \ms{0.27}{0.01} & 6.8 & 0.7 \\
+Energy score, $m{=}8$ & 1 & \ms{0.36}{0.02} & \ms{0.61}{0.02} & \ms{0.77}{0.06} & \best{\ms{1.06}{0.04}} & \ms{0.87}{0.06} & 6.4 & 1.2 \\
+Energy score, $m{=}16$ & 1 & \ms{0.28}{0.01} & \ms{0.61}{0.01} & \ms{0.60}{0.02} & \best{\ms{1.06}{0.03}} & \ms{0.97}{0.01} & 6.1 & 2.2 \\
+\imlewm{}, $m{=}4$ & 1 & \ms{0.46}{0.01} & \ms{0.68}{0.01} & \ms{0.65}{0.01} & \ms{1.14}{0.07} & \ms{0.75}{0.01} & 7.5 & 0.6 \\
+\imlewm{}, $m{=}16$ & 1 & \best{\ms{0.93}{0.01}} & \best{\ms{0.82}{0.01}} & \best{\ms{0.94}{0.01}} & \ms{1.55}{0.05} & \ms{0.29}{0.00} & 7.7 & 1.1 \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -27,7 +27,7 @@ Energy score, $m{=}16$ & 1 & \ms{0.28}{0.01} & \ms{0.61}{0.01} & \ms{0.60}{0.02}
 
 \leavevmode\refstepcounter{subsection}\textbf{\thesubsection\ Non-repeating contexts (A2-div).}
 \label{sec:a2}
-Table~\ref{tab:a2} is the main comparison (Figure~\ref{fig:samples}, Appendix~\ref{app:more}). \imlewm{} with $m{=}16$ covers $0.93$ of the modes, against $0.99$ for an ideal sampler, and $0.82$ of its samples fall on a mode. FM-50 has coverage $0.79$ and precision $0.51$, scattering its samples between the modes, and FM-2, iMF and Shortcut are below it on both measures. Trained for three times as many steps, more than the training time of \imlewm{} with $m{=}16$, FM-50 reaches $0.85$ (Appendix~\ref{app:r1}). The energy-score generator has the lowest coverage of all stochastic methods and, like regression, has memorized the realized outcomes of training contexts. \imlewm{} with $m{=}4$ lies in between. Section~\ref{sec:results2} analyzes the memorization index. The cost of $m{=}16$ is a larger deterministic-transition error and $1.7\times$ the training time of $m{=}4$, and inference costs the same at every $m$.
+Table~\ref{tab:a2} is the main comparison (Figure~\ref{fig:samples}, Appendix~\ref{app:more}). \imlewm{} with $m{=}16$ covers $0.93$ of the modes, against $0.99$ for an ideal sampler, and $0.82$ of its samples fall on a mode. FM-50 has coverage $0.79$ and precision $0.51$, scattering its samples between the modes, and FM-2, iMF and Shortcut are below it on both measures. Trained for three times as many steps, more than the training time of \imlewm{} with $m{=}16$, FM-50 reaches $0.85$ (Appendix~\ref{app:r1}). The energy-score generator has the lowest coverage of all stochastic methods and, like regression, has memorized the realized outcomes of training contexts. \imlewm{} with $m{=}4$ lies in between. Section~\ref{sec:results2} analyzes the memorization index. The cost of $m{=}16$ is a larger deterministic-transition error and $1.6\times$ the training time of $m{=}4$ on an idle GPU, and inference costs the same at every $m$.
 
 \begin{table}[t]
 \caption{Bouncing Shapes F1 error in px (frame $256$\,px), three seeds; bold: lowest per column. Autoregressive: 3-frame context, 16 rollout steps, 8M models. Joint: 16 frames predicted at once from 16 context frames, 27--29M models. A last-frame-copy baseline scores $21.7$ in every column; iMF, Shortcut and the energy-score generator reach $16.8$, $12.1$ and $8.9$ (autoregressive, probe; Appendix~\ref{app:readout}).}

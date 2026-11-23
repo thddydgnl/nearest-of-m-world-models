@@ -1,0 +1,3 @@
+r1_fm36k_s0 nfe=50 idx 0.304/0.251 free 0.305/0.256 exc_ch 0.071 exc_ho 0.070 gap -0.0153 (78.1s)
+r1_fm36k_s1 nfe=50 idx 0.297/0.247 free 0.302/0.257 exc_ch 0.063 exc_ho 0.067 gap -0.0185 (77.3s)
+r1_fm36k_s2 nfe=50 idx 0.297/0.255 free 0.303/0.251 exc_ch 0.062 exc_ho 0.056 gap -0.0174 (77.3s)

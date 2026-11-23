@@ -324,6 +324,114 @@
     "step_ms": 201.49999999999997,
     "train_h_at_orig_steps": 0.6716666666666666
    }
+  },
+  "B iMF": {
+   "run": "e1_b_imf_s0",
+   "nfe": 1,
+   "method": "imf",
+   "latency": {
+    "mean_ms": 9.59051513671875,
+    "sd_ms": 1.309515451055475,
+    "min_ms": 8.753633499145508,
+    "values_ms": [
+     8.754,
+     8.784,
+     8.761,
+     9.889,
+     11.766
+    ]
+   },
+   "orig_train_time_s": 18784.266793489456,
+   "orig_steps": 36000,
+   "train": {
+    "name": "r1_tim_B_iMF",
+    "steps": 400,
+    "t200": 111.1,
+    "t400": 220.4,
+    "step_ms": 546.5000000000001,
+    "train_h_at_orig_steps": 5.465000000000001
+   }
+  },
+  "B Shortcut": {
+   "run": "e7_b_sc_s0",
+   "nfe": 1,
+   "method": "sc",
+   "latency": {
+    "mean_ms": 8.810250282287598,
+    "sd_ms": 0.38937540752883737,
+    "min_ms": 8.47318172454834,
+    "values_ms": [
+     8.952,
+     8.688,
+     8.473,
+     8.518,
+     9.42
+    ]
+   },
+   "orig_train_time_s": 5400.341336250305,
+   "orig_steps": 24000,
+   "train": {
+    "name": "r1_tim_B_Shortcut",
+    "steps": 400,
+    "t200": 53.8,
+    "t400": 106.8,
+    "step_ms": 265.0,
+    "train_h_at_orig_steps": 1.7666666666666666
+   }
+  },
+  "B IMLE-WM m=4": {
+   "run": "e1_b_imle4_s0",
+   "nfe": 1,
+   "method": "imle",
+   "latency": {
+    "mean_ms": 8.41316032409668,
+    "sd_ms": 0.04514252918994404,
+    "min_ms": 8.376078605651855,
+    "values_ms": [
+     8.4,
+     8.414,
+     8.376,
+     8.386,
+     8.49
+    ]
+   },
+   "orig_train_time_s": 3861.7227675914764,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_B_IMLEWM_m4",
+    "steps": 400,
+    "t200": 68.5,
+    "t400": 135.1,
+    "step_ms": 332.99999999999994,
+    "train_h_at_orig_steps": 1.1099999999999999
+   }
+  },
+  "B IMLE-WM m=16": {
+   "run": "e1_b_imle16_s0",
+   "nfe": 1,
+   "method": "imle",
+   "latency": {
+    "mean_ms": 9.272041320800781,
+    "sd_ms": 0.3104474529216939,
+    "min_ms": 8.832840919494629,
+    "values_ms": [
+     9.509,
+     9.53,
+     9.429,
+     8.833,
+     9.059
+    ]
+   },
+   "orig_train_time_s": 7304.7385222911835,
+   "orig_steps": 12000,
+   "train": {
+    "name": "r1_tim_B_IMLEWM_m16",
+    "steps": 400,
+    "t200": 125.8,
+    "t400": 250.1,
+    "step_ms": 621.4999999999999,
+    "train_h_at_orig_steps": 2.0716666666666663
+   }
   }
  }
 }

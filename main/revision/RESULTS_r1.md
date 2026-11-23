@@ -165,14 +165,37 @@ Raw outputs: `main/revision/an_analyses/raw/an.1/out/<analysis>/`; tables: `pyth
   the block center at step h from the mean of 64 futures over 32 starts; the caption now states it); contact error
   11.2-12.6 px (paper 11.2-12.6); BAIR spread-to-error ratios equal on training and held-out contexts within 0.03.
   Nothing had to be removed under rule 4f.
-- **g. Timing** on the idle A5000: (TBD).
+- **g. Timing** on one otherwise idle RTX A5000 (`out/g_timing/timing.json` under `x2_long/raw/x2.1/`). Batch-1
+  latency per predicted frame, mean of five repeats of 50 passes (A2-div, 8M): regression 5.8 ms, FM-50 203 ms,
+  FM-2 11.3, iMF 6.5, Shortcut 6.8, energy score m = 8 / 16 6.4 / 6.1, IMLE-WM m = 4 / 16 7.5 / 7.7 ms (stochastic
+  Push-T, 21M: 10.3, 286, 18.3, 9.6, 8.8, 8.4 / 9.3 ms). Training step at batch 128 (8M): 170 ms for regression and
+  FM, 180 Shortcut, 300 iMF, 412 / 699 energy score, 203 / 321 IMLE-WM; 21M: 200, 200, 265, 547, 333 / 622 ms. All
+  latencies are about twice the paper's shared-GPU values; FM-50 / IMLE-WM m = 16 is 26x (paper: 32x), IMLE-WM
+  m = 16 / m = 4 training 1.6x (paper: 1.7x). The paper now reports these idle-GPU latencies in Table 2.
 - **h. Qualitative samples**: 9 models x (3 training + 3 held-out) contexts chosen by a fixed rule; the paper's new
   appendix figure shows the 3 training contexts and the first held-out context.
 
 ## 7. Post-hoc analyses (not in the frozen design)
 
-- Manifold distance with a training-split reference bank (review finding A-26), `main/code/imlewm/r1_e3bank.py`.
-  (TBD)
+- Manifold distance with a training-split reference bank (review finding A-26), `main/code/imlewm/r1_e3bank.py`,
+  `runpod/pod/e3bank.sh`; raw: `main/revision/an_analyses/raw/an.1/out/e3bank/`. The paper's bank (6,000 test-split
+  frames) contains the true futures of the evaluated rollouts. With 6,000 training-split frames instead (seed-0 A2-div
+  models of Table 2), manifold distance at h = 1 / 4 / 8 / 16 / 32:
+
+  | Model | h=1 | h=4 | h=8 | h=16 | h=32 | paper's bank, h=32 (seed 0) |
+  |---|---|---|---|---|---|---|
+  | True future frames | 1.42 | 1.40 | 1.42 | 1.42 | 1.42 | |
+  | Regression | 1.40 | 1.37 | 1.38 | 1.42 | 1.54 | 1.76 |
+  | IMLE-WM m=4 | 1.40 | 1.37 | 1.38 | 1.41 | 1.53 | |
+  | IMLE-WM m=16 | 1.40 | 1.38 | 1.39 | 1.40 | 1.50 | 1.69 |
+  | Energy score m=8 | 1.50 | 1.64 | 1.81 | 2.07 | 2.63 | |
+  | FM-50 | 1.44 | 1.49 | 1.66 | 2.21 | 4.12 | 6.02 |
+  | FM-2 | 1.41 | 1.45 | 1.60 | 2.19 | 4.31 | 6.31 |
+  | iMF | 1.52 | 1.83 | 2.16 | 3.08 | 6.08 | |
+
+  Held-out frames are novel, so the true futures sit at 1.42 rather than 1 against a training bank. No model starts
+  below that level, and the ordering at h = 32 is unchanged; the gap between flow matching and IMLE-WM shrinks from
+  3.6x to 2.7x.
 
 ## 8. Consequences for the paper
 

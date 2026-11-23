@@ -92,3 +92,18 @@
   geometries). C1: ceiling 1.000 and floor 0.250 on both geometries, no correction. Decision at m = 4: inconclusive
   (arc 0.418, control 0.517, difference 0.100; arc above the H_I interval [0.264, 0.360]); m = 2 inconclusive
   (0.688 vs 0.838); m = 8 reported (0.321 vs 0.313). Results and logs pulled; pod x1.1 deleted (GraphQL fallback).
+- 2026-11-22T23:58Z Post-hoc training-bank manifold check done (seed-0 A2-div models; true futures at 1.42; at h = 32
+  regression 1.54, IMLE-WM m = 16 1.50, FM-50 4.12, iMF 6.08; ordering unchanged). Pod an.1 deleted after the pull
+  (GraphQL fallback). Remaining pods: x2.1 (timing analysis g), x2.2 (experiment 2b, step 34,600 of 48,000).
+- 2026-11-23T00:20Z Manuscript step 2b (front matter) drafted: new abstract (1,914 characters), introduction,
+  contributions, discussion, conclusion; Results II rewritten by the experiment 1 decision; main text through the
+  Broader Impact Statement fits on 12 pages. Commit 6405f5f pushed to revision-r1.
+- 2026-11-23T00:30Z Analysis g (timing) done on x2.1 (idle RTX A5000): Table 2 latency column replaced (FM-50 203 ms,
+  IMLE-WM m = 16 7.7 ms, regression 5.8 ms); training step times in Appendix D replaced (IMLE-WM 203/321 ms for
+  m = 4/16, 8M). All values about twice the original shared-GPU numbers; ratios similar. Pod x2.1 deleted after the
+  pull. x2.2: both 48k runs stalled at step ~35,900 in I/O wait (D state, folio wait) on the network volume since
+  00:09Z; watching up to 15 minutes before acting (no checkpoint since 24k).
+- 2026-11-23T00:45Z Step 3 started: six independent Fable 5.2 max reviewers (A TMLR review simulation, B claims and
+  flow, C figures and tables, D numbers and reproducibility, E terminology and prose, F audit of the first round's
+  221 findings) on the manuscript as committed now; reports go to `paper/review/2026-11-23_fable_r2/`. The four TBD
+  placeholders wait for experiment 2b (48k runs resumed at 00:23Z after a 13-minute I/O stall at step 36k).

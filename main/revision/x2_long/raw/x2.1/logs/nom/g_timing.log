@@ -1,0 +1,16 @@
+A2 Regression 5.78 ms; 170.00000000000003 ms/step
+A2 FM-50 203.44 ms; 170.5 ms/step
+A2 FM-2 11.3 ms; 170.5 ms/step
+A2 iMF 6.48 ms; 299.50000000000006 ms/step
+A2 Shortcut 6.81 ms; 180.0 ms/step
+A2 ES m=8 6.45 ms; 412.0 ms/step
+A2 ES m=16 6.07 ms; 699.0000000000001 ms/step
+A2 IMLE-WM m=4 7.51 ms; 202.99999999999997 ms/step
+A2 IMLE-WM m=16 7.66 ms; 320.50000000000006 ms/step
+B Regression 10.28 ms; 199.50000000000003 ms/step
+B FM-50 285.59 ms; 201.49999999999997 ms/step
+B FM-2 18.33 ms; 201.49999999999997 ms/step
+B iMF 9.59 ms; 546.5000000000001 ms/step
+B Shortcut 8.81 ms; 265.0 ms/step
+B IMLE-WM m=4 8.41 ms; 332.99999999999994 ms/step
+B IMLE-WM m=16 9.27 ms; 621.4999999999999 ms/step

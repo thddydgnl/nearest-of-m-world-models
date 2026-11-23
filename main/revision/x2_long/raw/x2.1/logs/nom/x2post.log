@@ -1,0 +1,13 @@
+22:54:56Z FM 36k trained and evaluated, e3 chain finished
+22:59:01Z fm36k memo nfe 50 rc=0
+22:59:24Z fm36k memo nfe 2 rc=0
+23:03:25Z fm36k memo ckpt_12000 rc=0
+23:05:24Z eval r1_fm36k_s0 ckpt_12000 rc=0
+23:07:23Z eval r1_fm36k_s1 ckpt_12000 rc=0
+23:09:18Z eval r1_fm36k_s2 ckpt_12000 rc=0
+23:13:18Z fm36k memo ckpt_24000 rc=0
+23:15:15Z eval r1_fm36k_s0 ckpt_24000 rc=0
+23:17:10Z eval r1_fm36k_s1 ckpt_24000 rc=0
+23:19:08Z eval r1_fm36k_s2 ckpt_24000 rc=0
+23:58:30Z timing rc=0
+23:58:30Z x2 post done
