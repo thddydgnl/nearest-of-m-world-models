@@ -221,6 +221,13 @@ r_I = fit_rmse([p[2] for p in allpts])
 r_miss = fit_rmse([(1 - 1 / p[0]) ** p[1] for p in allpts])
 r_exp = fit_rmse([math.exp(-p[1] / p[0]) for p in allpts])
 r_m2 = fit_rmse([1 / p[1] ** 2 for p in allpts])
+all17 = [(K, m, g["I"], g["excess"]) for (K, m), g in grid.items()]
+def fit_rmse17(f):
+    y = np.array([p[3] for p in all17]); x = np.array([f(p) for p in all17]); bb, aa = np.polyfit(x, y, 1)
+    return float(np.sqrt(np.mean((aa + bb * x - y) ** 2)))
+r17 = dict(I=fit_rmse17(lambda p: p[2]), m2=fit_rmse17(lambda p: 1 / p[1] ** 2),
+           miss=fit_rmse17(lambda p: (1 - 1 / p[0]) ** p[1]), exp=fit_rmse17(lambda p: math.exp(-p[1] / p[0])))
+print("one-variable fit RMSE with K=2,m=2 included:", {k: round(v, 3) for k, v in r17.items()})
 print(f"one-variable linear fit RMSE (K=2,m=2 excluded): I(m,K) {r_I:.3f} | 1/m^2 {r_m2:.3f} | (1-1/K)^m {r_miss:.3f} | exp(-m/K) {r_exp:.3f}")
 
 # revision r1, experiment 1: K = 4 with the four modes on a 90-degree arc (pulled raw runs; skipped if absent)
@@ -239,6 +246,18 @@ for m in (2, 4, 8):
                       excess=(float(np.mean(vals)) - 0.25) / 0.75)
 for m, g in sorted(arc.items()):
     print(f"  arc90 K=4 m={m}: I={g['I']:.4f} memo={g['memo']:.3f} excess={g['excess']:.3f}")
+ctl = {}
+for m in (2, 4, 8):
+    vals = []
+    for s_ in (0, 1):
+        pth = os.path.join(R1_X1, f"r1_k4_m{m}_s{s_}", "log.jsonl")
+        if os.path.exists(pth):
+            rows = [json.loads(l) for l in open(pth) if "memo_train" in l]
+            if rows and rows[-1]["step"] == 8000:
+                vals.append(rows[-1]["memo_train"])
+    if len(vals) == 2:
+        ctl[m] = dict(I=I_mK(m, 4, 180.0), memo_seeds=vals, excess=(float(np.mean(vals)) - 0.25) / 0.75)
+ARC_C = "#CC79A7"   # arc test and its control in their own hue; the fit keeps the vermillion
 
 # predictions recorded before the K = 2, 16 runs (from theory_m_law.md, on the memorization-index scale)
 PRED = {(2, 2): (0.77, 0.74, 0.81), (2, 4): (0.57, 0.54, 0.61), (2, 8): (0.51, 0.50, 0.54), (2, 16): (0.51, 0.50, 0.54),
@@ -265,11 +284,15 @@ for ax, xof in zip(axes, (lambda K, m: grid[(K, m)]["I"], lambda K, m: (1 - 1 / 
         for m in ms:
             seed_ticks(ax, xof(K, m), [excess_of(v, K) for v in grid[(K, m)]["memo_seeds"]], KCOL[K])
     if arc:
-        xa = [arc[m]["I"] if xof is not None and ax is axes[0] else (0.75) ** m for m in sorted(arc)]
-        ax.plot(xa, [arc[m]["excess"] for m in sorted(arc)], color=C["imle"], marker="s", mfc="white", mec=C["imle"],
-                mew=1.0, lw=0.9, ls="--", ms=4, zorder=3.5, label="$K{=}4$, 90$^\\circ$ arc")
+        xa = [arc[m]["I"] if ax is axes[0] else (0.75) ** m for m in sorted(arc)]
+        ax.plot(xa, [arc[m]["excess"] for m in sorted(arc)], color=ARC_C, marker="s", mfc="white", mec=ARC_C,
+                mew=1.0, lw=0.9, ls="--", ms=4, zorder=3.5)
         for xv, m in zip(xa, sorted(arc)):
-            seed_ticks(ax, xv, [excess_of(v, 4) for v in arc[m]["memo_seeds"]], C["imle"])
+            seed_ticks(ax, xv, [excess_of(v, 4) for v in arc[m]["memo_seeds"]], ARC_C)
+    if ctl:
+        xc = [ctl[m]["I"] if ax is axes[0] else (0.75) ** m for m in sorted(ctl)]
+        ax.plot(xc, [ctl[m]["excess"] for m in sorted(ctl)], color=ARC_C, marker="s", mec="white", mew=0.4, lw=0.9,
+                ls="--", ms=4, zorder=3.4)
     ax.set_xscale("log")
 ax = axes[0]
 xx = np.geomspace(1.5e-5, 0.8, 200)
@@ -285,11 +308,12 @@ ax.set_xlim(1.5e-5, 0.8); ax.set_ylim(-0.03, 0.97)
 ax.set_xlabel("codebook distortion $I(m,K)$"); ax.set_ylabel("excess memorization")
 ax.set_title("(a) against the codebook distortion")
 fit_handle = (Patch(color=C["imle"], alpha=0.12, lw=0), Line2D([], [], color=C["imle"], lw=1.0))
-ARC_HANDLE = Line2D([], [], color=C["imle"], marker="s", mfc="white", mec=C["imle"], mew=1.0, lw=0.9, ls="--", ms=4)
-ax.legend(handles=K_HANDLES + ([ARC_HANDLE] if arc else []) + [fit_handle,
+ARC_HANDLE = Line2D([], [], color=ARC_C, marker="s", mfc="white", mec=ARC_C, mew=1.0, lw=0.9, ls="--", ms=4)
+CTL_HANDLE = Line2D([], [], color=ARC_C, marker="s", mec="white", mew=0.4, lw=0.9, ls="--", ms=4)
+ax.legend(handles=K_HANDLES + ([ARC_HANDLE, CTL_HANDLE] if arc else []) + [fit_handle,
                                Line2D([], [], ls="none", marker="|", ms=7, mew=0.9, color="k"),
                                Line2D([], [], ls="none", marker="o", ms=7, mfc="none", mec="k", mew=0.8)],
-          labels=[h.get_label() for h in K_HANDLES] + (["$K{=}4$, 90$^\\circ$ arc"] if arc else [])
+          labels=[h.get_label() for h in K_HANDLES] + (["$K{=}4$, 90\N{DEGREE SIGN} arc", "its semicircle control"] if arc else [])
                  + [f"fit on $K{{=}}4,8$ ($\\pm2$ RMSE)", "interval recorded in advance", "observed value outside it"],
           loc="upper left", handlelength=1.6)
 ax = axes[1]
@@ -298,7 +322,7 @@ ax.set_xlabel("miss probability $(1-1/K)^m$")
 ax.set_title("(b) against the miss probability")
 ax.annotate("", xy=(3e-4, 0.30), xytext=(3e-2, 0.30), arrowprops=dict(arrowstyle="->", color=INK, lw=0.8))
 note(ax, 3e-3, 0.32, "larger $m$", ha="center", va="bottom")
-note(ax, 0.03, 0.97, f"one-variable fit RMSE:\n$I(m,K)$  {r_I:.3f}\n$1/m^2$  {r_m2:.3f}\n$(1-1/K)^m$  {r_miss:.3f}\n$e^{{-m/K}}$  {r_exp:.3f}",
+note(ax, 0.03, 0.97, f"fit RMSE without / with $K{{=}}2,m{{=}}2$:\n$I(m,K)$  {r_I:.3f} / {r17['I']:.3f}\n$1/m^2$  {r_m2:.3f} / {r17['m2']:.3f}\n$(1-1/K)^m$  {r_miss:.3f} / {r17['miss']:.3f}\n$e^{{-m/K}}$  {r_exp:.3f} / {r17['exp']:.3f}",
      transform=ax.transAxes, va="top", ha="left", linespacing=1.3)
 savefig(fig, "fig_memo_collapse.pdf")
 
@@ -308,33 +332,47 @@ curves = {
     "es8": seeds("e15_a2_es8_s{}"), "es16": seeds("e15_a2_es16_s{}", 2), "estok8": seeds("e15_a2_estok8_s{}", 2),
     "imle4": seeds("e1_a2_imle4_s{}"), "imle16": seeds("e1_a2_imle16_s{}"),
 }   # table order
+def draw_curves(axes, keys, ms=3.5):
+    for key in keys:
+        rs = curves[key]
+        cs = [memo_curve(r) for r in rs]
+        cs = [c for c in cs if len(c[0])]
+        if not cs:
+            print("no memo curves for", key); continue
+        n = min(len(c[0]) for c in cs)
+        st = cs[0][0][:n]
+        mt = np.array([c[1][:n] for c in cs]); cv = np.array([c[3][:n] for c in cs])
+        s_ = dict(STY[key]); s_["ms"] = ms
+        axes[0].plot(st / 1000, mt.mean(0), **s_)
+        axes[0].fill_between(st / 1000, mt.min(0), mt.max(0), color=s_["color"], alpha=0.12, lw=0)
+        axes[1].plot(st / 1000, cv.mean(0), **s_)
+        axes[1].fill_between(st / 1000, cv.min(0), cv.max(0), color=s_["color"], alpha=0.12, lw=0)
+    axes[0].axhline(0.25, color="k", lw=0.7, ls="--", zorder=1.6); note(axes[0], 12.4, 0.235, "chance", va="top", ha="right")
+    axes[1].axhline(1 - 0.75 ** 16, color="k", lw=0.7, ls="--", zorder=1.6)
+    note(axes[1], 1.6, 1 - 0.75 ** 16 - 0.015, "ideal sampler", va="top", ha="left")
+    axes[0].set_ylim(0.15, 1.02); axes[1].set_ylim(0.0, 1.02)
+    for ax in axes:
+        ax.set_xlim(1.5, 12.5); ax.set_xticks([2, 4, 6, 8, 10, 12]); ax.set_xlabel("training step (k)")
+
+
 fig, axes = new_fig(1, 2, 2.9)
-for key, rs in curves.items():
-    cs = [memo_curve(r) for r in rs]
-    cs = [c for c in cs if len(c[0])]
-    if not cs:
-        print("no memo curves for", key); continue
-    n = min(len(c[0]) for c in cs)
-    st = cs[0][0][:n]
-    mt = np.array([c[1][:n] for c in cs]); cv = np.array([c[3][:n] for c in cs])
-    s = dict(STY[key]); s["ms"] = 3.5
-    axes[0].plot(st / 1000, mt.mean(0), **s)
-    axes[0].fill_between(st / 1000, mt.min(0), mt.max(0), color=s["color"], alpha=0.12, lw=0)
-    axes[1].plot(st / 1000, cv.mean(0), **s)
-    axes[1].fill_between(st / 1000, cv.min(0), cv.max(0), color=s["color"], alpha=0.12, lw=0)
-axes[0].axhline(0.25, color="k", lw=0.7, ls="--", zorder=1.6); note(axes[0], 12.4, 0.235, "chance", va="top", ha="right")
-axes[0].set_xlabel("training step (k)"); axes[0].set_ylabel("memorization index (training contexts)")
+draw_curves(axes, list(curves))
+axes[0].set_ylabel("memorization index (training contexts)")
 axes[0].set_title("(a) outcome memorization during training")
-axes[1].set_xlabel("training step (k)"); axes[1].set_ylabel("coverage, held-out contexts")
+axes[1].set_ylabel("coverage, held-out contexts")
 axes[1].set_title("(b) mode coverage during training")
-axes[1].axhline(1 - 0.75 ** 16, color="k", lw=0.7, ls="--", zorder=1.6)
-note(axes[1], 1.6, 1 - 0.75 ** 16 - 0.015, "ideal sampler", va="top", ha="left")
-axes[0].set_ylim(0.15, 1.02); axes[1].set_ylim(0.0, 1.02)
-for ax in axes:
-    ax.set_xlim(1.5, 12.5); ax.set_xticks([2, 4, 6, 8, 10, 12])
 h_, l_ = axes[1].get_legend_handles_labels()
 fig.legend(row_major(h_, 4), row_major(l_, 4), loc="outside lower center", ncol=4)
 savefig(fig, "fig_memo_curves.pdf")
+
+# compact version for the main text (Section 7.1): six series, no per-token score, titles instead of y labels
+fig, axes = new_fig(1, 2, 1.75)
+draw_curves(axes, [k for k in curves if k != "estok8"], ms=3.0)
+axes[0].set_title("(a) memorization index, training contexts")
+axes[1].set_title("(b) coverage, held-out contexts")
+h_, l_ = axes[1].get_legend_handles_labels()
+fig.legend(h_, l_, loc="outside upper center", ncol=6, handlelength=1.6)
+savefig(fig, "fig_memo_curves_main.pdf")
 
 # ------------------------------------------------------------------ Fig: the m knob (E2, E12, E14)
 share = {}
@@ -427,9 +465,12 @@ ax.axhline(p0, color="k", lw=0.7, ls="--", zorder=1.6)
 share_points(ax)
 log2_m_axis(ax, [1, 4, 16, 64], xlim=(0.9, 80))
 ax.set_ylim(0.45, 0.9); ax.set_yticks([0.5, 0.6, 0.7, 0.8])
-note(ax, 78, p0 + 0.012, f"true {p0:.2f}", ha="right", va="bottom")
-note(ax, 78, q_theory(78) + 0.015, "optimum", ha="right", va="bottom")
-note(ax, 5.0, share[4][0] + 0.01, "IMLE-WM", ha="left", va="center")
+ax.axhline(fm50_share, color=C["fm"], lw=1.0, zorder=1.6)
+note(ax, 78, fm50_share + 0.006, f"FM-50 {fm50_share:.2f}", ha="right", va="bottom")
+note(ax, 78, p0 - 0.010, f"true {p0:.2f}", ha="right", va="top")
+ax.annotate("optimum", xy=(2.9, q_theory(2.9)), xytext=(1.0, 0.52), fontsize=FS_TEXT, color=INK, ha="left", va="center",
+            arrowprops=dict(arrowstyle="-", color=INK, lw=0.5, shrinkA=1, shrinkB=1))
+note(ax, 20.0, share[16][0] + 0.035, "IMLE-WM", ha="left", va="bottom")
 ax.set_title("(d) frequent-mode share")
 fig.legend(handles=K_HANDLES + [REF_HANDLE, SEED_HANDLE],
            labels=[h.get_label() for h in K_HANDLES] + ["ideal sampler (a), chance $1/K$ (b)", "individual seeds"],
