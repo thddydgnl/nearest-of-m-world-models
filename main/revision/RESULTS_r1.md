@@ -1,13 +1,25 @@
 # Revision round r1: results and decisions
 
-Status: DRAFT (filled in as runs finish). Design: `DESIGN_r1.md` v1.0, frozen before any r1 run (SHA-256
+Status: final except experiment 2b (seed 1 rerun in progress). Design: `DESIGN_r1.md` v1.0, frozen before any r1 run (SHA-256
 959409ddf4ddc6be671a092454c1d4ad47d6396f06228790ee4ec2f6b7a157bc). Every number below is printed by
 `python3 main/revision/summarize_r1.py` (experiments 1-3) or `python3 main/revision/an_analyses/summarize.py`
 (analyses a-h) from the pulled raw files; spreads are sample standard deviations (n - 1) with the individual seeds.
 
 ## 1. Decisions
 
-(TBD: one line per pre-registered decision rule.)
+| Rule (DESIGN_r1.md) | Outcome | Decision |
+|---|---|---|
+| Experiment 1, primary cell m = 4: H_I if arc(4) in [0.264, 0.360] and control - arc >= 0.10; H_m if abs(control - arc) < 0.05 | arc 0.418, control 0.517, difference 0.0995 | **inconclusive** (neither condition of H_I holds; H_m is contradicted) |
+| Experiment 1, secondary cell m = 2 (same rule) | arc 0.688, control 0.838, difference 0.149 | **inconclusive** |
+| Experiment 1, m = 8 (reported only) | arc 0.321, control 0.313 | no difference |
+| C1 attenuation correction if ceiling_arc < ceiling_std - 0.05 | both ceilings 1.000, floors 0.250 | not applied |
+| Experiment 2a: claim limited to equal steps if FM-50 coverage >= 0.92 at 36k | 0.849 | **not triggered**; coverage claim holds at matched wall-clock |
+| Experiment 2b: "longer training brings memorization back" if index > 0.40 or coverage < 0.85 at 48k | (pending: seed 0 done, seed 1 rerun) | (pending) |
+| Experiment 3: drift attributed to training without context noise if h = 32 manifold <= 2.2 at coverage >= 0.74 | 4.47 (S = 0.1), 3.41 (S = 0.3) | **not triggered**; claim kept with the qualifier "including context-noise augmentation up to 0.3" |
+
+Predictions with tolerances (nine): H_I at m = 2, 4, 8 (held at m = 8 only); P2a coverage 0.80-0.90 (held) and
+FM index at NFE 50 <= 0.32 (failed, 0.379); P2b index <= 0.40 and coverage >= 0.85 (pending); P3 at S = 0.1 and 0.3
+(held). So far 4 held, 3 failed, 2 pending.
 
 ## 2. What was run
 
@@ -198,4 +210,15 @@ Raw outputs: `main/revision/an_analyses/raw/an.1/out/<analysis>/`; tables: `pyth
 
 ## 8. Consequences for the paper
 
-(TBD)
+- Experiment 1 (inconclusive) and analysis a: "governed by I(m)" and the "one curve" framing are dropped; the paper
+  states that memorization depends on the mode geometry, as a distortion does and a miss probability does not, that
+  a function of m alone fits the K grid nearly as well (better with the K = 2, m = 2 point), and that the recorded
+  geometry test was inconclusive (abstract, contribution 2, Section 7.2, Figure 1, limitation 6, conclusion).
+- Experiment 2a: coverage claim kept with "0.85 with three times the training"; the failed index prediction and
+  FM's memorization under longer training are reported in Sections 6.1 and 7.1 and Appendix C.
+- Experiment 3: Section 9.1 reports that context noise reduces but does not remove the drift.
+- Analysis d: the readout-offset explanation of the flattening measurement is removed; Figure 2(d) shows raw shares.
+- Analysis e: the planning diagnosis is replaced by the replay result (imagined falls leave an absorbing pit).
+- Analyses b, c, f, g, h and the post-hoc training-bank check: Appendix F, Table 2, Table 4, Appendix E and the new
+  qualitative appendix figure.
+- Experiment 2b: (pending) Section 7.1, contribution 2 and Appendix C.

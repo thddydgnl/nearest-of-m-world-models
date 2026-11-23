@@ -83,14 +83,14 @@ ANALYSIS_TEXT = [  # docstrings and paths of the scripts copied to analysis/ (or
     ("main/revision/an_analyses/REPORT.md, section h", "DESIGN_r1.md section 4h"),
     ("Print the tables of REPORT.md from the pulled result JSON files (reads raw/an.1/out/ only;",
      "Print the tables of analyses a-h (DESIGN_r1.md section 4) from the result JSON files "
-     "(reads revision_r1/an_analyses/raw/an.1/out/ only;"),
+     "(reads revision/an_analyses/raw/an.1/out/ only;"),
     ("python3 main/revision/an_analyses/summarize.py", "python3 analysis/summarize_analyses.py"),
     ("python3 main/revision/summarize_r1.py", "python3 analysis/summarize_r1.py"),
     ("pulled by runpod/pull_all.sh", "copied from the GPU machines"),
     ("raw/<pod>/", "raw/<machine>/"),
     ("generated on the pod", "generated on the GPU machine"),
     ("(from the repository root)", "(from the supplement root)"),
-    ("main/revision/", "revision_r1/"),
+    ("main/revision/", "revision/"),
     ("main/results/", "results/"),
     ("main/code/", "code/"),
     ("paper/build/make_figures.py", "analysis/make_figures.py"),
@@ -110,7 +110,7 @@ def fix_summarize_r1(text):
     old = "HERE = os.path.dirname(os.path.abspath(__file__))"
     if old not in text:
         die("summarize_r1.py: expected line '%s' not found; update fix_summarize_r1" % old)
-    text = text.replace(old, 'HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "revision_r1")'
+    text = text.replace(old, 'HERE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "revision")'
                              "  # supplement layout", 1)
     return analysis_text(text)
 
@@ -121,9 +121,12 @@ def fix_summarize_analyses(text):
     first = next((i for i, line in enumerate(lines) if expr in line), None)
     if first is None:
         die("an_analyses/summarize.py: no path built from __file__; update fix_summarize_analyses")
-    new = lines[:first] + ['_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "revision_r1", '
+    new = lines[:first] + ['_SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "revision", '
                            '"an_analyses")  # supplement layout'] + [line.replace(expr, "_SRC") for line in lines[first:]]
-    return analysis_text("\n".join(new))
+    text = "\n".join(new)
+    if "def sec_h" not in text:  # the usage line lists a section 'h' that the script does not define
+        text = text.replace("sections: b a c d e f h smoke", "sections: b a c d e f smoke")
+    return analysis_text(text)
 
 
 DESIGN_REDACT = [  # (pattern, replacement); each must match exactly once in the frozen text of DESIGN_r1.md
@@ -217,19 +220,27 @@ def braced(s, i):
     raise ValueError("unbalanced braces")
 
 
-MATH = [(r"\\(?:leq|le)\b", "≤"), (r"\\(?:geq|ge)\b", "≥"), (r"\\approx\b", "≈"), (r"\\lesssim\b", "≲"),
-        (r"\\gtrsim\b", "≳"), (r"\\pm\b", "±"), (r"\\times\b", "×"), (r"\\(?:to|rightarrow)\b", "→"),
-        (r"\\in\b", "∈"), (r"\\infty\b", "∞"), (r"\\cdot\b", "·"), (r"\\(?:ldots|dots|cdots)\b", "…"),
-        (r"\\epsilon\b", "ε"), (r"\\sigma\b", "σ"), (r"\\mu\b", "μ"), (r"\\theta\b", "θ"), (r"\\rho\b", "ρ"),
-        (r"\\alpha\b", "α"), (r"\\beta\b", "β"), (r"\\sum\b", "Σ"), (r"\\uparrow\b", "↑"), (r"\\downarrow\b", "↓"),
-        (r"\\(?:big|Big|bigg|Bigg|left|right)\b", ""), (r"\\(?:t|d)?frac\b", "")]
+GREEK = {"alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "epsilon": "ε", "varepsilon": "ε", "zeta": "ζ",
+         "eta": "η", "theta": "θ", "kappa": "κ", "lambda": "λ", "mu": "μ", "nu": "ν", "xi": "ξ", "pi": "π",
+         "rho": "ρ", "sigma": "σ", "tau": "τ", "phi": "φ", "varphi": "φ", "chi": "χ", "psi": "ψ", "omega": "ω",
+         "Gamma": "Γ", "Delta": "Δ", "Theta": "Θ", "Lambda": "Λ", "Pi": "Π", "Sigma": "Σ", "Phi": "Φ", "Psi": "Ψ",
+         "Omega": "Ω"}
+MATH = [(r"\^\{?\\circ\}?", "°"), (r"\\neq(?![A-Za-z])", "≠"), (r"\\sim(?![A-Za-z])", "∼"), (r"\\propto(?![A-Za-z])", "∝"), (r"\\ell(?![A-Za-z])", "ℓ"),
+        (r"\\partial(?![A-Za-z])", "∂"), (r"\\(?:lvert|rvert|mid)(?![A-Za-z])", "|"), (r"\\\|", "‖"), (r"\\(?:log|exp|min|max|arg)(?![A-Za-z])", None),
+        (r"\\mathcal\{([^{}]*)\}", r"\1")] + [(r"\\%s(?![A-Za-z])" % k, v) for k, v in GREEK.items()] + [
+        (r"\\(?:leq|le)(?![A-Za-z])", "≤"), (r"\\(?:geq|ge)(?![A-Za-z])", "≥"), (r"\\approx(?![A-Za-z])", "≈"), (r"\\lesssim(?![A-Za-z])", "≲"),
+        (r"\\gtrsim(?![A-Za-z])", "≳"), (r"\\pm(?![A-Za-z])", "±"), (r"\\times(?![A-Za-z])", "×"), (r"\\(?:to|rightarrow)(?![A-Za-z])", "→"),
+        (r"\\in(?![A-Za-z])", "∈"), (r"\\infty(?![A-Za-z])", "∞"), (r"\\cdot(?![A-Za-z])", "·"), (r"\\(?:ldots|dots|cdots)(?![A-Za-z])", "…"),
+        (r"\\epsilon(?![A-Za-z])", "ε"), (r"\\sigma(?![A-Za-z])", "σ"), (r"\\mu(?![A-Za-z])", "μ"), (r"\\theta(?![A-Za-z])", "θ"), (r"\\rho(?![A-Za-z])", "ρ"),
+        (r"\\alpha(?![A-Za-z])", "α"), (r"\\beta(?![A-Za-z])", "β"), (r"\\sum(?![A-Za-z])", "Σ"), (r"\\uparrow(?![A-Za-z])", "↑"), (r"\\downarrow(?![A-Za-z])", "↓"),
+        (r"\\(?:big|Big|bigg|Bigg|left|right)(?![A-Za-z])", ""), (r"\\(?:t|d)?frac(?![A-Za-z])", "")]
 
 
 def math2txt(s):
     s = s.replace("{=}", "=").replace("{,}", ",").replace("\\{", "\x01").replace("\\}", "\x02")
     s = re.sub(r"\\(?:mathrm|text|mathit|mathbf|operatorname|boldsymbol)\{([^{}]*)\}", r"\1", s)
     for pat, rep in MATH:
-        s = re.sub(pat, rep, s)
+        s = re.sub(pat, (lambda m: m.group(0)[1:]) if rep is None else rep, s)
     s = s.replace("\\,", " ").replace("\\;", " ").replace("\\!", "").replace("~", " ").replace("\\%", "%")
     s = re.sub(r"\^\{([^{}]*)\}", lambda m: "^" + (m.group(1) if len(m.group(1)) == 1 else "(" + m.group(1) + ")"), s)
     s = re.sub(r"_\{([^{}]*)\}", r"_\1", s)
@@ -393,10 +404,12 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
     ("tab:a2", "A2-div main comparison", "`analysis/make_figures.py` (printout \"A2-div main table\")",
      "`e1_a2_{reg,fm,imf,imle4,imle16}_s{0,1,2}`, `e7_a2_sc_s{0,1,2}`, `e15_a2_es8_s{0,1,2}`, `e15_a2_es16_s{0,1}`: "
      "`eval.json` (FM `eval_nfe50.json`, `eval_nfe2.json`; iMF and Shortcut `eval_nfe1.json`), fields `stoch.cov_pos`, "
-     "`stoch.prec_pos`, `stoch.recall_knn`, `det.pos_err`, `latency_ms`, `train_time` (s); memorization index: last "
-     "`memo_train` of `log.jsonl`, for FM-50, FM-2 and iMF `derived.index_train` of "
-     "`revision_r1/an_analyses/raw/an.1/out/c_nfe/<run>_ckpt_nfe{50,2,1}_200x16.json` "
-     "(`analysis/summarize_analyses.py c`)",
+     "`stoch.prec_pos`, `stoch.recall_knn`, `det.pos_err` and `train_time` (s; the Train column, original runs); "
+     "memorization index: last `memo_train` of `log.jsonl`, for FM-50, FM-2 and iMF `derived.index_train` of "
+     "`revision/an_analyses/raw/an.1/out/c_nfe/<run>_ckpt_nfe{50,2,1}_200x16.json` "
+     "(`analysis/summarize_analyses.py c`); ms/step: `configs[\"A2 <method>\"].latency.mean_ms` of "
+     "`revision/x2_long/raw/x2.1/out/g_timing/timing.json`, measured on an otherwise idle RTX A5000 by "
+     "`python -m imlewm.r1_timing run` (revision r1, analysis g; no script prints it, read the JSON)",
      [r"^e1_a2_(reg|fm|imf|imle4|imle16)_s\d$", r"^e7_a2_sc_s\d$", r"^e15_a2_es(8|16)_s\d$"]),
     ("tab:a1", "Bouncing Shapes (A1)", "`analysis/make_figures.py` (\"A1 table\", \"A1 joint 16->16\")",
      "autoregressive `e1_a1_{reg,fm,imle4,imle16}_s*`, joint `j_{reg,fm,imle4,imle16}_s*`; caption: `e1_a1_imf_s*`, "
@@ -405,12 +418,15 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      [r"^e1_a1_", r"^j_", r"^e7_a1_sc_", r"^e15_a1_es8_"]),
     ("tab:b", "Stochastic Push-T (B)", "`analysis/make_figures.py` (\"B table\")",
      "`e1_b_{reg,fm,imf,imle4,imle16}_s*`, `e7_b_sc_s*`: `mf_h8.precision_err`, `mf_h8.recall_err` (h = 8) and "
-     "`mf.precision_err`, `mf.recall_err` (h = 16) of `eval*.json`; true-future spread: "
-     "`revision_r1/an_analyses/raw/an.1/out/f_diag/gtspread_bdiag.json` (output of `code/diag/bdiag.py`)",
+     "`mf.precision_err`, `mf.recall_err` (h = 16) of `eval*.json`; distance between the true futures in the caption: "
+     "`h.8.pairwise_distinct`, `h.16.pairwise_distinct` of "
+     "`revision/an_analyses/raw/an.1/out/f_diag/gtspread_pusht_b.json` (`python -m imlewm.r1_diag gtspread`)",
      [r"^e1_b_(reg|fm|imf|imle4|imle16)_s\d$", r"^e7_b_sc_s\d$"]),
     ("fig:collapse", "Excess memorization against I(m,K)", "`analysis/make_figures.py` -> `fig_memo_collapse.pdf`",
      "budget grid `e2_k{4,8}_m*_s{0,1}`, `e12_k{2,16}_m*_s{0,1}`: last `memo_train` of `log.jsonl`; recorded "
-     "predictions: `PRED` in the script (`predictions/recorded.md`)", GRID),
+     "predictions: `PRED` in the script (`predictions/recorded.md`); 90-degree arc and its semicircle control "
+     "(revision r1, experiment 1): last `memo_train` of `revision/x1_arc/raw/x1.1/runs/r1_arc90_m{2,4,8}_s{0,1}/log.jsonl` "
+     "and `.../r1_k4_m{2,4,8}_s{0,1}/log.jsonl`", GRID + [r"^r1_(arc90|k4)_m\d+_s\d$"]),
     ("fig:knob", "What the budget controls", "`analysis/make_figures.py` -> `fig_m_knob_main.pdf`",
      "budget grid: `stoch.cov_pos`, `det.pos_err` of `eval.json`, last `memo_train` of `log.jsonl`; asymmetric modes "
      "`e14_asym_m{2,4,16}_s{0,1}`: `test.share0`, `test.data_freq0` of `modeshare.json`",
@@ -424,15 +440,12 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "`imle_e0_full`, `imle_e0_late`, `imle_e0_plain`, `imle_div_k4` (pilot recipe), `fm_div_k4`, `fm_e0_flowwm`, "
      "`imf_e0_ts1`: `eval*.json`; intervals and memorization: `results/runs/check/memo*.json` (logs "
      "`results/logs/check_memo*.log`); iMF with one step: "
-     "`revision_r1/an_analyses/raw/an.1/out/c_nfe/imf_e0_ts1_ckpt_nfe1_300x16.json`",
+     "`revision/an_analyses/raw/an.1/out/c_nfe/imf_e0_ts1_ckpt_nfe1_300x16.json`",
      [r"^(imle_e0_(full|late|plain)|imle_div_k4|fm_div_k4|fm_e0_flowwm|imf_e0_ts1)$"]),
     ("tab:readout", "A1 under three readouts", "`analysis/make_figures.py` (\"A1 table\", \"A1 joint\", \"E9 (48k)\")",
      "as @tab:a1@, plus `eval_hmn05*.json` (heatmap readout trained with feature noise 0.5) and the 48k-step runs "
      "`e9_a1_imle4_48k_s0`, `e9_a1_fm48k_s0`",
      [r"^e1_a1_", r"^j_", r"^e7_a1_sc_", r"^e15_a1_es8_", r"^e9_a1_"]),
-    ("fig:scatter", "Qualitative pilot", "copied by `analysis/make_figures.py` from "
-     "`results/feasibility/scatter_bounce_k4.png`", "pilot run `imle_k4` (figure drawn by `imlewm.report`)",
-     [r"^imle_k4$"]),
     ("tab:grid", "Budget grid", "`analysis/make_figures.py` (printout \"K x m grid\")",
      "budget grid: `stoch.cov_pos`, `stoch.prec_pos`, `stoch.recall_knn`, `det.pos_err`, `train_time` of "
      "`eval.json`; last `memo_train` of `log.jsonl`", GRID),
@@ -449,7 +462,7 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
     ("tab:flatten", "Asymmetric modes", "`analysis/make_figures.py` (printout \"asymmetric modes\")",
      "`e14_asym_{m2,m4,m16,fm}_s{0,1}`, `e15_asym_es8_s{0,1}`: `modeshare*.json` (`test.share0`, "
      "`test.data_freq0`, `test.cov`, `train.realized_share`, `test.realized_share`); readout check: "
-     "`revision_r1/an_analyses/raw/an.1/out/d_offset/` (`analysis/summarize_analyses.py d`)",
+     "`revision/an_analyses/raw/an.1/out/d_offset/` (`analysis/summarize_analyses.py d`)",
      [r"^e14_asym_", r"^e15_asym_es8_"]),
     ("fig:bair", "Under-dispersion on BAIR", "`analysis/make_figures.py` -> `fig_bair.pdf`",
      "`results/runs/e16_bair_deff.json`, `results/runs/e16_bair_dims.json` (written by `imlewm.bair_deff` from "
@@ -460,7 +473,7 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "`best_rms`, `mean_rms`, `manifold`, `spread` and `fd_h8`, `fd_h16`, `prec_h16`, `rec_h8`, `rec_h16` of "
      "`eval*.json`", [r"^e8_bair_", r"^e10_bair_"]),
     ("tab:memo400", "Re-measured memorization of the grid", "`analysis/summarize_analyses.py b` (revision r1, analysis b)",
-     "`revision_r1/an_analyses/raw/an.1/out/b_grid/<run>_ckpt_nfeNone_400x64.json` (`derived`); monitor: last "
+     "`revision/an_analyses/raw/an.1/out/b_grid/<run>_ckpt_nfeNone_400x64.json` (`derived`); monitor: last "
      "`memo_train` of `log.jsonl`", GRID),
     ("fig:manifold", "Manifold distance against the horizon", "`analysis/make_figures.py` -> `fig_manifold.pdf`",
      "`e1_{a2,a1,b}_{reg,fm,imf,imle4,imle16}_s*`, `e15_{a2,a1}_es8_s*`: per-horizon `manifold` of `e3.json` (FM "
@@ -468,8 +481,9 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
     ("tab:e3", "Rollouts from real contexts", "`e3*.json` at the last horizon (`analysis/make_figures.py` prints the "
      "manifold distances)", "as @fig:manifold@: `manifold`, `best_err`, `spread` at h = 32 (A2-div) or 16 (A1, B)",
      A2_E3),
-    ("tab:bci", "Paired bootstrap on Push-T", "resampling of the per-start errors (procedure in the statistics "
-     "appendix; no script included)",
+    ("tab:bci", "Paired bootstrap on Push-T", "`analysis/bootstrap_pusht.py results/runs` (procedure of the statistics "
+     "appendix; with `--seed 0` the differences agree with the table and the interval ends lie within 0.2 px, since "
+     "the resampling seed of the table was not stored)",
      "`mf.per_start`, `mf_h8.per_start` of `eval_ps*.json`: `e1_b_imle16_s*` (`eval_ps.json`), `e1_b_fm_s*` "
      "(`eval_ps_nfe50.json`, `eval_ps_nfe2.json`), `e7_b_sc_s*` (`eval_ps_nfe1.json`), `e6_b_seq4_s*`, `e6_b_n0_8k*`",
      [r"^e1_b_(imle16|fm)_s\d$", r"^e7_b_sc_s\d$", r"^e6_b_(seq4_s\d|n0_8k(_s\d)?)$"]),
@@ -495,15 +509,15 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "(a) `results/runs/e5/*.json` (`success`; `plan_s_per_step` divided by `n_eps`), models `e1_b_{reg,fm,imle16}_s*`; "
      "(b) `results/runs/plan/e13_push_{imle16,fm,reg}_s*_edge_pos_std_s0.json` and `oracle_edge_pos_std_s0.json` "
      "(`success`, `pit`, `timeout`); pit probability after one push: `plan/riskdiag_nfe2.json`, "
-     "`plan/riskdiag_fm50.json`; after five pushes: `revision_r1/an_analyses/raw/an.1/out/e_planrisk/riskdiag_both_nfe*.json`",
+     "`plan/riskdiag_fm50.json`; after five pushes: `revision/an_analyses/raw/an.1/out/e_planrisk/riskdiag_both_nfe*.json`",
      [r"^e13_push_", r"^e1_b_(reg|fm|imle16)_s\d$"]),
-    ("sec:phenomenon", "Memorization in non-repeating contexts (text)", "training logs and the pilot memorization check",
+    ("app:more", "Memorization with longer training and larger models (text)", "training logs and the pilot memorization check",
      "`imle_div_k4` (pilot recipe, m = 4), `imle_div_k4_24k` (twice as long), `imle_div_k4_big` (2.8x larger): "
      "`results/runs/check/memo.json` and `log.jsonl`; `ab_steps18k` (m = 16, 18k steps): last `memo_train` of `log.jsonl`",
      [r"^imle_div_k4(_24k|_big)?$", r"^ab_steps18k$"]),
     ("sec:b", "Contact error on Push-T (text)", "`code/diag/bstep.py`, re-run by `python -m imlewm.r1_diag script` "
      "(revision r1, analysis f)",
-     "`revision_r1/an_analyses/raw/an.1/out/f_diag/contact_bstep.json` for `e1_b_reg_s0`, `e1diag_b_reg36k` (36k steps), "
+     "`revision/an_analyses/raw/an.1/out/f_diag/contact_bstep.json` for `e1_b_reg_s0`, `e1diag_b_reg36k` (36k steps), "
      "`e1_b_fm_s0`, `e1_b_imle4_s0`, `e1_b_imle16_s0`", [r"^e1diag_b_reg36k$"]),
     ("app:ablation", "Ablations and the iMF learning curve (text)", "`analysis/make_figures.py` (printout \"Ablations "
      "(1 seed)\"); JSON fields",
@@ -512,8 +526,36 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "`results/runs/check/main.json`; iMF curve `e7_a2_imf72k_s0`: `stoch.cov_pos`, `stoch.prec_pos` of "
      "`eval_ckpt_<step>_nfe1.json` and `eval_nfe1.json` (72k)",
      [r"^ab_", r"^e7_a2_imf72k_s0$", r"^imle_k4(_l2)?$"]),
+    ("fig:curves_main", "Outcome memorization during training", "`analysis/make_figures.py` -> `fig_memo_curves_main.pdf`",
+     "as @fig:curves@ without the per-token energy score: `e1_a2_{reg,fm,imle4,imle16}_s*`, `e15_a2_es8_s*`, "
+     "`e15_a2_es16_s{0,1}`: `memo_train`, `cov_val` of `log.jsonl`",
+     [r"^e1_a2_(reg|fm|imle4|imle16)_s\d$", r"^e15_a2_es(8|16)_s\d$"]),
+    ("tab:itok", "Codebook distortion in three metrics", "`analysis/summarize_analyses.py a` (semicircle rows); "
+     "JSON fields (arc rows)",
+     "semicircle: `I_unit`, `I_tok` and `I_tok_gm.<m>.I` of `revision/an_analyses/raw/an.1/out/a_itok/"
+     "itok_bounce_div_k{2,4,8,16}.json` (`python -m imlewm.r1_itok tok`), excess memorization from the last "
+     "`memo_train` of the budget-grid logs; 90-degree arc: the same fields of "
+     "`revision/x1_arc/raw/x1.1/out/a_itok/itok_bounce_div_k4_arc90.json` (no script prints them) and the logs of "
+     "`r1_arc90_m{4,8}_s{0,1}`", GRID + [r"^r1_arc90_m[48]_s\d$"]),
+    ("tab:planrisk", "Pit probability from planner replays", "`analysis/summarize_analyses.py e` (revision r1, "
+     "analysis e)",
+     "`revision/an_analyses/raw/an.1/out/e_planrisk/e13_push_{imle16,fm,reg}_s*_replay.json` (`selected` and "
+     "`executed`, each with `last` and `any`: `model_mean`, `true_mean`; per-plan records in `*_records.json`) and "
+     "`riskdiag_both_nfe*.json` (`python -m imlewm.r1_planrisk`); models `e13_push_*`", [r"^e13_push_"]),
+    ("app:r1", "Follow-up experiments with recorded decision rules", "`analysis/summarize_r1.py` (experiments 1, 2a, "
+     "2b and 3 with their decision rules); outcomes in `revision/RESULTS_r1.md`",
+     "design `revision/DESIGN_r1.md`; runs `r1_arc90_*`, `r1_k4_*` (experiment 1), `r1_fm36k_*` (2a), "
+     "`r1_imle16_48k_*` (2b), `r1_fmcn*` (3) under `revision/<group>/raw/<machine>/runs/` (`log.jsonl`, `eval*.json`, "
+     "`e3*.json`) with their checks under `.../out/` (`c1`, `c2`, `fm36k_memo`); the check added afterwards: "
+     "`manifold` of `revision/an_analyses/raw/an.1/out/e3bank/*_trainbank.json` (`python -m imlewm.r1_e3bank`; no "
+     "script prints it)", [r"^r1_(arc90|k4|fm36k|imle16_48k|fmcn)"]),
+    ("app:impl", "Training-step times on an idle GPU (text)", "JSON fields (no script prints them)",
+     "`configs[<label>].train.step_ms` of `revision/x2_long/raw/x2.1/out/g_timing/timing.json`, from the 400-step "
+     "timing runs `r1_tim_*` under `revision/x2_long/raw/x2.1/runs/` ((t at step 400 - t at step 200) / 200 in "
+     "`log.jsonl`; `python -m imlewm.r1_timing run` on random tokens of the original shapes)",
+     [r"path:x2_long/raw/x2\.1/runs/r1_tim_"]),
     ("fig:samples", "Decoded next-frame samples on A2-div", "`analysis/make_fig_samples.py`",
-     "`revision_r1/an_analyses/raw/an.1/out/h_samples/` (`samples*.json`, `context_frames*.npz`), written by "
+     "`revision/an_analyses/raw/an.1/out/h_samples/` (`samples*.json`, `context_frames*.npz`), written by "
      "`python -m imlewm.r1_samples` from the seed-0 checkpoints of @tab:a2@",
      [r"^(e1_a2_(reg|fm|imf|imle4|imle16)|e7_a2_sc|e15_a2_es(8|16))_s0$"]),
 ]
@@ -621,10 +663,11 @@ def build_runs(repo, labels):
         d = os.path.basename(os.path.dirname(p))
         rel = os.path.relpath(os.path.dirname(p), os.path.join(repo, "main/revision"))
         if d in seen:
-            note(f"run {d} appears twice (also under revision_r1/{rel}); the first copy is listed")
-            continue
+            note(f"run name {d} appears twice; both folders are listed (the second under revision/{rel})")
         seen.add(d)
-        found.append((d, os.path.dirname(p), "revision_r1/" + rel))
+        found.append((d, os.path.dirname(p), "revision/" + rel))
+    names = [d for d, _, _ in found]
+    dup = {d for d in names if names.count(d) > 1}
 
     rows, discrepancies = [], []
     for run, path, where in found:
@@ -651,6 +694,11 @@ def build_runs(repo, labels):
         if args is None and run in queue:
             args = vars(parser.parse_args(shlex.split(queue[run][1])))
             src = f"queue file {os.path.basename(queue[run][0])} with the defaults of {module}.py"
+        base = max((q for q in queue if run.startswith(q + "_")), key=len, default=None)
+        if args is None and base:  # a folder renamed after its run stopped, e.g. <run>_partial_stop36600
+            args = vars(parser.parse_args(shlex.split(queue[base][1])))
+            src = f"queue file {os.path.basename(queue[base][0])} (line of {base}) with the defaults of {module}.py"
+            notes.append(f"folder of an interrupted run of {base}, renamed when {base} was restarted")
         if args is None and run in timing:
             args = vars(parser.parse_args(timing[run][1]))
             src = f"r1_timing.py configuration \"{timing[run][0]}\" (r1_timing_configs.json)"
@@ -667,10 +715,17 @@ def build_runs(repo, labels):
                 msg = f"the {os.path.basename(queue[run][0])} line differs from the stored arguments ({'; '.join(diff)})"
                 notes.append(msg)
                 discrepancies.append((run, msg))
+        if run.startswith("r1_tim_") and "/an.1/" in where:
+            notes.append("functional test of analysis g (outputs in out/g_timing_functest/); the reported timings "
+                         "come from revision/x2_long/raw/x2.1")
+        if run in dup:
+            others = [w for d, _, w in found if d == run and w != where]
+            notes.append("another run has the same name: " + ", ".join(others))
         step, t = last_log(os.path.join(path, "log.jsonl"))
         used = []
         for label, _, _, _, pats in MAP:
-            if any(re.search(p, run) for p in pats) and label in labels:
+            if label in labels and any(re.search(p[5:], where) if p.startswith("path:") else re.search(p, run)
+                                       for p in pats):
                 used.append(item_name(label, labels))
         rows.append(dict(run=run, group=group_of(run), outputs=where, script=f"imlewm.{module}", args_source=src,
                          used_in="; ".join(used), last_logged_step="" if step is None else step,
@@ -724,80 +779,184 @@ SOFTWARE.
 """
 
 
+TBD = "\\TBD"
+
+
+FLOATS = re.compile(r"\\begin\{(figure|table)\*?\}.*?\\end\{\1\*?\}", re.S)
+
+
+def check_left(md, what):
+    left = sorted(set(re.findall(r"\\[A-Za-z]+", md)))
+    if left:
+        note(f"{what}: LaTeX commands left after conversion: {', '.join(left)}")
+
+
+def latex_block(raw, labels, cites, what, check=True, allow_tbd=False):
+    """LaTeX of the manuscript -> Markdown; None (with a note) for text that is not final or cannot be converted.
+    The manuscript is edited while the supplement is built, so a LaTeX detail never stops the build, and text that
+    contains \\TBD is never copied."""
+    raw = FLOATS.sub(" ", raw)
+    if TBD in raw:
+        if not allow_tbd:
+            note(f"{what}: contains \\TBD in the manuscript, not copied")
+            return None
+        raw = raw.replace(TBD, "\\tbdsentinel")
+    try:
+        md = tex2md(raw, labels, cites)
+    except Exception as e:  # noqa: BLE001
+        note(f"{what}: could not be converted from LaTeX ({e!r}), not copied")
+        return None
+    if check:
+        check_left(md, what)
+    return md
+
+
+def tagged_predictions(app, letters, labels, cites, what):
+    """The introducing sentence and the tagged predictions (X1), (X2), ... of the first paragraph of app.tex that
+    records them; X is tried in the order of `letters` (the manuscript renamed P1-P5 to E1-E5)."""
+    for letter in letters:
+        for p in paragraphs(app):
+            tags = sorted({int(n) for n in re.findall(r"\(%s(\d)\)" % letter, p)})
+            if len(tags) < 2 or "recorded prediction" not in p:
+                continue
+            text = latex_block(p, labels, cites, what, check=False, allow_tbd=True)
+            if text is None:
+                return None, None
+            a, b = text.find(f"({letter}{tags[0]})"), text.rfind(f"({letter}{tags[-1]})")
+            k = text.rfind("recorded prediction", 0, a)
+            s0 = text.rfind(". ", 0, k if k >= 0 else a)
+            start = 0 if s0 < 0 else s0 + 2
+            m = re.compile(r"\.\s+(?=[A-Z])").search(text, b)
+            span = text[start:m.start() + 1 if m else len(text)].strip()
+            if "tbdsentinel" in span:
+                note(f"app.tex: {what} contain \\TBD in the manuscript, not copied")
+                return None, None
+            check_left(span, what)
+            pieces = [x.strip() for x in re.split(r"(?=\(%s\d\) )" % letter, span) if x.strip()]
+            intro = "" if pieces[0].startswith(f"({letter}") else pieces.pop(0)
+            return intro, pieces
+    note(f"app.tex: {what} not found")
+    return None, None
+
+
+def md_section(text, heading_re):
+    """Body of the Markdown section whose heading matches heading_re, up to the next heading of the same level."""
+    m = re.search(r"^(#+) " + heading_re + r".*$", text, re.M)
+    if not m:
+        return None
+    rest = text[m.end():]
+    n = re.search(r"^#{1,%d} " % len(m.group(1)), rest, re.M)
+    return rest[:n.start() if n else len(rest)].strip()
+
+
+def results_status(rev):
+    p = os.path.join(rev, "RESULTS_r1.md")
+    if not os.path.exists(p):
+        return None
+    m = re.search(r"^Status:\s*(.*?)(?:\.\s+Design:|\.\s*$)", read_text(p), re.M | re.S)
+    return re.sub(r"\s+", " ", m.group(1)).strip() if m else None
+
+
 def predictions_md(repo, labels, cites, design_redacted, design_state, results_present):
     app = read_text(os.path.join(repo, "paper/tmlr/app.tex"))
+    rev = os.path.join(repo, "main/revision")
+    app_pred, app_r1 = labels.get("app:pred", ""), labels.get("app:r1", "")
     out = ["# Predictions recorded before the corresponding runs", ""]
-    app_pred = labels.get("app:pred", "")
     out += ["This file collects the predictions that were written down before the runs that test them, together with "
             "their outcomes. Sections 1 to 4 are converted from the appendix of the paper" +
             (f" (Appendix {app_pred})" if app_pred else "") + ", including its statement that these records are the "
-            "authors' own notes and are not externally timestamped. Section 5 reproduces the predictions and decision "
-            "rules of revision round r1 from its design file, which was frozen before the first r1 run.", ""]
+            "authors' own notes and are not externally timestamped. Section 5 covers the follow-up experiments of "
+            "revision round r1" + (f" (Appendix {app_r1})" if app_r1 else "") + ": their predictions and decision "
+            "rules come from the design file, which was frozen before the first r1 run, and their outcomes from the "
+            "results file of the round.", ""]
 
+    out += ["## 1. All recorded predictions and their outcomes", ""]
     head = "\\paragraph{Predictions recorded before the runs.}"
     i = app.find(head)
-    out += ["## 1. All recorded predictions and their outcomes", ""]
     if i < 0:
-        note("app.tex: paragraph 'Predictions recorded before the runs.' not found; section 1 of predictions/recorded.md is empty")
+        note("app.tex: paragraph 'Predictions recorded before the runs.' not found; section 1 is empty")
         out += ["(The paragraph was not found in the current manuscript.)", ""]
     else:
-        para = tex2md(re.split(r"\n\s*\n", app[i + len(head):], maxsplit=1)[0], labels, cites)
-        parts = re.split(r"\((i|ii|iii|iv|v|vi|vii)\) ", para)
-        out += [parts[0].strip(), ""]
-        summary = None
-        items = list(zip(parts[1::2], parts[2::2]))
-        if items:
-            last = items[-1][1]
-            k = last.find("In total")
-            if k > 0:
-                items[-1] = (items[-1][0], last[:k].strip())
-                summary = last[k:].strip()
-        for tag, body in items:
-            out.append(f"- ({tag}) {body.strip()}")
+        raw = re.split(r"\n\s*\n", app[i + len(head):], maxsplit=1)[0]
+        parts = re.split(r"\((i|ii|iii|iv|v|vi|vii|viii|ix)\) ", raw)   # items are converted one by one
+        intro = latex_block(parts[0], labels, cites, "app.tex, recorded predictions (introduction)")
+        if intro:
+            out += [intro, ""]
+        for tag, body in zip(parts[1::2], parts[2::2]):
+            if "app:r1" in body:  # the follow-up experiments: section 5, from the design and results documents
+                out.append(f"- ({tag}) The follow-up experiments of revision round r1: see section 5 below.")
+                continue
+            md = latex_block(body, labels, cites, f"app.tex, recorded predictions ({tag})")
+            out.append(f"- ({tag}) " + (md if md else "[not included: this item of the manuscript is not final]"))
         out.append("")
-        if summary:
-            out += [summary, ""]
 
+    label_pf = labels.get("tab:predfull")
+    out += [f"## 2. Memorization index for K = 2 and 16" + (f" (Table {label_pf})" if label_pf else ""), ""]
     body = tex_env_with_label(app, "table", "tab:predfull")
-    out += [f"## 2. Memorization index for K = 2 and 16 (Table {labels.get('tab:predfull', 'tab:predfull')})", ""]
     if body is None:
         note("app.tex: table tab:predfull not found")
         out += ["(The table was not found in the current manuscript.)", ""]
     else:
-        out += [tex2md(caption_of(body), labels, cites), ""]
+        try:
+            cap = latex_block(caption_of(body), labels, cites, "app.tex, caption of tab:predfull")
+        except Exception as e:  # noqa: BLE001
+            cap = None
+            note(f"app.tex: caption of tab:predfull not readable ({e!r})")
         m = re.search(r"\\begin\{tabular\}\{[^}]*\}(.*?)\\end\{tabular\}", body, re.S)
-        out += [tabular2md(m.group(1), labels, cites), ""]
-        head2 = "\\paragraph{Recorded predictions for the $K{=}2,16$ grid.}"
-        j = app.find(head2)
-        if j >= 0:
-            out += [tex2md(re.split(r"\n\s*\n", app[j + len(head2):], maxsplit=1)[0], labels, cites), ""]
+        tab = None
+        if m and TBD not in m.group(1):
+            try:
+                tab = tabular2md(m.group(1), labels, cites)
+            except Exception as e:  # noqa: BLE001
+                note(f"app.tex: tab:predfull could not be converted ({e!r})")
+        elif m:
+            note("app.tex: tab:predfull contains \\TBD, not copied")
+        blocks = [x for x in (cap, tab) if x] or ["(The table is not final in the current manuscript.)"]
+        for x in blocks:
+            out += [x, ""]
+        m2 = re.search(r"\\paragraph\{Recorded predictions for the .*? grid\.\}", app)
+        if m2:
+            par = latex_block(re.split(r"\n\s*\n", app[m2.end():], maxsplit=1)[0], labels, cites,
+                              "app.tex, paragraph on the K = 2, 16 predictions")
+            if par:
+                out += [par, ""]
+        else:
+            note("app.tex: paragraph 'Recorded predictions for the ... grid.' not found")
 
-    for n, (title, lab, a, b) in enumerate((("Energy-score follow-up runs", "app:es", "(P1)", "(P5)"),
-                                            ("Fed-back-state ablation", "app:seq", "(S1)", "(S3)")), start=3):
-        where = f", Appendix {labels[lab]}" if lab in labels else ""
-        out += [f"## {n}. {title} ({a[1:-1]} to {b[1:-1]}{where})", ""]
-        sent = None
-        for p in paragraphs(app):
-            if a in p and b in p:
-                sent = sentence_span(tex2md(p, labels, cites), a, b)
-                break
-        if sent is None:
-            note(f"app.tex: predictions {a}-{b} not found")
-            sent = "(Not found in the current manuscript.)"
-        out += [sent, ""]
+    for n, (title, lab, letters) in enumerate((("Energy-score follow-up runs", "app:es", ("E", "P")),
+                                               ("Fed-back-state ablation", "app:seq", ("S",))), start=3):
+        out += [f"## {n}. {title}" + (f" (Appendix {labels[lab]})" if lab in labels else ""), ""]
+        intro, items = tagged_predictions(app, letters, labels, cites, f"{title.lower()} predictions")
+        if items is None:
+            out += ["(Not found in the current manuscript.)", ""]
+            continue
+        if intro:
+            out += [intro, ""]
+        out += [f"- {x}" for x in items] + [""]
 
-    out += ["## 5. Revision round r1", ""]
-    out += [f"The design `revision_r1/DESIGN_r1.md` was frozen before the first r1 run; the SHA-256 of the file as "
-            f"frozen is `{DESIGN_SHA256}`. {design_state} Its predictions and decision rules are reproduced below "
-            "(sections 1 to 3 of the design; the analyses of section 4 carry no predictions). Outcomes: " +
-            ("see `revision_r1/RESULTS_r1.md`." if results_present else
-             "see `revision_r1/RESULTS_r1.md` (not yet written when this supplement was built)."), ""]
+    out += ["## 5. Revision round r1: follow-up experiments with recorded decision rules", ""]
+    out += [f"The design `revision/DESIGN_r1.md` was frozen before the first r1 run; the SHA-256 of the file as "
+            f"frozen is `{DESIGN_SHA256}`. {design_state}", ""]
     m = re.search(r"^## 1\..*?(?=^## 4\.)", design_redacted, re.S | re.M)
     if not m:
         note("DESIGN_r1.md: sections 1-3 not found")
     else:
-        sec = re.sub(r"^## (\d)\. ", r"### 5.\1 ", m.group(0), flags=re.M)
-        out += [sec.strip(), ""]
+        out += ["Predictions and decision rules, copied from sections 1 to 3 of the design (the analyses of its "
+                "section 4 carry no predictions):", ""]
+        out += [re.sub(r"^## (\d)\. ", r"### 5.\1 ", m.group(0), flags=re.M).strip(), ""]
+    out += ["### 5.4 Outcomes and decisions", ""]
+    res = read_text(os.path.join(rev, "RESULTS_r1.md")) if results_present else None
+    dec = md_section(res, r"\d+\.\s*Decisions") if res else None
+    if dec is None:
+        note("RESULTS_r1.md: no section 'Decisions'; section 5.4 of predictions/recorded.md points to the file only")
+        out += ["See `revision/RESULTS_r1.md`" + ("" if results_present else " (not yet written when this "
+                "supplement was built)") + ".", ""]
+    else:
+        st = results_status(rev)
+        out += ["Copied from section 1 of `revision/RESULTS_r1.md`" + (f" (status when this supplement was built: "
+                f"{st})" if st else "") + "; the full results are in that file.", "", dec, ""]
+        if re.search(r"(?i)\bTBD\b|pending", dec):
+            note("RESULTS_r1.md: the decisions still contain pending entries")
     return "\n".join(out) + "\n"
 
 
@@ -976,13 +1135,14 @@ def readme_md(ctx):
         ["`run_args/runs.csv`", f"One row per training run ({len(ctx['rows'])} runs) with its full arguments, their source "
                                 "and the paper items that use it"],
         ["`analysis/`", "`make_figures.py` (figures and most table values), `summarize_analyses.py` and "
-                        "`summarize_r1.py` (revision r1), `make_fig_samples.py` (decoded-sample figure)"],
+                        "`summarize_r1.py` (revision r1), `make_fig_samples.py` (decoded-sample figure), "
+                        "`bootstrap_pusht.py` (paired bootstrap intervals on stochastic Push-T)"],
         ["`results/runs/`", f"Per-run outputs (JSON / JSONL) of the {n_orig} logged runs of the original study, plus "
                             "planning (`plan/`, `e5/`) and checks (`check/`)"],
         ["`results/check/`, `results/e15_toy/`, `results/feasibility/`", "Checks of the pilot models, the CPU toy "
                                                                         "experiment, the feasibility-study summary and figures"],
         ["`results/logs/`", "Standard output of every job of the original study (home-directory paths replaced by `~`)"],
-        ["`revision_r1/`", f"Revision round r1: frozen design, results, job lists and raw outputs ({n_r1} logged runs)"],
+        ["`revision/`", f"Revision round r1: frozen design, results, job lists and raw outputs ({n_r1} logged runs)"],
         ["`predictions/recorded.md`", "Predictions recorded before the corresponding runs, with their outcomes"],
         ["`data/README.md`", "How every dataset is generated: command, generator seed, size, external sources"],
     ]))
@@ -990,7 +1150,7 @@ def readme_md(ctx):
     S.append("Comments and docstrings in the code sometimes cite internal notes of the project (for example "
              "`E15_report.md`, `theory_m_law.md`, `novelty_analysis.md`, `REPORT.md`); these notes are not part of the "
              "supplement. Paths in the revision-r1 documents refer to the project layout: `main/code/` is `code/` here, "
-             "`main/results/` is `results/`, `main/revision/` is `revision_r1/`, `main/revision/summarize_r1.py` and "
+             "`main/results/` is `results/`, `main/revision/` is `revision/`, `main/revision/summarize_r1.py` and "
              "`main/revision/an_analyses/summarize.py` are `analysis/summarize_r1.py` and "
              "`analysis/summarize_analyses.py`, and `paper/build/make_figures.py` is `analysis/make_figures.py`.")
     S.append("")
@@ -1050,6 +1210,7 @@ def readme_md(ctx):
     S.append("python3 analysis/summarize_analyses.py                        # revision r1, analyses a-h")
     S.append("python3 analysis/summarize_r1.py                              # revision r1, experiments 1-3 and decision rules")
     S.append("python3 analysis/make_fig_samples.py --out out/fig_samples.pdf")
+    S.append("python3 analysis/bootstrap_pusht.py results/runs                # paired bootstrap on stochastic Push-T")
     S.append("```")
     S.append("")
     S.append("`make_figures.py` prints mean ± standard deviation over seeds with the 1/n normalization (`np.std`); the "
@@ -1073,7 +1234,7 @@ def readme_md(ctx):
     S.append(md_table(["Item", "How", "Runs, files and fields"], app_rows))
     S.append("")
     if text_rows:
-        S.append("### Results quoted in the text (selection)")
+        S.append("### Appendix sections and results quoted in the text (selection)")
         S.append("")
         S.append(md_table(["Item", "How", "Runs, files and fields"], text_rows))
         S.append("")
@@ -1082,14 +1243,18 @@ def readme_md(ctx):
         S.append("")
     S.append("Numbers quoted only in the text come from the same files. A few constants are written into "
              "`make_figures.py` (the recorded predictions `PRED` and the true-future spread of the fed-back-state "
-             "ablation). The diagnostic scripts in `code/diag/` and the summary scripts `code/run/e15_summary.py`, "
+             "ablation). Three groups of values are stored but printed by no script, and the map names their JSON "
+             "fields: the latencies of " + (item_name("tab:a2", L) or "the A2-div table") + " (`timing.json` of "
+             "analysis g), the arc rows of " + (item_name("tab:itok", L) or "the distortion table") + " and the "
+             "training-bank check of the follow-up appendix (`e3bank/`). The diagnostic scripts in `code/diag/` and "
+             "the summary scripts `code/run/e15_summary.py`, "
              "`e16_summary.py` and `e16_curves.py` print to standard output; the diagnostics that were re-run with saved "
-             "outputs in revision round r1 are under `revision_r1/an_analyses/raw/an.1/out/f_diag/`.")
+             "outputs in revision round r1 are under `revision/an_analyses/raw/an.1/out/f_diag/`.")
     S.append("")
     S.append("## Run arguments (`run_args/runs.csv`)")
     S.append("")
     S.append(f"One row per run with a training log: {n_orig} runs of the original study (`results/runs/`) and {n_r1} "
-             "runs of revision round r1 (`revision_r1/*/raw/*/runs/`). Columns: `run`; `group` (experiment block); "
+             "runs of revision round r1 (`revision/*/raw/*/runs/`). Columns: `run`; `group` (experiment block); "
              "`outputs` (folder in this supplement); `script` (`imlewm.train` or `imlewm.joint`); `args_source`; "
              "`used_in` (paper items, from the map above); `last_logged_step` (last step in `log.jsonl`); `params`; "
              "`train_time_h` (wall-clock hours, several runs shared a GPU); `command` (the stored arguments that differ "
@@ -1127,26 +1292,29 @@ def readme_md(ctx):
     S.append("")
     S.append("## Revision round r1")
     S.append("")
-    S.append("Revision round r1 adds three small training experiments and eight analyses of existing checkpoints "
-             "(a to h). Its design, `revision_r1/DESIGN_r1.md`, states the questions, data, runs, predictions, decision "
+    S.append("Revision round r1 adds four follow-up experiments (1, 2a, 2b and 3) and eight analyses of existing "
+             "checkpoints (a to h). Its design, `revision/DESIGN_r1.md`, states the questions, data, runs, predictions, decision "
              "rules and consequences for the paper, and was frozen before the first r1 job started. The SHA-256 of the "
              f"design file as frozen is `{DESIGN_SHA256}`.")
     S.append("")
     S.append(ctx["design_state"])
     S.append("")
-    S.append("- Runs: `revision_r1/queues/*.txt` (one line = arguments of `imlewm.train`); outputs under "
-             "`revision_r1/<group>/raw/<machine>/runs/r1_*/` (`log.jsonl`, `eval*.json`, `e3*.json`) and "
+    if ctx.get("results_status"):
+        S.append(f"Status of `revision/RESULTS_r1.md` when this supplement was built: {ctx['results_status']}.")
+        S.append("")
+    S.append("- Runs: `revision/queues/*.txt` (one line = arguments of `imlewm.train`); outputs under "
+             "`revision/<group>/raw/<machine>/runs/r1_*/` (`log.jsonl`, `eval*.json`, `e3*.json`) and "
              "`.../out/<check>/`. All r1 runs are listed in `run_args/runs.csv`.")
-    S.append("- Analyses a to h: `code/imlewm/r1_*.py`; the commands as run are in `revision_r1/an_analyses/jobs/`; the "
-             "outputs are under `revision_r1/an_analyses/raw/an.1/out/<analysis>/` (paths under `/workspace` in these "
+    S.append("- Analyses a to h: `code/imlewm/r1_*.py`; the commands as run are in `revision/an_analyses/jobs/`; the "
+             "outputs are under `revision/an_analyses/raw/an.1/out/<analysis>/` (paths under `/workspace` in these "
              "files are the working folders of the GPU machine).")
     S.append("- Code: the only change to the original code for r1 is the arc option of experiment 1 (design section 0); "
              "every existing dataset is generated as before.")
     S.append("- Summaries: `python3 analysis/summarize_r1.py` (experiments 1 to 3 with the decision rules) and "
              "`python3 analysis/summarize_analyses.py` (analyses a to h); both read only the JSON files in this folder.")
     S.append("- Predictions: `predictions/recorded.md`, section 5. Outcomes and decisions: " +
-             ("`revision_r1/RESULTS_r1.md`." if ctx["results_present"] else
-              "`revision_r1/RESULTS_r1.md` (not yet written when this supplement was built)."))
+             ("`revision/RESULTS_r1.md`." if ctx["results_present"] else
+              "`revision/RESULTS_r1.md` (not yet written when this supplement was built)."))
     S.append("")
     S.append("## Per-run output files")
     S.append("")
@@ -1242,8 +1410,14 @@ def main():
             os.path.join(tex, "main.aux")):
         note("a .tex file is newer than main.aux: rebuild the manuscript so that table and figure numbers are current")
     mt = read_text(os.path.join(tex, "main.tex"))
-    m = re.search(r"\\title\{", mt)
-    title = tex2md(braced(mt, m.end() - 1)[0].replace("\\\\", " "), labels, cites).replace("$", "")
+    try:
+        m = re.search(r"\\title\{", mt)
+        title = tex2md(braced(mt, m.end() - 1)[0].replace("\\\\", " "), labels, cites).replace("$", "")
+        if TBD in title or "\\" in title:
+            raise ValueError("title not final")
+    except Exception as e:  # noqa: BLE001
+        title = "One-step world models with nearest-of-m training"
+        note(f"main.tex: title not readable ({e!r}); a generic title is used in README.md")
 
     # ---- code
     n = copy_tree(J("main/code/imlewm"), os.path.join(out, "code/imlewm"), {".py", ".json"})
@@ -1263,6 +1437,7 @@ def main():
     copy_file(J("main/revision/summarize_r1.py"), os.path.join(out, "analysis/summarize_r1.py"), fix_summarize_r1)
     copy_file(J("main/revision/an_analyses/summarize.py"), os.path.join(out, "analysis/summarize_analyses.py"),
               fix_summarize_analyses)
+    copy_file(J("paper/build/bootstrap_pusht.py"), os.path.join(out, "analysis/bootstrap_pusht.py"))
     fs = [p for p in (J("paper/build/make_fig_samples.py"), J("paper/tmlr/make_fig_samples.py")) if os.path.exists(p)]
     if fs:
         copy_file(fs[0], os.path.join(out, "analysis/make_fig_samples.py"), analysis_text)
@@ -1281,8 +1456,8 @@ def main():
     dtext = read_text(os.path.join(rev, "DESIGN_r1.md"))
     state, _ = design_check(repo, dtext)
     red, n_red = redact_design(dtext)
-    write_text(os.path.join(out, "revision_r1/DESIGN_r1.md"), scrub(red))
-    MANIFEST.append(os.path.join(out, "revision_r1/DESIGN_r1.md"))
+    write_text(os.path.join(out, "revision/DESIGN_r1.md"), scrub(red))
+    MANIFEST.append(os.path.join(out, "revision/DESIGN_r1.md"))
     red_sha = hashlib.sha256(scrub(red).encode("utf-8", "surrogateescape")).hexdigest()
     design_state = {
         "unchanged": "The file has not changed since it was frozen.",
@@ -1297,16 +1472,16 @@ def main():
                      f"`{red_sha}`; the unredacted file will be released with the code.")
     results_present = os.path.exists(os.path.join(rev, "RESULTS_r1.md"))
     if results_present:
-        copy_file(os.path.join(rev, "RESULTS_r1.md"), os.path.join(out, "revision_r1/RESULTS_r1.md"))
+        copy_file(os.path.join(rev, "RESULTS_r1.md"), os.path.join(out, "revision/RESULTS_r1.md"))
     else:
         note("main/revision/RESULTS_r1.md does not exist yet: add it and rebuild")
-    n = copy_tree(os.path.join(rev, "queues"), os.path.join(out, "revision_r1/queues"), {".txt"})
+    n = copy_tree(os.path.join(rev, "queues"), os.path.join(out, "revision/queues"), {".txt"})
     for raw in sorted(glob.glob(os.path.join(rev, "*", "raw"))):
         rel = os.path.relpath(raw, rev)
-        n += copy_tree(raw, os.path.join(out, "revision_r1", rel), RAW_EXT)
-    n += copy_tree(os.path.join(rev, "an_analyses/jobs"), os.path.join(out, "revision_r1/an_analyses/jobs"),
+        n += copy_tree(raw, os.path.join(out, "revision", rel), RAW_EXT)
+    n += copy_tree(os.path.join(rev, "an_analyses/jobs"), os.path.join(out, "revision/an_analyses/jobs"),
                    {".sh", ".py"})
-    print(f"revision_r1: {n + 2} files")
+    print(f"revision: {n + 2} files")
 
     # ---- run arguments
     rows, disc = build_runs(repo, labels)
@@ -1327,7 +1502,7 @@ def main():
         o = json.load(open(J("main/results/runs/e1_a2_imle16_s0/eval.json"), encoding="utf-8"))["stoch"]
         smoke = (f"Re-evaluating the stored checkpoint of this run on another GPU in revision round r1 gave coverage "
                  f"{s['cov_pos']:.4f} and precision {s['prec_pos']:.4f}, against the stored {o['cov_pos']:.4f} and "
-                 f"{o['prec_pos']:.4f} (`revision_r1/an_analyses/raw/an.1/out/smoke/`); sampling on a different GPU "
+                 f"{o['prec_pos']:.4f} (`revision/an_analyses/raw/an.1/out/smoke/`); sampling on a different GPU "
                  "is not bit-identical.")
 
     # ---- generated documents
@@ -1336,7 +1511,8 @@ def main():
                scrub(predictions_md(repo, labels, cites, red, design_state, results_present)))
     write_text(os.path.join(out, "data/README.md"), scrub(data_md(repo, rows)))
     ctx = dict(labels=labels, title=title, rows=rows, discrepancies=disc, design_state=design_state,
-               results_present=results_present, gpu_hours=gpu_hours, smoke=smoke, mf_identical=mf_identical)
+               results_present=results_present, gpu_hours=gpu_hours, smoke=smoke, mf_identical=mf_identical,
+               results_status=results_status(rev))
     write_text(os.path.join(out, "README.md"), scrub(readme_md(ctx)))
 
     # ---- excluded internal documents must not be present

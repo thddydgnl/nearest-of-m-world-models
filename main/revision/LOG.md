@@ -113,3 +113,11 @@
   relaunched from scratch with the same arguments and seed (operational repeat, not a design change); the stopped
   run is kept as `r1_imle16_48k_s1_partial_stop36600` (log to 36,600, EMA checkpoints at 12k, 24k, 36k). Seed 0
   continues (step 39,000 at 00:41Z). Expected end of the repeat: about 07:30Z; cost about 3.7 USD more.
+- 2026-11-23T01:20Z-02:00Z Step 3 reports: A (TMLR review, acceptance about 53% now and 67% after its ten changes),
+  B (claims and flow), C (figures and tables), D (about 1,700 numbers re-traced; about 20 last-digit mismatches),
+  F (221 earlier findings audited: 123 fixed, 80 partly, 11 not, 3 regressions). Reviewer E's Fable session hit
+  the account's Fable usage limit (resets 2026-11-27 03:00 KST) after writing its full report; its fixes are applied
+  by a worker on the default model. Fixes from A, B, C, D and F applied in commits 74deef6 and 5457c61.
+- 2026-11-23T02:10Z Supplement builder repaired after review D (stages the build, keeps the old zip on failure,
+  mirrors the project layout so the copied figure script finds the follow-up runs, adds a Push-T bootstrap script,
+  never copies TBD text): zip 4.8 MiB, identifier grep 0 matches in 1,660 files, deterministic.

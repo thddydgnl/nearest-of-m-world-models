@@ -1,11 +1,11 @@
-\section{A Random-Codebook Account of \Nom{} Training}
+\section{A random-codebook account of \nom{} training}
 \label{sec:theory}
 Fix a context and write $p$ and $q$ for the true and generated outcome distributions, $x$ for the outcome $s_{t+1}$ and $Y_j$ for candidate $j$. As the candidates are i.i.d.\ draws from $q$, the population objective of \nom{} training is
 \begin{equation}
 L(q) = \E_{x \sim p}\, \E_{Y_1,\dots,Y_m \sim q}\, \min_{j \in [m]} \| Y_j - x \|^2 ,
 \label{eq:codebook}
 \end{equation}
-the expected distortion of quantizing $x$ with a random codebook of $m$ i.i.d.\ draws from $q$. This best-of-$m$ risk obeys the coverage identity of \citet[Theorem~1]{bennett2026freedom} for general losses, and $I(m)$ below is its value at $q = p$. For a $d$-dimensional Gaussian source, this random codebook is Shannon's random-coding construction at a rate of $\ln m / d$ nats per dimension \citep{shannon1959coding}. The consequences below are elementary. Appendix~\ref{app:proofs} proves them, and Appendix~\ref{app:pred} lists their predictions, where each is tested and which we recorded in advance.
+the expected distortion of quantizing $x$ with a random codebook of $m$ i.i.d.\ draws from $q$. This risk obeys the coverage identity of \citet[Theorem~1]{bennett2026freedom} for general losses, and $I(m)$ below is its value at $q = p$. For a $d$-dimensional Gaussian source, this random codebook is Shannon's random-coding construction at a rate of $\ln m / d$ nats per dimension \citep{shannon1959coding}. The consequences below are elementary. Appendix~\ref{app:proofs} proves them, and Appendix~\ref{app:pred} lists their predictions, where each is tested and which we recorded in advance.
 
 \leavevmode\refstepcounter{subsection}\textbf{\thesubsection\ Outcome memorization in non-repeating contexts.}
 \label{sec:theory_memo}
@@ -19,7 +19,7 @@ the \emph{codebook distortion} of $m$ random mode draws, written $I(m,K)$ when $
 \label{prop:memo}
 With non-repeating contexts, the empirical \nom{} loss of the memorizing solution is lower than that of the generalizing solution by $I(m)$ in expectation over the realized modes. For equiprobable modes with pairwise distances in $[\Delta_{\min}, \Delta_{\max}]$, $(1 - 1/K)^m \Delta_{\min}^2 \le I(m) \le (1-1/K)^m \Delta_{\max}^2$, so the incentive decays exponentially in $m/K$. If the modes densely fill a curve of length $\ell$ with $K \gg m$, then $I(m) = \Theta(\ell^2/m^2)$, independently of $K$. For squared-error regression the corresponding incentive is $\mathrm{tr}\,\mathrm{Cov}_p$, which no budget reduces.
 \end{proposition}
-The incentive is a distortion and not a miss probability. A missed mode contributes its squared distance to the nearest drawn mode, so the geometry of the modes determines whether $I(m)$ depends on $K$. On A2-div and A2-fix (Section~\ref{sec:setup}) the $K$ modes are equiangular directions on a semicircle, so for $m \lesssim K$ the distortion is nearly the same for every $K$ (Appendix~\ref{app:pred} computes it exactly).
+The incentive is a distortion and not the miss probability $(1-1/K)^m$. A missed mode contributes its squared distance to the nearest drawn mode, so the mode geometry determines whether $I(m)$ depends on $K$. On A2-div and A2-fix (Section~\ref{sec:setup}) the $K$ modes are equiangular directions on a semicircle, so for $m \lesssim K$ the distortion is nearly the same for every $K$ (Appendix~\ref{app:pred} computes it exactly).
 
 \leavevmode\refstepcounter{subsection}\textbf{\thesubsection\ High-dimensional continuous outcomes.}
 \label{sec:theory_shrink}
@@ -27,9 +27,9 @@ The incentive is a distortion and not a miss probability. A missed mode contribu
 \label{prop:shrink}
 Let $p = \mathcal{N}(\mu, \sigma^2 I_d)$ and $q = \mathcal{N}(\mu, \tau^2 I_d)$. For large $d$, Equation~\ref{eq:codebook} gives $L(q) \approx d\sigma^2 + d \tau^2 - 2 \tau \sigma \sqrt{d}\, e_m$ with $e_m = \E\max_{j \in [m]} \xi_j$, $\xi_j \sim \mathcal{N}(0,1)$, so the optimal scale is $\tau^\star/\sigma = e_m/\sqrt{d}$ ($e_4 = 1.03$, $e_{16} = 1.77$, $e_{64} = 2.34$; $e_m \approx \sqrt{2 \ln m}$ for large $m$).
 \end{proposition}
-This is the first-order form of the reproduction variance $\sigma^2(1 - m^{-2/d})$ of the Gaussian rate--distortion test channel \citep{cover2006elements}, and the construction is the same, because \nom{} training draws its codebook i.i.d.\ from the reproduction distribution. It separates two regimes, set by $\ln m$ and the effective dimension $\deff$ of the conditional outcome. For a few discrete modes Proposition~\ref{prop:memo} applies, and an i.i.d.\ min-of-$N$ loss over-disperses low-dimensional densities \citep{thiede2019variety}. When $\deff \gg e_m^2$, the samples concentrate near the mean and their scale grows only like $\sqrt{\ln m}$, which Section~\ref{sec:bair} tests on BAIR.
+This is the first-order form of the reproduction variance $\sigma^2(1 - m^{-2/d})$ of the Gaussian rate--distortion test channel \citep{cover2006elements}, and the construction is the same, because \nom{} training draws its codebook i.i.d.\ from the reproduction distribution. It separates two regimes, set by $\ln m$ and the effective dimension $\deff$ (the value of $d$ fitted to data). For a few discrete modes Proposition~\ref{prop:memo} applies, and the same loss over-disperses low-dimensional densities \citep{thiede2019variety}. When $\deff \gg e_m^2$, the samples concentrate near the mean and their scale grows only like $\sqrt{\ln m}$, which Section~\ref{sec:bair} tests on BAIR.
 
-\leavevmode\refstepcounter{subsection}\textbf{\thesubsection\ Flattening of mode probabilities.}
+\leavevmode\refstepcounter{subsection}\textbf{\thesubsection\ Mode-probability flattening.}
 \label{sec:theory_flatten}
 Even with every mode covered, the generator's optimal mode probabilities $q_k$ satisfy $\pi_k (1 - q_k)^{m-1} = \mathrm{const}$ for equidistant modes \citep[Theorem~7]{bennett2026freedom}. At $m{=}1$ all mass goes to the most frequent mode, and at $K{=}2$ and $m{=}2$ the optimum is calibrated. For large $m$ the differences $q_k - q_{k'} \approx (1-1/K)\ln(\pi_k/\pi_{k'})/(m-1)$ vanish, so rare modes are overrepresented. For equiprobable, equidistant modes the optimum is exactly $q_k = \pi_k$ for every $m \ge 2$ \citep[Theorem~4]{bennett2026freedom}. The budget therefore trades coverage against calibration, which equiprobable benchmarks cannot reveal (Section~\ref{sec:flatten}).
 
