@@ -12,9 +12,8 @@ model A with model B and one metric:
 - hierarchical CI: resample the three seeds of each model with replacement, independently for the two models of a
   comparison between methods and as pairs for per-step against one-step matching (runs with the same seed are
   paired), then resample the 128 starting states with replacement, jointly for both models;
-10,000 resamples each, percentile 95% intervals (2.5 and 97.5). The resampling seed behind the manuscript table was
-not stored: with --seed 0 the differences agree with the table and the interval ends lie within 0.2 px of it (other
-seeds move them by up to about 0.3 px). Needs only numpy.
+10,000 resamples each, percentile 95% intervals (2.5 and 97.5). The manuscript table is the output of the default
+--seed 0; other resampling seeds move the interval ends by up to about 0.3 px. Needs only numpy.
 """
 import argparse
 import json

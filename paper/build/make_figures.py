@@ -743,6 +743,6 @@ for r in ("e9_a1_imle4_48k_s0", "e9_a1_fm48k_s0"):
         e = J(r, f)
         if e: print(f"  {r} {f}: F1 {e['model']['f1_err']:.2f} P {e['model']['precision_err']:.2f} R {e['model']['recall_err']:.2f}")
 print("\niMF 72k curve (A2):")
-e = J("e7_a2_imf72k_s0", "eval.json")
+e = J("e7_a2_imf72k_s0", "eval_nfe1.json")
 if e: print("  final:", e["stoch"]["cov_pos"], e["stoch"]["prec_pos"])
 print("done")

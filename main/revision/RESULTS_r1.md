@@ -226,9 +226,11 @@ Raw outputs: `main/revision/an_analyses/raw/an.1/out/<analysis>/`; tables: `pyth
   | FM-2 | 1.41 | 1.45 | 1.60 | 2.19 | 4.31 | 6.31 |
   | iMF | 1.52 | 1.83 | 2.16 | 3.08 | 6.08 | |
 
-  Held-out frames are novel, so the true futures sit at 1.42 rather than 1 against a training bank. No model starts
-  below that level, and the ordering at h = 32 is unchanged; the gap between flow matching and IMLE-WM shrinks from
-  3.6x to 2.7x.
+  Held-out frames are novel, so the true futures sit at 1.42 rather than 1 against a training bank. No model lies
+  below 1, but regression and IMLE-WM stay slightly below the true frames up to h of about 15 to 18 (1.36 to 1.40
+  against 1.41 to 1.42). (Corrected 2026-11-23: an earlier version said that no model starts below that level; with
+  the training-split bank, regression and IMLE-WM stay slightly below the true frames up to h of about 15 to 18.)
+  The ordering at h = 32 is unchanged; the gap between flow matching and IMLE-WM shrinks from 3.6x to 2.7x.
 
 ## 8. Consequences for the paper
 

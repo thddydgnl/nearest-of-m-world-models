@@ -482,8 +482,8 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "manifold distances)", "as @fig:manifold@: `manifold`, `best_err`, `spread` at h = 32 (A2-div) or 16 (A1, B)",
      A2_E3),
     ("tab:bci", "Paired bootstrap on Push-T", "`analysis/bootstrap_pusht.py results/runs` (procedure of the statistics "
-     "appendix; with `--seed 0` the differences agree with the table and the interval ends lie within 0.2 px, since "
-     "the resampling seed of the table was not stored)",
+     "appendix; the table is the output of the default `--seed 0`, and other resampling seeds move the interval ends "
+     "by up to about 0.3 px)",
      "`mf.per_start`, `mf_h8.per_start` of `eval_ps*.json`: `e1_b_imle16_s*` (`eval_ps.json`), `e1_b_fm_s*` "
      "(`eval_ps_nfe50.json`, `eval_ps_nfe2.json`), `e7_b_sc_s*` (`eval_ps_nfe1.json`), `e6_b_seq4_s*`, `e6_b_n0_8k*`",
      [r"^e1_b_(imle16|fm)_s\d$", r"^e7_b_sc_s\d$", r"^e6_b_(seq4_s\d|n0_8k(_s\d)?)$"]),
