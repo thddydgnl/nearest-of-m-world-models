@@ -135,3 +135,6 @@
 - 2026-11-23T07:40Z Manuscript: the eleven TBD placeholders filled from RESULTS_r1.md, the temporary TBD macro
   removed; final build 36 pages, main text through the Broader Impact Statement on 12 pages, abstract 1,918
   characters, no overfull boxes, no undefined references.
+- 2026-11-23T07:45Z Wrap-up: supplement zip rebuilt (4.96 MB, identifier grep 0 matches) and copied next to the TMLR
+  PDF in the papers folder; arXiv v2 bundle built (`paper/arxiv/`, preprint build with the repository link in
+  Appendix C) and synced; TMLR copy synced. No pod alive; watchdog and caffeinate stopped. Commit 1ee8acd pushed.
