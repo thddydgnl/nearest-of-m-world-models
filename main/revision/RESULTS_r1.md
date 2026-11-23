@@ -1,6 +1,6 @@
 # Revision round r1: results and decisions
 
-Status: final except experiment 2b (seed 1 rerun in progress). Design: `DESIGN_r1.md` v1.0, frozen before any r1 run (SHA-256
+Status: final (2026-11-23). Design: `DESIGN_r1.md` v1.0, frozen before any r1 run (SHA-256
 959409ddf4ddc6be671a092454c1d4ad47d6396f06228790ee4ec2f6b7a157bc). Every number below is printed by
 `python3 main/revision/summarize_r1.py` (experiments 1-3) or `python3 main/revision/an_analyses/summarize.py`
 (analyses a-h) from the pulled raw files; spreads are sample standard deviations (n - 1) with the individual seeds.
@@ -14,12 +14,12 @@ Status: final except experiment 2b (seed 1 rerun in progress). Design: `DESIGN_r
 | Experiment 1, m = 8 (reported only) | arc 0.321, control 0.313 | no difference |
 | C1 attenuation correction if ceiling_arc < ceiling_std - 0.05 | both ceilings 1.000, floors 0.250 | not applied |
 | Experiment 2a: claim limited to equal steps if FM-50 coverage >= 0.92 at 36k | 0.849 | **not triggered**; coverage claim holds at matched wall-clock |
-| Experiment 2b: "longer training brings memorization back" if index > 0.40 or coverage < 0.85 at 48k | (pending: seed 0 done, seed 1 rerun) | (pending) |
+| Experiment 2b: "longer training brings memorization back" if index > 0.40 or coverage < 0.85 at 48k | index 0.320, coverage 0.890 | **not triggered** |
 | Experiment 3: drift attributed to training without context noise if h = 32 manifold <= 2.2 at coverage >= 0.74 | 4.47 (S = 0.1), 3.41 (S = 0.3) | **not triggered**; claim kept with the qualifier "including context-noise augmentation up to 0.3" |
 
 Predictions with tolerances (nine): H_I at m = 2, 4, 8 (held at m = 8 only); P2a coverage 0.80-0.90 (held) and
-FM index at NFE 50 <= 0.32 (failed, 0.379); P2b index <= 0.40 and coverage >= 0.85 (pending); P3 at S = 0.1 and 0.3
-(held). So far 4 held, 3 failed, 2 pending.
+FM index at NFE 50 <= 0.32 (failed, 0.379); P2b index <= 0.40 and coverage >= 0.85 (both held); P3 at S = 0.1 and 0.3
+(held). In total 6 held and 3 failed.
 
 ## 2. What was run
 
@@ -114,6 +114,28 @@ manifold distance at h = 32 is 4.86 (NFE 50) and 4.87 (NFE 2), against 6.02 and 
   **failed** (0.379). Flow matching memorizes the realized outcomes of training contexts as training continues:
   its index rises from 0.30 at 12k to 0.38 at 36k while its held-out index stays at chance (0.25-0.26), the
   signature of outcome memorization defined in the paper. With two Euler steps the same model gives 0.44.
+
+### 4.2 Experiment 2b: IMLE-WM with m = 16 for 48k steps
+
+Two seeds, 48k steps (cosine schedule over 48k). Seed 0 ran on x2.2. Seed 1 was run three times: the first attempt
+stopped at 36,600 steps after a storage failure (exit code 0, no error; kept as `r1_imle16_48k_s1_partial_stop36600`),
+the second was lost at about 20k steps when the watchdog's experiment-2 cost cap deleted its pod, and the third ran to
+48k on pod x2.3 (same arguments and seed, same GPU type). The monitor values of all attempts agree within noise.
+
+| Step | Index, training (s0 / s1) | Index, held-out (s0 / s1) |
+|---|---|---|
+| 12k | 0.286 / 0.289 | 0.242 / 0.249 |
+| 24k | 0.283 / 0.283 | 0.246 / 0.246 |
+| 36k | 0.307 / 0.305 | 0.247 / 0.238 |
+| 48k | **0.322 / 0.318** (mean 0.320) | 0.247 / 0.233 |
+
+At 48k: held-out coverage **0.890 (0.891 / 0.889)**, precision 0.880 (0.879 / 0.881), deterministic-transition error
+1.48 px (1.45 / 1.50). For reference, the 12k-step model of the paper's Table 1: index 0.29, coverage 0.93.
+
+- Decision rule (index above 0.40 or coverage below 0.85 at 48k): **not triggered**. "Removes the incentive" is
+  dropped from the paper in every case, as the design requires; the paper reports that the index rises only from 0.29
+  to 0.32 and the coverage falls from 0.93 to 0.89 over four times the training.
+- Prediction P2b (index at most 0.40 and coverage at least 0.85): **held** (both parts).
 
 ## 5. Experiment 3: context noise for flow rollouts
 
@@ -221,4 +243,5 @@ Raw outputs: `main/revision/an_analyses/raw/an.1/out/<analysis>/`; tables: `pyth
 - Analysis e: the planning diagnosis is replaced by the replay result (imagined falls leave an absorbing pit).
 - Analyses b, c, f, g, h and the post-hoc training-bank check: Appendix F, Table 2, Table 4, Appendix E and the new
   qualitative appendix figure.
-- Experiment 2b: (pending) Section 7.1, contribution 2 and Appendix C.
+- Experiment 2b: Section 7.1, contribution 2 and Appendix C report the slow rise of the index (0.29 to 0.32) and the
+  coverage (0.93 to 0.89) over 48k steps.

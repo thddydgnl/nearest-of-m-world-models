@@ -18,6 +18,7 @@ ORIG = os.path.join(HERE, "..", "results", "runs")
 RAW = {"x1": os.path.join(HERE, "x1_arc", "raw", "x1.1"),
        "x2.1": os.path.join(HERE, "x2_long", "raw", "x2.1"),
        "x2.2": os.path.join(HERE, "x2_long", "raw", "x2.2"),
+       "x2.3": os.path.join(HERE, "x2_long", "raw", "x2.3"),   # seed 1 of experiment 2b after x2.2 was deleted
        "x3": os.path.join(HERE, "x3_ctxnoise", "raw", "x3.1")}
 
 
@@ -159,10 +160,12 @@ def x2a():
 
 # ------------------------------------------------------------------------------------------ experiment 2b
 def x2b():
-    root = RAW["x2.2"]
+    # seed 0 ran on x2.2; seed 1 was rerun on x2.3 (the x2.2 attempts are kept as *_partial_* runs)
+    roots = {0: RAW["x2.2"], 1: RAW["x2.3"]}
     print("## Experiment 2b: IMLE-WM m = 16, 48k steps, bounce_div_k4 (monitor index on training contexts)")
     last, cov, prec, det = [], [], [], []
     for s in (0, 1):
+        root = roots[s]
         rows = memo_rows(f"{root}/runs/r1_imle16_48k_s{s}/log.jsonl")
         if rows:
             print(f"  s{s}: " + " ".join(f"{r['step'] // 1000}k:{r['memo_train']:.3f}/{r.get('memo_val', float('nan')):.3f}"
@@ -173,7 +176,7 @@ def x2b():
         prec.append(ev["stoch"]["prec_pos"] if ev else None)
         det.append(ev["det"]["pos_err"] if ev else None)
     for ck in ("ckpt_12000", "ckpt_24000", "ckpt_36000"):
-        c = [J(f"{root}/runs/r1_imle16_48k_s{s}/eval_{ck}.json") for s in (0, 1)]
+        c = [J(f"{roots[s]}/runs/r1_imle16_48k_s{s}/eval_{ck}.json") for s in (0, 1)]
         if any(c):
             print(f"  {ck}: cov {ms([x['stoch']['cov_pos'] if x else None for x in c])}")
     print(f"  48k: index {ms(last)} | held-out cov {ms(cov)} | prec {ms(prec)} | det {ms(det, 2)}")

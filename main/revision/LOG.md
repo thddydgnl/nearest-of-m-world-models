@@ -121,3 +121,17 @@
 - 2026-11-23T02:10Z Supplement builder repaired after review D (stages the build, keeps the old zip on failure,
   mirrors the project layout so the copied figure script finds the follow-up runs, adds a Push-T bootstrap script,
   never copies TBD text): zip 4.8 MiB, identifier grep 0 matches in 1,660 files, deterministic.
+- 2026-11-23T03:23Z Incident: the watchdog deleted pod x2.2 because the experiment-2 group reached its own cap
+  (`runpod/caps.json`, x2 = 8 USD; x2.1 1.93 + x2.2 6.11). Seed 0 of experiment 2b had finished (48k: index 0.322,
+  held-out coverage 0.891, pulled); the relaunched seed 1 (started 00:43Z) was lost at about 20k steps (last pulled
+  log: 16k). Operational fix: x2 cap raised to 11 USD (total limit unchanged at 24 USD), seed 1 relaunched from
+  scratch on a new pod x2.3 with TERM_H = 7.
+- 2026-11-23T04:05Z x2.3 (A40, Secure Cloud) runs seed 1 of experiment 2b since 03:36Z at about 204 steps/min (ETA
+  about 07:40Z with evaluation). The experiment-2 group would reach about 10.5 USD at that time, so its cap was raised
+  again to 12 USD for margin (total limit unchanged at 24 USD; estimated final total about 19 USD).
+- 2026-11-23T07:34Z Experiment 2b complete: seed 1 finished on x2.3 (48k at 07:32Z, evaluated 07:34Z). Index 0.320
+  (0.322 / 0.318), held-out coverage 0.890 (0.891 / 0.889); decision rule not triggered, P2b held. Pod x2.3 deleted;
+  no pod of this study is alive. Final spend estimate 18.94 USD (account delta 18.89; limit 24, user cap 30).
+- 2026-11-23T07:40Z Manuscript: the eleven TBD placeholders filled from RESULTS_r1.md, the temporary TBD macro
+  removed; final build 36 pages, main text through the Broader Impact Statement on 12 pages, abstract 1,918
+  characters, no overfull boxes, no undefined references.
