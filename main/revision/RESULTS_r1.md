@@ -177,8 +177,7 @@ Raw outputs: `main/revision/an_analyses/raw/an.1/out/<analysis>/`; tables: `pyth
 
 ## 7. Post-hoc analyses (not in the frozen design)
 
-- Manifold distance with a training-split reference bank (review finding A-26), `main/code/imlewm/r1_e3bank.py`,
-  `runpod/pod/e3bank.sh`; raw: `main/revision/an_analyses/raw/an.1/out/e3bank/`. The paper's bank (6,000 test-split
+- Manifold distance with a training-split reference bank (review finding A-26), `main/code/imlewm/r1_e3bank.py`; raw: `main/revision/an_analyses/raw/an.1/out/e3bank/`. The paper's bank (6,000 test-split
   frames) contains the true futures of the evaluated rollouts. With 6,000 training-split frames instead (seed-0 A2-div
   models of Table 2), manifold distance at h = 1 / 4 / 8 / 16 / 32:
 

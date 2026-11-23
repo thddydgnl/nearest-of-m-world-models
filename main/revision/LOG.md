@@ -107,3 +107,9 @@
   flow, C figures and tables, D numbers and reproducibility, E terminology and prose, F audit of the first round's
   221 findings) on the manuscript as committed now; reports go to `paper/review/2026-11-23_fable_r2/`. The four TBD
   placeholders wait for experiment 2b (48k runs resumed at 00:23Z after a 13-minute I/O stall at step 36k).
+- 2026-11-23T00:43Z Incident, experiment 2b: run `r1_imle16_48k_s1` stopped at step 36,600 (00:29Z) with exit code 0
+  and no error, after the I/O stall on the network volume at step 36k (its stdout log also lost the lines after
+  35,800). The training script has no early exit and no resume (checkpoints hold only EMA weights), so the run was
+  relaunched from scratch with the same arguments and seed (operational repeat, not a design change); the stopped
+  run is kept as `r1_imle16_48k_s1_partial_stop36600` (log to 36,600, EMA checkpoints at 12k, 24k, 36k). Seed 0
+  continues (step 39,000 at 00:41Z). Expected end of the repeat: about 07:30Z; cost about 3.7 USD more.
