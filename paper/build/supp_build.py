@@ -482,8 +482,8 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "manifold distances)", "as @fig:manifold@: `manifold`, `best_err`, `spread` at h = 32 (A2-div) or 16 (A1, B)",
      A2_E3),
     ("tab:bci", "Paired bootstrap on Push-T", "`analysis/bootstrap_pusht.py results/runs` (procedure of the statistics "
-     "appendix; the table is the output of the default `--seed 0`, and other resampling seeds move the interval ends "
-     "by up to about 0.3 px)",
+     "appendix; the bootstrap columns are the output of the default `--seed 0`, and other resampling seeds move their "
+     "ends by up to about 0.3 px; the seed-level t-intervals are printed after the bootstrap table)",
      "`mf.per_start`, `mf_h8.per_start` of `eval_ps*.json`: `e1_b_imle16_s*` (`eval_ps.json`), `e1_b_fm_s*` "
      "(`eval_ps_nfe50.json`, `eval_ps_nfe2.json`), `e7_b_sc_s*` (`eval_ps_nfe1.json`), `e6_b_seq4_s*`, `e6_b_n0_8k*`",
      [r"^e1_b_(imle16|fm)_s\d$", r"^e7_b_sc_s\d$", r"^e6_b_(seq4_s\d|n0_8k(_s\d)?)$"]),
@@ -493,7 +493,14 @@ MAP = [  # label, title, how to regenerate, sources (runs, files, JSON fields), 
      "`e1_a2_imle{4,16}_s*`: `eval.json`, `manifold[0]` of `e3.json`, last `memo_train` of `log.jsonl`",
      [r"^e15_(a2|fix)_", r"^e1_a2_imle(4|16)_s\d$"]),
     ("fig:toy", "Toy two-branch problem", "`analysis/make_figures.py` -> `fig_toy.pdf`",
-     "`results/e15_toy/toy_*.json` (`python -m imlewm.toy_memo`, CPU)", []),
+     "`results/e15_toy/toy_*.json` (`python -m imlewm.toy_memo`, CPU); the small budgets m = 1, 2, 4 of the text are "
+     "in `toy_smallm.json` (printout \"toy, 1,024 fixed training contexts, small budgets\")", []),
+    ("tab:flowloss", "Training losses of the flow baselines", "`analysis/make_figures.py` (printout \"Table S19, "
+     "training losses\")",
+     "last 10 records of `log.jsonl` (`loss`; Shortcut: its flow-matching term; iMF: `mf_v_mse`) of the flow and "
+     "regression runs of Tables 1-3 and S10, the 48k-step Bouncing Shapes runs and the branch-risk Push runs",
+     [r"^e1_(a2|a1|b)_(fm|reg|imf)_s\d$", r"^e7_(a2|a1|b)_sc_s\d$", r"^j_(fm|reg)_s\d$", r"^e9_a1_fm48k_s0$",
+      r"^e8_bair_(fm|reg|sc)_s\d$", r"^e13_push_(fm|reg)_s\d$", r"^r1_fm36k_s\d$"]),
     ("tab:seq", "Per-step matching on Push-T", "`analysis/make_figures.py` (\"B table\" rows `n0_8k`, `seq4_8k`)",
      "`e6_b_n0_8k`, `e6_b_n0_8k_s1`, `e6_b_n0_8k_s2`, `e6_b_seq4_s{0,1,2}`: `mf_h8.*`, `mf.*`, `train_time` of "
      "`eval.json`; text: deterministic control `e6_det_n0`, `e6_det_seq4`, A1 and A2 runs `e11_*`",

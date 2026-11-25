@@ -222,8 +222,80 @@ def x3():
                          else "claim stays with 'including context-noise augmentation up to 0.3'"))
 
 
+# ------------------------------------------------- second revision: 400 x 64 remeasurement of experiment 1
+def x1r(n_boot=10000, seed=0):
+    """Control (semicircle) minus arc at 400 training contexts x 64 samples (out/c2/*_400x64.json): the index and the
+    tolerance-free index (seed means), a 95% bootstrap interval of the tolerance-free difference over contexts (per
+    context the two seeds are averaged, which share their contexts; the two geometries are resampled independently),
+    the difference on the monitor's first 200 contexts and on the other 200, the 95% half-width over contexts of one
+    200-context, 16-sample index (out/c2/*_200x16.json, check.boot_ci), and the observed drop as a share of the
+    predicted one (control minus the H_I prediction) for the monitor value and for the 400 x 64 index."""
+    root = RAW["x1"]
+    rng = np.random.default_rng(seed)
+    print("## Experiment 1 remeasured: 400 contexts x 64 samples (control minus arc; tolerance-free interval over contexts,"
+          f" {n_boot} resamples, seed {seed})")
+    for m in (2, 4, 8):
+        d = {}
+        for geo, pre in (("arc", "r1_arc90"), ("std", "r1_k4")):
+            r = [J(f"{root}/out/c2/{pre}_m{m}_s{s}_ckpt_nfeNone_400x64.json") for s in (0, 1)]
+            q = [J(f"{root}/out/c2/{pre}_m{m}_s{s}_ckpt_nfeNone_200x16.json") for s in (0, 1)]
+            if None in r or None in q:
+                break
+            if r[0]["train"]["per_context"]["t"] != r[1]["train"]["per_context"]["t"]:
+                print(f"  m={m}: the two seeds of {pre} use different contexts")
+            mon = [memo_rows(f"{root}/runs/{pre}_m{m}_s{s}/log.jsonl")[-1]["memo_train"] for s in (0, 1)]
+            d[geo] = dict(idx=mean([x["derived"]["index_train"] for x in r]),
+                          free=mean([x["derived"]["free_index_train"] for x in r]),
+                          fs=np.mean([x["train"]["per_context"]["free_share"] for x in r], 0),
+                          hw=[(x["train"]["realized_share"][2] - x["train"]["realized_share"][1]) / 2 for x in q],
+                          mon=mean(mon))
+        if len(d) < 2:
+            print(f"  m={m}: incomplete")
+            continue
+        a, c = d["arc"], d["std"]
+        ia = rng.integers(0, len(a["fs"]), (n_boot, len(a["fs"])))
+        ic = rng.integers(0, len(c["fs"]), (n_boot, len(c["fs"])))
+        bd = c["fs"][ic].mean(1) - a["fs"][ia].mean(1)
+        lo, hi = np.percentile(bd, [2.5, 97.5])
+        first = c["fs"][:200].mean() - a["fs"][:200].mean()
+        rest = c["fs"][200:].mean() - a["fs"][200:].mean()
+        line = (f"  m={m}: index control {c['idx']:.3f} arc {a['idx']:.3f} diff {c['idx'] - a['idx']:+.3f} | tolerance-free "
+                f"control {c['free']:.3f} arc {a['free']:.3f} diff {c['free'] - a['free']:+.3f} [{lo:+.3f}, {hi:+.3f}] | "
+                f"first 200 contexts {first:+.3f}, other 200 {rest:+.3f} | 200x16 index half-width arc "
+                f"{'/'.join(f'{v:.3f}' for v in a['hw'])} control {'/'.join(f'{v:.3f}' for v in c['hw'])}")
+        if m in H_I:
+            p = H_I[m][0]
+            line += (f" | observed/predicted drop: monitor {(c['mon'] - a['mon']) / (c['mon'] - p):.2f}, "
+                     f"400x64 {(c['idx'] - a['idx']) / (c['idx'] - p):.2f}")
+        print(line)
+
+
+# ------------------------------------------------ second revision: the restarts of seed 1 of experiment 2b
+def x2b_restart():
+    """The three attempts of seed 1 of experiment 2b (x2.2: stopped at 36,600 steps and lost at about 20k steps,
+    last pulled log 16k; x2.3: complete): largest absolute difference of the logged values at the common steps."""
+    runs = {"stopped at 36,600": f"{RAW['x2.2']}/runs/r1_imle16_48k_s1_partial_stop36600/log.jsonl",
+            "lost at about 20k": f"{RAW['x2.2']}/runs/r1_imle16_48k_s1_partial_lost20k/log.jsonl",
+            "complete (x2.3)": f"{RAW['x2.3']}/runs/r1_imle16_48k_s1/log.jsonl"}
+    print("## Experiment 2b, seed 1: logged values of the three attempts at their common steps")
+    logs = {k: {r["step"]: r for r in log_rows(p)} for k, p in runs.items()}
+    names = list(logs)
+    for i in range(len(names)):
+        for j in range(i + 1, len(names)):
+            a, b = logs[names[i]], logs[names[j]]
+            common = sorted(set(a) & set(b))
+            if not common:
+                print(f"  {names[i]} vs {names[j]}: no common steps")
+                continue
+            dif = {k: max(abs(a[s][k] - b[s][k]) for s in common if k in a[s] and k in b[s])
+                   for k in ("loss", "match_d", "memo_train", "memo_val", "cov_val")
+                   if any(k in a[s] and k in b[s] for s in common)}
+            print(f"  {names[i]} vs {names[j]}: {len(common)} common logged steps ({common[0]}-{common[-1]}), "
+                  "largest absolute difference " + ", ".join(f"{k} {v:.1e}" for k, v in dif.items()))
+
+
 if __name__ == "__main__":
-    which = sys.argv[1:] or ["x1", "x2a", "x2b", "x3"]
+    which = sys.argv[1:] or ["x1", "x2a", "x2b", "x3", "x1r", "x2b_restart"]
     for w in which:
-        {"x1": x1, "x2a": x2a, "x2b": x2b, "x3": x3}[w]()
+        {"x1": x1, "x2a": x2a, "x2b": x2b, "x3": x3, "x1r": x1r, "x2b_restart": x2b_restart}[w]()
         print()

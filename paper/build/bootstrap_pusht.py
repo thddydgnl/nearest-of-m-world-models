@@ -13,10 +13,15 @@ model A with model B and one metric:
   comparison between methods and as pairs for per-step against one-step matching (runs with the same seed are
   paired), then resample the 128 starting states with replacement, jointly for both models;
 10,000 resamples each, percentile 95% intervals (2.5 and 97.5). The manuscript table is the output of the default
---seed 0; other resampling seeds move the interval ends by up to about 0.3 px. Needs only numpy.
+--seed 0; other resampling seeds move the interval ends by up to about 0.3 px.
+A second table (added in the second revision) gives the seed-level t-intervals that the text uses: the per-seed
+means over the 128 starting states, Welch's 95% t-interval for comparisons between methods and a paired 95%
+t-interval for per-step against one-step matching (no resampling, no adjustment for the eleven comparisons), and
+the share of starting states on which model A has the lower seed-averaged error. Needs only numpy.
 """
 import argparse
 import json
+import math
 import os
 
 import numpy as np
@@ -56,6 +61,39 @@ def intervals(a, b, paired, n, rng):
     return diff, ci_start, ci_hier
 
 
+def t_cdf(x, nu, n=200001):
+    """CDF of Student's t with nu (possibly fractional) degrees of freedom, by the trapezoid rule on [0, |x|]."""
+    g = np.linspace(0.0, abs(x), n)
+    c = math.exp(math.lgamma((nu + 1) / 2) - math.lgamma(nu / 2) - 0.5 * math.log(nu * math.pi))
+    y = c * (1 + g * g / nu) ** (-(nu + 1) / 2)
+    return 0.5 + math.copysign(float(np.sum((y[1:] + y[:-1]) / 2 * np.diff(g))), x)
+
+
+def t_quantile(p, nu):
+    """Upper quantile of Student's t by bisection (t(0.975, 2) = 4.3027, t(0.975, 4) = 2.7764)."""
+    lo, hi = 0.0, 200.0
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if t_cdf(mid, nu) < p else (lo, mid)
+    return (lo + hi) / 2
+
+
+def t_interval(a, b, paired):
+    """95% t-interval of mean(A) - mean(B) over the per-seed means (mean over starting states of each seed).
+    Paired: one-sample interval of the per-seed differences (n - 1 degrees of freedom); otherwise Welch's interval
+    with the Welch-Satterthwaite degrees of freedom."""
+    sa, sb = a.mean(1), b.mean(1)
+    d = sa.mean() - sb.mean()
+    if paired:
+        dd = sa - sb
+        se, nu = dd.std(ddof=1) / math.sqrt(len(dd)), len(dd) - 1
+    else:
+        va, vb = sa.var(ddof=1) / len(sa), sb.var(ddof=1) / len(sb)
+        se, nu = math.sqrt(va + vb), (va + vb) ** 2 / (va ** 2 / (len(sa) - 1) + vb ** 2 / (len(sb) - 1))
+    q = t_quantile(0.975, nu)
+    return d, (d - q * se, d + q * se), nu
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("runs_dir")
@@ -75,6 +113,21 @@ def main():
             metric = f"h={horizon[1:]} {err.replace('_err', '')} error"
             ci_s, ci_h = f"[{f(cs[0])}, {f(cs[1])}]", f"[{f(ch[0])}, {f(ch[1])}]"
             print(f"{label:38s} {metric:22s} {f(d):>10s}  {ci_s:18s} {ci_h}")
+            label = ""
+    # second revision: the seed-level t-intervals of the text (deterministic, no resampling)
+    print()
+    print("Seed-level 95% t-intervals over the three per-seed means (Welch between methods; paired for per-step vs. "
+          "one-step matching), unadjusted; share: starting states on which the first model has the lower error "
+          "(seeds averaged)")
+    print(f"{'Comparison':38s} {'Metric':22s} {'Difference':>10s}  {'t-interval':18s} {'df':>5s}  {'Share'}")
+    for label, ra, fa, rb, fb, paired, rows in COMPARISONS:
+        for horizon, err in rows:
+            A = load(a.runs_dir, ra, fa, horizon, err)
+            B = load(a.runs_dir, rb, fb, horizon, err)
+            d, ci, nu = t_interval(A, B, paired)
+            share = float(np.mean(A.mean(0) < B.mean(0)))
+            metric = f"h={horizon[1:]} {err.replace('_err', '')} error"
+            print(f"{label:38s} {metric:22s} {f(d):>10s}  {'[' + f(ci[0]) + ', ' + f(ci[1]) + ']':18s} {nu:5.2f}  {share:.3f}")
             label = ""
 
 

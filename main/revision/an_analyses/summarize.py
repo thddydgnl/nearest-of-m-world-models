@@ -1,6 +1,6 @@
 """Print the tables of REPORT.md from the pulled result JSON files (reads raw/an.1/out/ only; seconds on a laptop).
 
-usage: python3 main/revision/an_analyses/summarize.py [section ...]   sections: b a c d e f h smoke
+usage: python3 main/revision/an_analyses/summarize.py [section ...]   sections: b a c d e f h smoke c64 e5
 """
 import glob
 import json
@@ -124,6 +124,38 @@ def sec_f():
             print(os.path.basename(f), {k: v for k, v in r.items() if k != "h"}, r.get("h"))
 
 
+def sec_c64():
+    """Second revision: held-out coverage and precision with 64 samples per context (400 contexts), seed means."""
+    print("## c64: coverage with 64 samples per held-out context (400 contexts; mean of seeds)")
+    for label, pat in (("FM-2 (12k, Table 1 checkpoints)", "c_nfe/e1_a2_fm_s*_ckpt_nfe2_400x64.json"),
+                       ("Shortcut (24k, Table 1 checkpoints)", "c_nfe/e7_a2_sc_s*_ckpt_nfe1_400x64.json"),
+                       ("iMF (36k, Table 1 checkpoints)", "c_nfe/e1_a2_imf_s*_ckpt_nfe1_400x64.json"),
+                       ("IMLE-WM m=16, K=4 (8k grid)", "b_grid/e2_k4_m16_s*_ckpt_nfeNone_400x64.json"),
+                       ("IMLE-WM m=16, K=8 (8k grid)", "b_grid/e2_k8_m16_s*_ckpt_nfeNone_400x64.json"),
+                       ("IMLE-WM m=16, K=16 (8k grid)", "b_grid/e12_k16_m16_s*_ckpt_nfeNone_400x64.json")):
+        rs = [J(f) for f in sorted(glob.glob(f"{R}/{pat}"))]
+        if not rs:
+            print(f"{label}: missing")
+            continue
+        cov, prec = [r["test"]["cov"][0] for r in rs], [r["test"]["prec"][0] for r in rs]
+        print(f"{label}: coverage {np.mean(cov):.3f} ({'/'.join(f'{v:.3f}' for v in cov)}), precision {np.mean(prec):.3f}, "
+              f"{rs[0]['n_ctx']} contexts x {rs[0]['n']} samples, {len(rs)} seeds")
+
+
+def sec_e5():
+    """Second revision: five-push risk test, share of imagined falls that leave the pit before the last frame."""
+    print("## e5: five-push risk test, imagined falls that leave the absorbing pit before the last frame (1 - last/any)")
+    for f in sorted(glob.glob(f"{R}/e_planrisk/riskdiag_both_nfe*.json")):
+        r = J(f)
+        by = {}
+        for k, v in r["models"].items():
+            by.setdefault(k.rsplit("_s", 1)[0], []).append((v["last"]["model_mean"], v["any"]["model_mean"]))
+        for name, vals in sorted(by.items()):
+            last, anyf = np.mean([v[0] for v in vals]), np.mean([v[1] for v in vals])
+            print(f"nfe {r['nfe']} {name}: last {last:.3f}, any {anyf:.3f}, remain {last / anyf:.3f}, "
+                  f"leave {1 - last / anyf:.3f} ({len(vals)} seeds)")
+
+
 def sec_smoke():
     for f in glob.glob(f"{R}/smoke/*.json"):
         r = J(f)
@@ -137,7 +169,7 @@ def sec_smoke():
 
 
 if __name__ == "__main__":
-    secs = sys.argv[1:] or ["smoke", "b", "a", "c", "d", "e", "f"]
+    secs = sys.argv[1:] or ["smoke", "b", "a", "c", "d", "e", "f", "c64", "e5"]
     for s in secs:
         globals()["sec_" + s]()
         print()

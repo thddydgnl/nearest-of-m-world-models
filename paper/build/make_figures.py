@@ -746,3 +746,135 @@ print("\niMF 72k curve (A2):")
 e = J("e7_a2_imf72k_s0", "eval_nfe1.json")
 if e: print("  final:", e["stoch"]["cov_pos"], e["stoch"]["prec_pos"])
 print("done")
+
+# ================================================================== second revision: printouts behind the new numbers
+print("\nSecond revision")
+
+# --- competing accounts: the procedure of the recorded predictions (linear fit of the excess memorization on the
+# K = 4, 8 points, +-2 RMSE intervals mapped to the index scale) applied to other one-variable accounts
+def dnn2(K, arc=180.0):
+    """Squared distance from a mode to its nearest other mode (the same for every mode on the bounce geometry)."""
+    ang = np.deg2rad((np.arange(K) + 0.5) / K * arc - arc / 2)
+    pts = np.stack([np.cos(ang), np.sin(ang)], 1)
+    d = ((pts[:, None] - pts[None]) ** 2).sum(-1)
+    np.fill_diagonal(d, np.inf)
+    return float(d.min(1).mean())
+ACCOUNTS = {"I(m,K)": lambda K, m: I_mK(m, K), "1/m^2": lambda K, m: 1 / m ** 2, "1/m": lambda K, m: 1 / m,
+            "(1-1/K)^m": lambda K, m: (1 - 1 / K) ** m, "exp(-m/K)": lambda K, m: math.exp(-m / K),
+            "2^-m": lambda K, m: 2.0 ** -m, "(1-1/K)^m * dNN^2": lambda K, m: (1 - 1 / K) ** m * dnn2(K)}
+fit_c = sorted(c for c in grid if c[0] in (4, 8))
+pred_c = sorted(c for c in grid if c[0] in (2, 16))
+print("competing accounts, procedure of the recorded predictions (fit on K=4,8; +-2 RMSE on the index scale; "
+      "out-of-sample RMSE of the excess memorization on the nine K=2,16 cells):")
+rmse_I48 = None
+for name, fx in ACCOUNTS.items():
+    x = np.array([fx(*c) for c in fit_c]); y = np.array([grid[c]["excess"] for c in fit_c])
+    bb, aa = np.polyfit(x, y, 1)
+    r48 = float(np.sqrt(np.mean((aa + bb * x - y) ** 2)))
+    rmse_I48 = rmse_I48 or r48
+    hits_, oos, oos8 = 0, [], []
+    for (K, m) in pred_c:
+        pe = aa + bb * fx(K, m)
+        pi, half = 1 / K + (1 - 1 / K) * pe, 2 * r48 * (1 - 1 / K)
+        hits_ += pi - half <= grid[(K, m)]["memo"] <= pi + half
+        oos.append(pe - grid[(K, m)]["excess"])
+        if (K, m) != (2, 2):
+            oos8.append(pe - grid[(K, m)]["excess"])
+    c16 = [c for c in grid if c != (2, 2)]
+    x16 = np.array([fx(*c) for c in c16]); y16 = np.array([grid[c]["excess"] for c in c16])
+    b16, a16 = np.polyfit(x16, y16, 1)
+    x17 = np.array([fx(*c) for c in grid]); y17 = np.array([grid[c]["excess"] for c in grid])
+    b17, a17 = np.polyfit(x17, y17, 1)
+    print(f"  {name:18s} fit on K=4,8 RMSE {r48:.4f} (interval width x{r48 / rmse_I48:.2f} of I(m,K)) | inside "
+          f"{hits_}/{len(pred_c)} | out-of-sample RMSE {np.sqrt(np.mean(np.square(oos))):.3f} "
+          f"(without K=2,m=2 {np.sqrt(np.mean(np.square(oos8))):.3f}) | grid fit RMSE without / with K=2,m=2 "
+          f"{np.sqrt(np.mean((a16 + b16 * x16 - y16) ** 2)):.3f} / {np.sqrt(np.mean((a17 + b17 * x17 - y17) ** 2)):.3f}")
+
+# --- Table S19: final training losses of the flow baselines and of regression (log.jsonl: mean of the last 10
+# records, i.e. the last 2k steps; first record = step 0). Stem width d and noisy channels n per token position from
+# model.py / joint.py and the run arguments (C = 256 for the 8M models, 384 for the 21M and joint models; the joint
+# model stacks 16 noisy future maps of 384 channels).
+def last10(run, key, root=None):
+    p = os.path.join(root or RUNS, run, "log.jsonl")
+    if not os.path.exists(p):
+        return None
+    rows = [json.loads(l) for l in open(p) if l.strip()]
+    rows = [r for r in rows if key in r]
+    return (float(np.mean([r[key] for r in rows[-10:]])), rows[0][key], rows[-1]["step"]) if rows else None
+X2_RUNS = os.path.join(RES, "..", "revision", "x2_long", "raw", "x2.1", "runs")
+S19 = [  # setting, stem d, noisy n, {column: (runs, log key, root)}, regression runs
+    ("A2-div, 8M", 256, 384, {"FM": (seeds("e1_a2_fm_s{}"), "loss", None), "FM 36k": (["r1_fm36k_s0", "r1_fm36k_s1", "r1_fm36k_s2"], "loss", X2_RUNS),
+                              "Shortcut": (seeds("e7_a2_sc_s{}"), "flow_mse", None), "iMF": (seeds("e1_a2_imf_s{}"), "mf_v_mse", None)},
+     seeds("e1_a2_reg_s{}")),
+    ("Bouncing Shapes, autoregressive, 8M", 256, 384, {"FM": (seeds("e1_a1_fm_s{}"), "loss", None), "FM 48k": (["e9_a1_fm48k_s0"], "loss", None),
+                                                      "Shortcut": (seeds("e7_a1_sc_s{}"), "flow_mse", None), "iMF": (seeds("e1_a1_imf_s{}"), "mf_v_mse", None)},
+     seeds("e1_a1_reg_s{}")),
+    ("Bouncing Shapes, joint 16->16, 29M", 384, 16 * 384, {"FM": (seeds("j_fm_s{}"), "loss", None)}, seeds("j_reg_s{}")),
+    ("Push (branch risk), 8M", 256, 384, {"FM": (seeds("e13_push_fm_s{}"), "loss", None)}, seeds("e13_push_reg_s{}")),
+    ("Stochastic Push-T, 21M", 384, 384, {"FM": (seeds("e1_b_fm_s{}"), "loss", None), "Shortcut": (seeds("e7_b_sc_s{}"), "flow_mse", None),
+                                          "iMF": (seeds("e1_b_imf_s{}"), "mf_v_mse", None)}, seeds("e1_b_reg_s{}")),
+    ("BAIR, 21M", 384, 384, {"FM": (seeds("e8_bair_fm_s{}", 2), "loss", None), "Shortcut": (seeds("e8_bair_sc_s{}", 2), "flow_mse", None)},
+     seeds("e8_bair_reg_s{}", 2)),
+]
+print("Table S19, training losses (mean of the last 10 log records, mean over seeds; flow: velocity loss per coordinate, "
+      "Shortcut: its flow term flow_mse, iMF: mf_v_mse; regression: final, step 0 and final/step 0):")
+for name, d_, n_, cols, regs in S19:
+    parts = []
+    for col, (rs, key, root) in cols.items():
+        v = [last10(r, key, root) for r in rs]
+        v = [x for x in v if x]
+        if v:
+            parts.append(f"{col} {np.mean([x[0] for x in v]):.3f} ({'/'.join(f'{x[0]:.3f}' for x in v)}; step 0 "
+                         f"{np.mean([x[1] for x in v]):.2f}; last step {v[0][2]})")
+    rg = [last10(r, "loss") for r in regs]
+    rg = [x for x in rg if x]
+    fin, ini = np.mean([x[0] for x in rg]), np.mean([x[1] for x in rg])
+    print(f"  {name}: stem {d_} / noisy {n_} -> bound (n-d)/n = {max(n_ - d_, 0) / n_:.4f} | " + " | ".join(parts)
+          + f" | regression {fin:.4f} / step 0 {ini:.4f} = {fin / ini:.3f} ({len(rg)} seeds)")
+
+# --- deterministic-transition token RMS error on A2-div (det.tok_err of eval*.json) and the noise-floor estimate
+print("A2-div deterministic transitions, token RMS error (det.tok_err, mean over seeds):")
+TOK = [("regression", seeds("e1_a2_reg_s{}"), "eval.json", None), ("IMLE-WM m=16", seeds("e1_a2_imle16_s{}"), "eval.json", None),
+       ("FM-50", seeds("e1_a2_fm_s{}"), "eval_nfe50.json", None), ("FM-50, 36k", ["r1_fm36k_s0", "r1_fm36k_s1", "r1_fm36k_s2"], "eval_nfe50.json", X2_RUNS),
+       ("FM-2", seeds("e1_a2_fm_s{}"), "eval_nfe2.json", None), ("FM-2, 36k", ["r1_fm36k_s0", "r1_fm36k_s1", "r1_fm36k_s2"], "eval_nfe2.json", X2_RUNS),
+       ("Shortcut", seeds("e7_a2_sc_s{}"), "eval_nfe1.json", None), ("iMF", seeds("e1_a2_imf_s{}"), "eval_nfe1.json", None)]
+tok = {}
+for name, rs, f, root in TOK:
+    v = [json.load(open(os.path.join(root or RUNS, r, f)))["det"]["tok_err"] for r in rs if os.path.exists(os.path.join(root or RUNS, r, f))]
+    tok[name] = float(np.mean(v)) if v else float("nan")
+    print(f"  {name:13s} {tok[name]:.3f} ({'/'.join(f'{x:.3f}' for x in v)})")
+res_rms = math.sqrt(np.mean([last10(r, "loss")[1] for r in seeds("e1_a2_reg_s{}")]))
+print(f"  residual RMS from the step-0 regression loss (prediction = last context map) {res_rms:.3f}; regression error plus "
+      f"noise of that scale in 1/3 of the coordinates: sqrt({tok['regression']:.3f}^2 + {res_rms:.3f}^2 / 3) = "
+      f"{math.sqrt(tok['regression'] ** 2 + res_rms ** 2 / 3):.3f}")
+
+# --- toy rows with small budgets (T1): results/e15_toy/toy_smallm.json (python -m imlewm.toy_memo --n_train 1024
+# --methods nn1 nn2 nn4 es2 --seeds 0 1)
+p = os.path.join(RES, "e15_toy", "toy_smallm.json")
+if os.path.exists(p):
+    rows = json.load(open(p))
+    print(f"toy, 1,024 fixed training contexts, small budgets ({len(rows)} rows of toy_smallm.json):")
+    for method, m in sorted({(r["method"], r["m"]) for r in rows}, key=lambda t: (t[0] != "nn", t[1])):
+        rr = [r for r in rows if r["method"] == method and r["m"] == m]
+        mem = [r["train"]["memo"] for r in rr]; cov = [r["test"]["cov2"] for r in rr]
+        print(f"  {'nearest-of-m' if method == 'nn' else 'energy score'} m={m}: memorization index {np.mean(mem):.4f} "
+              f"({'/'.join(f'{x:.4f}' for x in mem)}), two-mode coverage of new contexts {np.mean(cov):.4f} "
+              f"({'/'.join(f'{x:.3f}' for x in cov)}), seeds {[r['seed'] for r in rr]}")
+else:
+    print("toy_smallm.json not found")
+
+# --- the earlier stochastic Push-T test set, discarded after the seed-0 models were evaluated on it
+print("earlier Push-T multi-future test set (results/runs/_old_b_eval, seed 0): precision / recall error (px), mode coverage")
+for name, f in (("regression", "e1_b_reg_s0_eval.json"), ("FM-50", "e1_b_fm_s0_eval_nfe50.json"), ("FM-2", "e1_b_fm_s0_eval_nfe2.json"),
+                ("IMLE-WM m=4", "e1_b_imle4_s0_eval.json"), ("IMLE-WM m=16", "e1_b_imle16_s0_eval.json")):
+    e = J("_old_b_eval", f)
+    if e:
+        print(f"  {name:13s} {e['mf']['precision_err']:.1f} / {e['mf']['recall_err']:.1f}, mode coverage {e['mf']['mode_cov']:.4f}, "
+              f"{e['mf']['n_starts']} starting states, {e['mf']['n_modes']:.2f} modes")
+
+# --- training time of the stochastic Push-T models (eval*.json train_time, original runs)
+print("stochastic Push-T training time (h, original runs, 12k steps):")
+for name, fmt, f in (("FM", "e1_b_fm_s{}", "eval_nfe50.json"), ("IMLE-WM m=16", "e1_b_imle16_s{}", "eval.json")):
+    v = [J(r, f)["train_time"] / 3600 for r in seeds(fmt) if J(r, f)]
+    print(f"  {name:13s} {'/'.join(f'{x:.2f}' for x in v)} (mean {np.mean(v):.2f})")
+print("done (second revision)")
